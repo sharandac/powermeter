@@ -35,6 +35,7 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 
+#include "mqttclient.h"
 #include "webserver.h"
 #include "ota.h"
 #include "config.h"
@@ -46,6 +47,8 @@ TaskHandle_t _ASYNCWEBSERVER_Task;
  * based on: https://github.com/lbernstone/asyncUpdate/blob/master/AsyncUpdate.ino
  */
 void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) {
+  mqtt_client_disable();
+
   if (!index){
     /*
      * if filename includes spiffs, update the spiffs partition
@@ -80,6 +83,7 @@ void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_
       ESP.restart();
     }
   }
+  void mqtt_client_enable();
 }
 
 /*
@@ -158,6 +162,7 @@ void asyncwebserver_setup(void){
   });
 
   asyncserver.on("/httpfirmwareupdate", HTTP_GET, [](AsyncWebServerRequest * request) {
+    mqtt_client_disable();
     config_saveall();
     if ( ota_update() ) {
       request->send(200, "text/plain", "Firmware update OK\r\n" );
@@ -167,19 +172,21 @@ void asyncwebserver_setup(void){
     else {
       request->send(200, "text/plain", "Firmware update failed\r\n" );
     }
-
+    mqtt_client_enable();
   });
 
   asyncserver.on("/httpspiffsupdate", HTTP_GET, [](AsyncWebServerRequest * request ) {
+    mqtt_client_disable();
     if ( ota_spiffupdate() ) {
       config_saveall();
       request->send(200, "text/plain", "SPIFFS update OK\r\n" );
+      delay(3000);
+      ESP.restart();    
     }
     else {
       request->send(200, "text/plain", "SPIFFS update FAIL\r\n" );      
     }
-    delay(3000);
-    ESP.restart();    
+    mqtt_client_enable();
   });
 
   asyncserver.on("/updateall", HTTP_GET, [](AsyncWebServerRequest * request ) {
@@ -209,6 +216,6 @@ void asyncwebserver_setup(void){
   );
 
   asyncserver.begin();
-  Serial.printf( "Start on Core: %d\r\n", xPortGetCoreID() );
+  Serial.printf( "Start Webserver on Core: %d\r\n", xPortGetCoreID() );
 }
 

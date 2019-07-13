@@ -37,6 +37,7 @@
 #include <stdio.h>
 #include <string.h>
 
+#include "mqttclient.h"
 #include "config.h"
 #include "ota.h"
 
@@ -88,6 +89,8 @@ void ota_StartTask( void ) {
 int ota_update( void ) {
   int retval=0;
 
+  mqtt_client_disable();
+
   Serial.printf("Start Firmware update over HTTP\r\n");
 
   WiFiClient client;
@@ -116,6 +119,8 @@ int ota_update( void ) {
  */
 int ota_spiffupdate( void ) {
   int retval=0;
+
+  mqtt_client_disable();
 
   Serial.printf("Start SPIFFS update over HTTP\r\n");
 

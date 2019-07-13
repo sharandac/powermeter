@@ -32,5 +32,7 @@
     void mqtt_client_publish( char * topic, char * payload );
     void mqtt_client_StartTask( void );
     void mqtt_client_Task( void * pvParameters );
+    void mqtt_client_disable( void );
+    void mqtt_client_enable( void );
 
 #endif // _MQTTCLIENT_H

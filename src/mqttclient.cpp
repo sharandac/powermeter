@@ -40,6 +40,7 @@ This example uses FreeRTOS softwaretimers as there is no built-in Ticker library
 
 TaskHandle_t _ASYNCMQTT_Task;
 AsyncMqttClient mqttClient;
+bool disable_MQTT=false;
 
 /*
  *
@@ -61,7 +62,9 @@ void onMqttConnect(bool sessionPresent) {
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
   Serial.printf( "Disconnected from MQTT\r\n" );
   if ( WiFi.isConnected() )
-    mqttClient.connect();
+    if ( strlen( config_get_MQTTServer() ) >= 1 && disable_MQTT == false ) {
+      mqttClient.connect();
+    }
 }
 
 /*
@@ -134,7 +137,7 @@ void mqtt_client_Task( void * pvParameters ) {
   mqttClient.setClientId( config_get_HostName() );
   mqttClient.setCredentials( config_get_MQTTUser(), config_get_MQTTPass() );
 
-  Serial.printf( "Start on Core: %d\r\n", xPortGetCoreID() );
+  Serial.printf( "Start MQTT-Client on Core: %d\r\n", xPortGetCoreID() );
 
   delay(1000);
 
@@ -143,7 +146,9 @@ void mqtt_client_Task( void * pvParameters ) {
 
     if ( WiFi.isConnected() ) {
       if ( !mqttClient.connected() ) {
-        mqttClient.connect();
+        if ( strlen( config_get_MQTTServer() ) >= 1 && disable_MQTT == false ) {
+          mqttClient.connect();
+        }
       }
       else {
         /*
@@ -174,4 +179,20 @@ void mqtt_client_Task( void * pvParameters ) {
       }
     }
   }
+}
+
+/*
+ *
+ */
+void mqtt_client_disable( void ) {
+  disable_MQTT = true;
+   mqttClient.disconnect();
+}
+
+/*
+ *
+ */
+void mqtt_client_enable( void ) {
+  disable_MQTT = false;
+   mqttClient.connect();
 }

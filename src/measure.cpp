@@ -82,8 +82,8 @@ void measure_mes( void ) {
    * Sample measure
    */
   while ( millis() < NextMillis ) {
-    vTaskSuspendAll();
-    cli();
+//    vTaskSuspendAll();
+//    cli();
     for (int n=0; n<numberOfSamples; n++) {
       for ( int i = 0 ; i < MEASURE_CHANELS ; i++ ) {
         /*
@@ -105,8 +105,8 @@ void measure_mes( void ) {
        */
       delayMicroseconds(66);
     }
-    sei();
-    xTaskResumeAll();
+//    sei();
+//    xTaskResumeAll();
     if ( TX_buffer != -1 ) {
       memcpy( buffer, &backbuffer[ TX_buffer ][ 0 ] , sizeof( buffer ) );
       TX_buffer = -1;
