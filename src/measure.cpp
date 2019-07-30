@@ -50,10 +50,10 @@ uint16_t backbuffer[ MEASURE_CHANELS ][ numberOfSamples ];
  */
 void measure_init( void ) {
   int inPinI = atoi( config_get_MeasurePin() );
-  pinMode(inPinI,INPUT);     //Set Analog Inputs
-  adcAttachPin(inPinI);
   for ( int i = 0 ; i < MEASURE_CHANELS ; i++ ) {
-    PowerOverAll[i] = atof( config_get_MeasureCounter() ) / MEASURE_CHANELS ;
+    pinMode( inPinI + i ,INPUT);     //Set Analog Inputs
+    adcAttachPin( inPinI + i );
+    PowerOverAll[ i ] = atof( config_get_MeasureCounter() ) / MEASURE_CHANELS ;
   }
 }
 
@@ -82,8 +82,8 @@ void measure_mes( void ) {
    * Sample measure
    */
   while ( millis() < NextMillis ) {
-//    vTaskSuspendAll();
-//    cli();
+    vTaskSuspendAll();
+    cli();
     for (int n=0; n<numberOfSamples; n++) {
       for ( int i = 0 ; i < MEASURE_CHANELS ; i++ ) {
         /*
@@ -105,8 +105,8 @@ void measure_mes( void ) {
        */
       delayMicroseconds(66);
     }
-//    sei();
-//    xTaskResumeAll();
+    sei();
+    xTaskResumeAll();
     if ( TX_buffer != -1 ) {
       memcpy( buffer, &backbuffer[ TX_buffer ][ 0 ] , sizeof( buffer ) );
       TX_buffer = -1;
