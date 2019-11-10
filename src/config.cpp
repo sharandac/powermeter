@@ -42,8 +42,8 @@ void config_set_HostName( char * value ) { if ( strlen( value ) <= sizeof( cfgda
 
 char * config_get_WlanSSID( void ) { return( cfgdata.WlanSSID ); }
 void config_set_WlanSSID( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.WlanSSID ) ) strcpy( cfgdata.WlanSSID, value ); }
-char * config_get_WlanPassord( void ) { return( cfgdata.WlanPassord ); }
-void config_set_WlanPassord( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.WlanPassord ) ) strcpy( cfgdata.WlanPassord, value ); }
+char * config_get_WlanPassord( void ) { return( cfgdata.WlanPassword ); }
+void config_set_WlanPassord( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.WlanPassword ) ) strcpy( cfgdata.WlanPassword, value ); }
 
 char * config_get_OTALocalApSSID( void ) { return( cfgdata.OTALocalApSSID ); }
 void config_set_OTALocalApSSID( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.OTALocalApSSID ) ) strcpy( cfgdata.OTALocalApSSID, value ); }

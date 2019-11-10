@@ -37,7 +37,7 @@
     char Firmware[16]="";
     char HostName[64]="";
     char WlanSSID[64]="";
-    char WlanPassord[64]="";
+    char WlanPassword[64]="";
     char OTALocalApSSID[64]="";
     char OTALocalApPassword[64]="powermeter";
     char OTAWlanPin[16]="12345678";
@@ -137,7 +137,7 @@
   /*
    * firmewareversion string
    */
-  #define __FIRMWARE__            "2019071601"
+  #define __FIRMWARE__            "2019111001"
 
   /*
    * Config filename
