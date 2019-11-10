@@ -11,6 +11,26 @@ platformio run --uploadfs
 platformio run --upload
 ```
 
+After that, take a look at your monitorport ...
+
+```text
+Read config from SPIFFS
+scan for SSID "" ... not found
+starting Wifi-AP with SSID "powermeter_aadee0"
+AP IP address: 192.168.4.1
+Start Main Task on Core: 1
+Start NTP Task on Core: 1
+Start Measurement Task on Core: 0
+Start Websock Task on Core: 1
+Start MQTT-Client on Core: 1
+Start Webserver on Core: 1
+NTP-client: renew time
+Start OTA Task on Core: 1
+Failed to obtain time
+NTP-client: Thursday, January 01 1970 01:00:07
+```
+When the output look like this, congratulation!
+
 After the first start an access point will be opened with an unique name like
 ```bash
 powermeter_XXXXX
