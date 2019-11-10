@@ -5,7 +5,11 @@ A simple smartmeter based on ESP32. Supports the complete setup via web interfac
 # Install
 
 Clone this repository and open it with platformIO.
-Remember, the SPIFF must also be flashed.
+Remember, the SPIFF must also be flashed. On a terminal in vscode you can do it with
+```bash
+platformio run --uploadfs
+platformio run --upload
+```
 
 After the first start an access point will be opened with an unique name like
 ```bash
