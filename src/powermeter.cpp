@@ -70,7 +70,7 @@ void setup()
   /*
    * doing setup Serial an config
    */
-  Serial.begin(115200);
+  Serial.begin(9600);
   config_setup();
 
   /*
