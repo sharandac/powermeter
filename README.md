@@ -1,6 +1,6 @@
 # powermeter
 
-A simple powermeter base on ESP32 with MQTT support, live-monitoring and some web-interface stuff.
+A simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
 
 # Install
 
