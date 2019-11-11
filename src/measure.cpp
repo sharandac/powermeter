@@ -114,7 +114,7 @@ void measure_mes( void ) {
     rounds++;
   }
   
-  Serial.printf("%d mesurements\r\n", rounds );
+//  Serial.printf("%d mesurements\r\n", rounds );
 
   for ( int i = 0 ; i < MEASURE_CHANELS ; i++ ) {
     //Calculation of the root of the mean of the voltage and measure squared (rms)
