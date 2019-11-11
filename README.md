@@ -7,8 +7,8 @@ A simple smartmeter based on ESP32. Supports the complete setup via web interfac
 Clone this repository and open it with platformIO.
 Remember, the SPIFF must also be flashed. On a terminal in vscode you can do it with
 ```bash
-platformio run --uploadfs
-platformio run --upload
+platformio run -t uploadfs
+platformio run -t upload
 ```
 
 After that, take a look at your monitorport ...
