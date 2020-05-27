@@ -85,7 +85,11 @@ void onMqttUnsubscribe(uint16_t packetId) {
  *
  */
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
-  Serial.printf( "Publish received, topic: [%s] , payload: [%s]\r\n", topic, payload);
+  Serial.printf( "Publish received, topic: [%s] , payload: [", topic );
+  for ( int i = 0 ; i < len ; i++ ) {
+    printf("%c",payload[i]);
+  }
+  printf("]\r\n");
 }
 
 /*
@@ -125,6 +129,10 @@ void mqtt_client_Task( void * pvParameters ) {
      set the timerevent for sending MQTT and reconnect
   */
   static unsigned long NextMillis = millis() + 15000;
+  static unsigned long NextMeasureMillis = millis() + 15000;
+  static float measure[ MEASURE_CHANELS ];
+
+  memset( measure, 0, sizeof( measure ) );
 
   mqttClient.onConnect(onMqttConnect);
   mqttClient.onDisconnect(onMqttDisconnect);
@@ -160,12 +168,13 @@ void mqtt_client_Task( void * pvParameters ) {
           char topic[64] = "";
 
           for ( int channel = 0 ; channel < MEASURE_CHANELS ; channel++ ) {
-            snprintf( value, sizeof( value ), "%.3f", measure_get_power( channel ) / 1000 );
+            snprintf( value, sizeof( value ), "%.3f", measure[ channel ] / atof( config_get_MQTTInterval() ) );
             snprintf( topic, sizeof( topic ), "stat/%s/channel%d/power", config_get_MQTTTopic(), channel );
             mqtt_client_publish( topic , value );
             snprintf( value, sizeof( value ), "%.3f", measure_get_poweroverall( channel ) / 1000 );
             snprintf( topic, sizeof( topic ), "stat/%s/channel%d/poweroverall", config_get_MQTTTopic(), channel );
             mqtt_client_publish( topic , value );
+            measure[ channel ] = 0;
           }
 
           double poweroverall = 0;
@@ -175,6 +184,18 @@ void mqtt_client_Task( void * pvParameters ) {
           snprintf( value, sizeof( value ), "%.2f", ( poweroverall / 1000 ) * atof( config_get_MeasureCost() ) );
           snprintf( topic, sizeof( topic ), "stat/%s/cost", config_get_MQTTTopic() );
           mqtt_client_publish( topic , value );      
+        }
+
+        if ( NextMeasureMillis < millis() ) {
+          NextMeasureMillis += 1000;
+          for ( int channel = 0 ; channel < MEASURE_CHANELS ; channel++ ) {
+            char value[32] = "";
+            char topic[64] = "";
+            measure[ channel ] += measure_get_power( channel ) / 1000;
+            snprintf( value, sizeof( value ), "%.3f", measure_get_power( channel ) / 1000 );
+            snprintf( topic, sizeof( topic ), "stat/%s/channel%d/realtimepower", config_get_MQTTTopic(), channel );
+            mqtt_client_publish( topic , value );
+          }
         }
       }
     }
@@ -186,7 +207,7 @@ void mqtt_client_Task( void * pvParameters ) {
  */
 void mqtt_client_disable( void ) {
   disable_MQTT = true;
-   mqttClient.disconnect();
+  mqttClient.disconnect();
 }
 
 /*
@@ -194,5 +215,5 @@ void mqtt_client_disable( void ) {
  */
 void mqtt_client_enable( void ) {
   disable_MQTT = false;
-   mqttClient.connect();
+  mqttClient.connect();
 }

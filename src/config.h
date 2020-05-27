@@ -137,7 +137,7 @@
   /*
    * firmewareversion string
    */
-  #define __FIRMWARE__            "2019111001"
+  #define __FIRMWARE__            "2020052701"
 
   /*
    * Config filename

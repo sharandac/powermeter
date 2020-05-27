@@ -51,6 +51,8 @@ void webSocketEvent(uint8_t num, WStype_t type, uint8_t * cmdpayload, size_t len
                                           break;
                                         }
     case WStype_BIN:                    { break; }
+    case WStype_PING:                    { break; }
+    case WStype_PONG:                    { break; }
     case WStype_FRAGMENT:               { break; }
     case WStype_FRAGMENT_BIN_START:     { break; }
     case WStype_FRAGMENT_FIN:           { break; }
