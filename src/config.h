@@ -41,22 +41,17 @@
     char OTALocalApSSID[64]="";
     char OTALocalApPassword[64]="powermeter";
     char OTAWlanPin[16]="12345678";
-    char FirmwareURL[128]="http://www.neo-guerillaz.de/powermeter.ino.bin";
-    char SPIFFSURL[128]="http://www.neo-guerillaz.de/powermeter.spiffs.bin";
-    char VersionURL[128]="http://www.neo-guerillaz.de/powermeter.version.txt";
     char MQTTServer[32]="";
     char MQTTUser[32]="";
     char MQTTPass[32]="";
     char MQTTTopic[32]="test";
     char MQTTInterval[32]="15";
-    char MeasurePin[16]="34";
     char MeasureBurdenResistor[16]="62";
     char MeasureCoilTurns[16]="1800";
     char MeasureVoltage[16]="230";
     char MeasureOffset[16]="0";
-    char MeasureCounter[16]="0";
-    char MeasureCost[16]="0.29";
     char MeasureChannels[16]="1";
+    char MeasureSamplerate[16]="0";
   };
 
   #if CONFIG_FREERTOS_UNICORE
@@ -113,20 +108,16 @@
 
   char * config_get_MeasureBurdenResistor( void );
   void config_set_MeasureBurdenResistor( char * value );
-  char * config_get_MeasurePin( void );
-  void config_set_MeasurePin( char * value );
   char * config_get_MeasureCoilTurns( void );
   void config_set_MeasureCoilTurns( char * value );
   char * config_get_MeasureVoltage( void );
   void config_set_MeasureVoltage( char * value );
   char * config_get_MeasureOffset( void );
   void config_set_MeasureOffset( char * value );
-  char * config_get_MeasureCounter( void );
-  void config_set_MeasureCounter( char * value );
-  char * config_get_MeasureCost( void );
-  void config_set_MeasureCost( char * value );
   char * config_get_MeasureChannels( void );
   void config_set_MeasureChannels( char * value );
+  char * config_get_MeasureSamplerate( void );
+  void config_set_MeasureSamplerate( char * value );
   
   char * config_get_FirmwareURL( void );
   void config_set_FirmwareURL( char * value );
@@ -137,7 +128,7 @@
   /*
    * firmewareversion string
    */
-  #define __FIRMWARE__            "2020052701"
+  #define __FIRMWARE__            "2020060801"
 
   /*
    * Config filename

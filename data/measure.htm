@@ -17,30 +17,25 @@
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
    <li><a href='update.htm'>Web update</a></li>
-   <li><a href='iupdate.htm'>Internet update</a></li>
    <li><a href='info.htm'>Info</a></li>
 </ul>
 </div>
 <h1>measurement settings</h1>
-<label>Channels</label><br>
+<label>channels (1-3, first channel ADC1-CH5)</label><br>
 <input type='text' size='16' id='CHS'></input>
-<label>first Pin</label><br>
-<input type='text' size='63' id='PIN'></input>
 <label>burden resistor value</label><br>
 <input type='text' size='63' id='BUR'></input>
 <label>coil turns</label><br>
 <input type='text' size='63' id='COI'></input>
-<label>voltage</label><br>
+<label>AC voltage</label><br>
 <input type='text' size='63' id='VOL'></input>
 <label>offset</label><br>
 <input type='text' size='63' id='OFF'></input>
-<label>electric meter in Wh</label><br>
-<input type='text' size='63' id='COU'></input>
-<label>cost per kWh</label><br>
-<input type='text' size='63' id='COS'></input>
+<label>sample rate correction value in Hz</label><br>
+<input type='text' size='63' id='RAT'></input>
 <br>
 <br>
-<button type='button' onclick='SaveSetting("PIN");SaveSetting("CHS");SaveSetting("BUR");SaveSetting("COI");SaveSetting("VOL");SaveSetting("OFF");SaveSetting("COS");SaveSetting("COU");refreshValue();' class='button'>save</button><br><br>
+<button type='button' onclick='SaveSetting("CHS");SaveSetting("RAT");SaveSetting("BUR");SaveSetting("COI");SaveSetting("VOL");SaveSetting("OFF");refreshValue();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>

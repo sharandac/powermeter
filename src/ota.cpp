@@ -83,67 +83,6 @@ void ota_StartTask( void ) {
                     _OTA_TASKCORE );  /* Core where the task should run */  
 }
 
-/*
- * 
- */
-int ota_update( void ) {
-  int retval=0;
-
-  mqtt_client_disable();
-
-  Serial.printf("Start Firmware update over HTTP\r\n");
-
-  WiFiClient client;
-  
-  t_httpUpdate_return ret = httpUpdate.update( client, config_get_FirmwareURL() );
-  
-  switch(ret) {
-      case HTTP_UPDATE_FAILED:
-          Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
-          break;
-  
-      case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("HTTP_UPDATE_NO_UPDATES");
-          break;
-  
-      case HTTP_UPDATE_OK:
-          Serial.println("HTTP_UPDATE_OK");
-          retval=1;
-          break;
-  }
-  return( retval );
-}
-
-/*
- * 
- */
-int ota_spiffupdate( void ) {
-  int retval=0;
-
-  mqtt_client_disable();
-
-  Serial.printf("Start SPIFFS update over HTTP\r\n");
-
-  WiFiClient client;
-  
-  t_httpUpdate_return ret = httpUpdate.updateSpiffs( client, config_get_SPIFFSURL() );
-  
-  switch(ret) {
-      case HTTP_UPDATE_FAILED:
-          Serial.printf("HTTP_UPDATE_FAILD Error (%d): %s", httpUpdate.getLastError(), httpUpdate.getLastErrorString().c_str());
-          break;
-  
-      case HTTP_UPDATE_NO_UPDATES:
-          Serial.println("HTTP_UPDATE_NO_UPDATES");
-          break;
-  
-      case HTTP_UPDATE_OK:
-          Serial.println("HTTP_UPDATE_OK");
-          retval=1;
-          break;
-  }
-  return( retval );
-}
 
 /*
  * \brief Scant das Wlan nach einen bestimmten Wlan (OTA_WLAN_SSID) und schaltet wenn vorhanden

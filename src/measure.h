@@ -31,17 +31,18 @@
 
   #define _MEASURE_H
 
-  #define numberOfSamples       512
-  #define samplingFrequency     numberOfSamples*25
-  #define DELAY                 50
-  #define MEASURE_CHANELS       1
+  #define MEASURE_CHANELS       3
+  #define numbersOfSamples       510
+  #define numbersOfFFTSamples   32
+  #define samplingFrequency     numbersOfSamples*25*MEASURE_CHANELS
+  #define DELAY                 1000
   
   void measure_init( void );
   void measure_mes( void );
+  int measure_set_samplerate( int corr );
   float measure_get_power( int line );
-  float measure_get_poweroverall( int line );
-  void measure_set_poweroverall( int line, float value );
-  uint16_t * measure_get_buffer( int channel );
+  uint16_t * measure_get_buffer( void );
+  uint16_t * measure_get_fft( void );
   void measure_Task( void * pvParameters );
   void measure_StartTask( void );
   float measure_get_Irms( int line );

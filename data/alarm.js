@@ -1,9 +1,9 @@
+var pause_osc = true;
 var connect = false;
-var firstrun = false;
 var counter = 10;
 var savecounter = 0;
 
-var connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']);
+var connection = new WebSocket('ws://' + location.hostname + '/ws', ['arduino']);
 
 setInterval(function () { if ( connect == true ) getStatus();}, 1000);
 
@@ -16,13 +16,12 @@ connection.onopen = function () {
 connection.onerror = function (error) {
 	connect = false; 
 //	console.log('WebSocket Error ', error);
-	connection = new WebSocket('ws://' + location.hostname + ':81/', ['arduino']); 
+	connection = new WebSocket('ws://' + location.hostname + '/ws', ['arduino']); 
 };
 
 connection.onmessage = function (e) {
 //	console.log('Server: ', e.data);
 	partsarry = e.data.split('\\');
-	if (firstrun == false) { firstrun = true; }
 	if (partsarry[0] == 'OScopeProbe') {
 		GotOScope(e.data );
 	}
@@ -75,99 +74,200 @@ function OScopeProbe() {
 	if ( connect ) connection.send( "OSC" );
 }
 
-var pause_osc = true;
-
 function GotOScope(data)
 {
 	var mult = Number(document.getElementById('OSCMultIn').value);
 	document.getElementById('OSCMultOut').innerHTML = mult;
-	var canvas = document.getElementById('OScopeCanvas');
-	var ctx = canvas.getContext('2d');
-	var h = canvas.height;
-	var w = canvas.width;
-	if( ctx.canvas.width != canvas.clientWidth )   ctx.canvas.width = canvas.clientWidth;
-	if( ctx.canvas.height != canvas.clientHeight ) ctx.canvas.height = canvas.clientHeight;
+
+	var ocanvas = document.getElementById('OScopeCanvas');
+	var otx = ocanvas.getContext('2d');
+	var fcanvas = document.getElementById('FFTCanvas');
+	var ftx = fcanvas.getContext('2d');
+
+	if( otx.canvas.width != ocanvas.clientWidth )   otx.canvas.width = ocanvas.clientWidth;
+	if( otx.canvas.height != ocanvas.clientHeight ) otx.canvas.height = ocanvas.clientHeight;
+
+	if( ftx.canvas.width != fcanvas.clientWidth )   ftx.canvas.width = fcanvas.clientWidth;
+	if( ftx.canvas.height != fcanvas.clientHeight ) ftx.canvas.height = fcanvas.clientHeight;
 
 	var secs = data.split( "\\" );
 
-	var samps = Number( secs[1] );
-	var iratio = 512/(secs[2]*4096) * 10;
-	var data = secs[3];
-	var lastsamp = parseInt( data.substr(0,4),16 );
+	var channels = Number( secs[1] );
+	var samps = Number( secs[2] );
+	var fftsamps = secs[3];
+	var iratio = ocanvas.clientHeight / ( secs[4]*4096 ) * 10;
+	var data = secs[5];
+	var fftdata = secs[6];
 
-	ctx.clearRect(0, 0, canvas.width, canvas.height);
-	ctx.beginPath();
-	ctx.strokeStyle = "#000000";
-	ctx.strokeRect( 0,  0, canvas.clientWidth, canvas.clientHeight );
+	otx.clearRect(0, 0, ocanvas.width, ocanvas.height);
 	
-	for (var i = 0; i < samps; i++)
+	for( var round=0 ; round < channels ; round++ )
 	{
-		var x2 = (i+1) * canvas.clientWidth / samps;
-		var samp = parseInt(data.substr(i * 4, 4), 16);
-		var y2 = ( 1.-mult*samp / 4096 ) * canvas.clientHeight ;
-		
-		if( i == 0 )
-		{
-			var x1 = i * canvas.clientWidth / samps;
-			var y1 = ( 1.-mult*lastsamp / 4096 ) * canvas.clientHeight ;
-			ctx.moveTo( x1, y1 + ( ( mult * canvas.clientHeight ) / 2 ) - ( canvas.clientHeight / 2 ) );
+		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
+		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
+		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
+		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
+
+		otx.beginPath();
+		if ( round == 0 ) {
+			otx.strokeStyle = "#0000FF";
+		}
+		if ( round == 1 ) {
+			otx.strokeStyle = "#00FF00";
+		}
+		if ( round == 2 ) {
+			otx.strokeStyle = "#00FFFF";
+		}
+		if ( round == 3 ) {
+			otx.strokeStyle = "#FF0000";
 		}
 
-		ctx.lineTo( x2, y2  + ( ( mult * canvas.clientHeight ) / 2 ) - ( canvas.clientHeight / 2 ) );
+		var lastsamp = parseInt( data.substr( samps * round ,3),16 );
 
-		lastsamp = samp;
+		for (var i = samps * round ; i < samps * round + samps ; i++)
+		{
+			var x2 = ((i-(samps * round)) ) * ocanvas.clientWidth / ( samps - 1 );
+			var samp = parseInt(data.substr(i * 3, 3), 16);
+			var y2 = ( 1.-mult*samp / 4096 ) * ocanvas.clientHeight ;
+			
+			if( i == 0 )
+			{
+				var x1 = i * ocanvas.clientWidth / samps;
+				var y1 = ( 1.-mult*lastsamp / 4096 ) * ocanvas.clientHeight ;
+				otx.moveTo( x1, y1 + ( ( mult * ocanvas.clientHeight ) / 2 ) - ( ocanvas.clientHeight / 2 ) );
+			}
+
+			otx.lineTo( x2, y2  + ( ( mult * ocanvas.clientHeight ) / 2 ) - ( ocanvas.clientHeight / 2 ) );
+
+			lastsamp = samp;
+		}
+		otx.stroke();
 	}
 
-	ctx.stroke();
-	ctx.beginPath();
-
-	ctx.strokeStyle = "#FF8080";
-
-	for (i = 1; (iratio * mult * i) < (canvas.clientHeight / 2); i++)
-	{
-		ctx.moveTo(0, canvas.clientHeight / 2 + (iratio * mult * i));
-		ctx.lineTo(ctx.canvas.width, canvas.clientHeight / 2 + (iratio * mult * i));
-		ctx.moveTo(0, canvas.clientHeight / 2 - (iratio * mult * i));
-		ctx.lineTo(ctx.canvas.width, canvas.clientHeight / 2 - (iratio * mult * i));
-	}
-
-	ctx.stroke();
-	ctx.beginPath();
+	ftx.clearRect(0, 0, fcanvas.width, fcanvas.height);
 	
-	ctx.strokeStyle = "#FF0000";
-	ctx.moveTo(0, canvas.clientHeight / 2);
-	ctx.lineTo(canvas.clientWidth, canvas.clientHeight / 2);
+	for( var round=0 ; round < channels ; round++ )
+	{
+		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
+		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
+		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
+		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
 
-	ctx.moveTo(1, canvas.clientHeight / 2 - 20 );
-	ctx.lineTo(1, canvas.clientHeight / 2 + 20);
+		ftx.beginPath();
+		if ( round == 0 ) {
+			ftx.strokeStyle = "#0000FF";
+		}
+		if ( round == 1 ) {
+			ftx.strokeStyle = "#00FF00";
+		}
+		if ( round == 2 ) {
+			ftx.strokeStyle = "#00FFFF";
+		}
+		if ( round == 3 ) {
+			ftx.strokeStyle = "#FF0000";
+		}
 
-	ctx.moveTo(ctx.canvas.width / 8, canvas.clientHeight / 2 - 10);
-	ctx.lineTo(ctx.canvas.width / 8 , canvas.clientHeight / 2 + 10);
+		var lastsamp = parseInt( fftdata.substr( fftsamps * round ,3),16 ) * mult;
 
-	ctx.moveTo(ctx.canvas.width / 8 * 2, canvas.clientHeight / 2 - 10 );
-	ctx.lineTo(ctx.canvas.width / 8 * 2, canvas.clientHeight / 2 + 10);
+		var x1 = 0;
+		var y1 = 0;
 
-	ctx.moveTo(ctx.canvas.width / 8 * 3, canvas.clientHeight / 2 - 10 );
-	ctx.lineTo(ctx.canvas.width / 8 * 3, canvas.clientHeight / 2 + 10);
+		for (var i = fftsamps * round ; i < fftsamps * round + fftsamps ; i++)
+		{
+			var x2 = ((i-(fftsamps * round)) ) * fcanvas.clientWidth / ( fftsamps - 1 );
+			var samp = parseInt(fftdata.substr(i * 3, 3), 16) * mult;
+			var y2 = ( 1.-samp / 1024 ) * fcanvas.clientHeight - 1;
+			
+			ftx.moveTo( x1, y1 );
+      ftx.bezierCurveTo( x2, y1, x1, y2, x2, y2 );
+      x1 = x2;
+      y1 = y2;
+//			ftx.lineTo( x2, y2 );
 
-	ctx.moveTo(ctx.canvas.width / 2, canvas.clientHeight / 2 - 20);
-	ctx.lineTo(ctx.canvas.width / 2 , canvas.clientHeight / 2 + 20);
+			lastsamp = samp;
+		}
+		ftx.stroke();
+	}
+	
+	ftx.beginPath();
+	ftx.strokeStyle = "#000000";
+  ftx.font = "30px Arial";
+  ftx.fillText("Spectrum",10,30);
+  ftx.stroke();
 
-	ctx.moveTo(ctx.canvas.width / 8 * 5, canvas.clientHeight / 2 - 10 );
-	ctx.lineTo(ctx.canvas.width / 8 * 5, canvas.clientHeight / 2 + 10);
+	ftx.beginPath();
+	ftx.strokeStyle = "#FF8080";
+	for (i = 1; (iratio * mult * i) < ( fcanvas.clientHeight ); i++)
+	{
+		ftx.moveTo(0, fcanvas.clientHeight - (iratio * mult * i) );
+		ftx.lineTo( ftx.canvas.width, fcanvas.clientHeight - (iratio * mult * i) );
+	}
+	ftx.stroke();
+	ftx.beginPath();
+	
+	ftx.strokeStyle = "#000000";
+	ftx.strokeRect( 0,  0, fcanvas.clientWidth, fcanvas.clientHeight );
+	ftx.stroke();
+	
+	otx.beginPath();
+	otx.strokeStyle = "#FF8080";
 
-	ctx.moveTo(ctx.canvas.width / 8 * 6, canvas.clientHeight / 2 - 10);
-	ctx.lineTo(ctx.canvas.width / 8 * 6, canvas.clientHeight / 2 + 10);
+	for (i = 1; (iratio * mult * i) < ( ocanvas.clientHeight / 2); i++)
+	{
+		otx.moveTo(0, ocanvas.clientHeight / 2 + (iratio * mult * i));
+		otx.lineTo(otx.canvas.width, ocanvas.clientHeight / 2 + (iratio * mult * i));
+		otx.moveTo(0, ocanvas.clientHeight / 2 - (iratio * mult * i));
+		otx.lineTo(otx.canvas.width, ocanvas.clientHeight / 2 - (iratio * mult * i));
+	}
 
-	ctx.moveTo(ctx.canvas.width / 8 * 7, canvas.clientHeight / 2 - 10);
-	ctx.lineTo(ctx.canvas.width / 8 * 7, canvas.clientHeight / 2 + 10);
+	otx.stroke();
+	otx.beginPath();
+	
+	otx.strokeStyle = "#FF0000";
+	otx.moveTo(0, ocanvas.clientHeight / 2);
+	otx.lineTo(ocanvas.clientWidth, ocanvas.clientHeight / 2);
 
-	ctx.moveTo(ctx.canvas.width - 1, canvas.clientHeight / 2 - 20 );
-	ctx.lineTo(ctx.canvas.width - 1, canvas.clientHeight / 2 + 20);
+	otx.moveTo(1, ocanvas.clientHeight / 2 - 20 );
+	otx.lineTo(1, ocanvas.clientHeight / 2 + 20);
 
-	ctx.stroke();
+	otx.moveTo(otx.canvas.width / 8, ocanvas.clientHeight / 2 - 10);
+	otx.lineTo(otx.canvas.width / 8 , ocanvas.clientHeight / 2 + 10);
 
-	var samp = parseInt(data.substr(i * 4, 4), 16) - 2048;
+	otx.moveTo(otx.canvas.width / 8 * 2, ocanvas.clientHeight / 2 - 10 );
+	otx.lineTo(otx.canvas.width / 8 * 2, ocanvas.clientHeight / 2 + 10);
+
+	otx.moveTo(otx.canvas.width / 8 * 3, ocanvas.clientHeight / 2 - 10 );
+	otx.lineTo(otx.canvas.width / 8 * 3, ocanvas.clientHeight / 2 + 10);
+
+	otx.moveTo(otx.canvas.width / 2, ocanvas.clientHeight / 2 - 20);
+	otx.lineTo(otx.canvas.width / 2 , ocanvas.clientHeight / 2 + 20);
+
+	otx.moveTo(otx.canvas.width / 8 * 5, ocanvas.clientHeight / 2 - 10 );
+	otx.lineTo(otx.canvas.width / 8 * 5, ocanvas.clientHeight / 2 + 10);
+
+	otx.moveTo(otx.canvas.width / 8 * 6, ocanvas.clientHeight / 2 - 10);
+	otx.lineTo(otx.canvas.width / 8 * 6, ocanvas.clientHeight / 2 + 10);
+
+	otx.moveTo(otx.canvas.width / 8 * 7, ocanvas.clientHeight / 2 - 10);
+	otx.lineTo(otx.canvas.width / 8 * 7, ocanvas.clientHeight / 2 + 10);
+
+	otx.moveTo(otx.canvas.width - 1, ocanvas.clientHeight / 2 - 20 );
+	otx.lineTo(otx.canvas.width - 1, ocanvas.clientHeight / 2 + 20);
+
+	otx.strokeStyle = "#000000";
+	otx.strokeRect( 0,  0, ocanvas.clientWidth, ocanvas.clientHeight );
+
+	otx.stroke();
+
+	var samp = parseInt(data.substr(i * 3, 3), 16) - 2048;
+
+  otx.beginPath();
+	ftx.strokeStyle = "#000000";
+  otx.font = "30px Arial";
+  otx.fillText("Oscilloscope",10,30);
+  otx.font = "15px Arial";
+  otx.fillText("div: 5ms/10A",10,50);
+  otx.stroke();
 
 	if (!pause_osc)
 		OScopeProbe();
@@ -177,3 +277,14 @@ function ToggleOScopePause()
 {
 	pause_osc = !pause_osc;
 }
+
+function SampleratePlus()
+{
+	if ( connect ) connection.send( "FQ+" );	
+}
+
+function SamplerateMinus()
+{
+	if ( connect ) connection.send( "FQ-" );		
+}
+

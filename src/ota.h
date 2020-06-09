@@ -39,9 +39,7 @@
     
   void ota_setup( void );
   void ota_loop( void );
-  int ota_update( void );
   int ota_scan( char * SSID );
-  int ota_spiffupdate( void );
   void ota_Task( void * pvParameters );
   void ota_StartTask( void );
   

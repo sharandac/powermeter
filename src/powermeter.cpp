@@ -26,7 +26,6 @@
 
 #include "measure.h"
 #include "config.h"
-#include "websock.h"
 #include "ota.h"
 #include "webserver.h"
 #include "mqttclient.h"
@@ -101,11 +100,10 @@ void setup()
    */
   Serial.printf("Start Main Task on Core: %d\r\n", xPortGetCoreID() );
   ntp_StartTask();
-  measure_StartTask();
-  websock_StartTask();
   ota_StartTask();
   mqtt_client_StartTask();
-  asyncwebserver_setup();
+  asyncwebserver_StartTask();
+  measure_StartTask();
 }
 
 /*

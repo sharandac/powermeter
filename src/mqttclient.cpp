@@ -27,10 +27,6 @@
    \author Dirk Broßwick
 
 */
-
-/*
-This example uses FreeRTOS softwaretimers as there is no built-in Ticker library
-*/
 #include <WiFi.h>
 #include <AsyncMqttClient.h>
 
@@ -49,9 +45,6 @@ void onMqttConnect(bool sessionPresent) {
   Serial.printf( "connected to %s\r\n", config_get_MQTTServer() );
   char topic[64] = "";
   snprintf( topic, sizeof( topic ), "cmd/%s/#", config_get_MQTTTopic() );
-  mqttClient.subscribe( topic, 0 );
-  Serial.printf( "subscribe [%s]\r\n", topic );
-  snprintf( topic, sizeof( topic ), "stat/%s/#", config_get_MQTTTopic() );
   mqttClient.subscribe( topic, 0 );
   Serial.printf( "subscribe [%s]\r\n", topic );
 }
@@ -159,6 +152,9 @@ void mqtt_client_Task( void * pvParameters ) {
         }
       }
       else {
+        int virtualchannel = 0;
+
+        if ( atoi(config_get_MeasureChannels()) == MEASURE_CHANELS ) virtualchannel = 1;
         /*
         *  send N seconds an msg to MQTT
         */
@@ -167,33 +163,22 @@ void mqtt_client_Task( void * pvParameters ) {
           char value[32] = "";
           char topic[64] = "";
 
-          for ( int channel = 0 ; channel < MEASURE_CHANELS ; channel++ ) {
+          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) + virtualchannel ; channel++ ) {
             snprintf( value, sizeof( value ), "%.3f", measure[ channel ] / atof( config_get_MQTTInterval() ) );
-            snprintf( topic, sizeof( topic ), "stat/%s/channel%d/power", config_get_MQTTTopic(), channel );
-            mqtt_client_publish( topic , value );
-            snprintf( value, sizeof( value ), "%.3f", measure_get_poweroverall( channel ) / 1000 );
-            snprintf( topic, sizeof( topic ), "stat/%s/channel%d/poweroverall", config_get_MQTTTopic(), channel );
+            snprintf( topic, sizeof( topic ), "stat/%s/power/channel%d", config_get_MQTTTopic(), channel );
             mqtt_client_publish( topic , value );
             measure[ channel ] = 0;
           }
-
-          double poweroverall = 0;
-          for ( int channel = 0 ; channel < MEASURE_CHANELS ; channel++ ) {
-            poweroverall =+ measure_get_poweroverall( channel );
-          }
-          snprintf( value, sizeof( value ), "%.2f", ( poweroverall / 1000 ) * atof( config_get_MeasureCost() ) );
-          snprintf( topic, sizeof( topic ), "stat/%s/cost", config_get_MQTTTopic() );
-          mqtt_client_publish( topic , value );      
         }
 
         if ( NextMeasureMillis < millis() ) {
           NextMeasureMillis += 1000;
-          for ( int channel = 0 ; channel < MEASURE_CHANELS ; channel++ ) {
+          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()); channel++ ) {
             char value[32] = "";
             char topic[64] = "";
             measure[ channel ] += measure_get_power( channel ) / 1000;
             snprintf( value, sizeof( value ), "%.3f", measure_get_power( channel ) / 1000 );
-            snprintf( topic, sizeof( topic ), "stat/%s/channel%d/realtimepower", config_get_MQTTTopic(), channel );
+            snprintf( topic, sizeof( topic ), "stat/%s/realtimepower/channel%d", config_get_MQTTTopic(), channel );
             mqtt_client_publish( topic , value );
           }
         }

@@ -17,22 +17,35 @@
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
    <li><a href='update.htm'>Web update</a></li>
-   <li><a href='iupdate.htm'>Internet update</a></li>
    <li><a href='info.htm'>Info</a></li>
 </ul>
 </div>
 <h1>live view</h1>
 <div id=OScope class="collapsible">
-   <table width=100% border="0">
+   <table width="50%" border="0">
       <tr>
-         <td width=80% height=70%>
-            <CANVAS id=OScopeCanvas width="1000" height="512"></CANVAS>
-         </td>
-         <td width=20%>
-            <input type=button onclick="ToggleOScopePause(); OScopeProbe();" id=OScopeProbeButton value="|| / >"><br>
-            Scale<input id="OSCMultIn" type="range" value="1" max="10" min="0.1" step="0.1">
-            <output id="OSCMultOut"></output><br>
-         </td>
+        <td>
+          <input id="OSCMultIn" type="range" value="1" max="20" min="0.5" step="0.1" orient="vertical">
+        </td>
+        <td width="60%">
+          <canvas id=OScopeCanvas width="800" height="400"></canvas>
+        </td>
+        <td width="20%">
+          <canvas id=FFTCanvas width="200" height="400"></canvas>
+        </td>
+      </tr>
+        <td></td>
+        <td>
+            <input type="checkbox" id="channel0" checked><label for="channel0">CH 1</label>
+            <input type="checkbox" id="channel1" checked><label for="channel1">CH 2</label>
+            <input type="checkbox" id="channel2" checked><label for="channel2">CH 3</label>
+            <input type="checkbox" id="channelv" checked><label for="channelv">virtual CH</label>
+            <input type=button onclick="SampleratePlus(); " id=SampleratePlusButton value="samplerate +1Hz">
+            <input type=button onclick="SamplerateMinus(); " id=SamplerateMinusButton value="samplerate -1Hz">
+            <input type=button onclick="ToggleOScopePause(); OScopeProbe();" id=OScopeProbeButton value="|| / >">
+            zoom: <output id="OSCMultOut"></output>
+        </td>
+      <tr>
       </tr>
    </table>
 </div>   
