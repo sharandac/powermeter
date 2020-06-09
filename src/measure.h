@@ -32,9 +32,9 @@
   #define _MEASURE_H
 
   #define MEASURE_CHANELS       3
-  #define numbersOfSamples       510
+  #define numbersOfSamples      510
   #define numbersOfFFTSamples   32
-  #define samplingFrequency     numbersOfSamples*25*MEASURE_CHANELS
+  #define samplingFrequency     numbersOfSamples*MEASURE_CHANELS
   #define DELAY                 1000
   
   void measure_init( void );

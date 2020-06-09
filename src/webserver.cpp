@@ -139,6 +139,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         client->printf("BUR\\%s", config_get_MeasureBurdenResistor() );
         client->printf("COI\\%s", config_get_MeasureCoilTurns() );
         client->printf("VOL\\%s", config_get_MeasureVoltage() );
+        client->printf("HRZ\\%s", config_get_MeasureVoltageFrequency() );
         client->printf("OFF\\%s", config_get_MeasureOffset() );
         client->printf("CHS\\%s", config_get_MeasureChannels() );
         client->printf("RAT\\%s", config_get_MeasureSamplerate() );
@@ -227,6 +228,12 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       /* store AC-voltage */
       else if ( !strcmp("VOL", cmd ) ) {
         config_set_MeasureVoltage( value );
+      }
+      /* store AC-main voltage frequency */
+      else if ( !strcmp("HRZ", cmd ) ) {
+        config_set_MeasureVoltageFrequency( value );
+        int samplerate = atoi( config_get_MeasureSamplerate() );
+        measure_set_samplerate( samplerate );
       }
       /* store offset */
       else if ( !strcmp("OFF", cmd ) ) {

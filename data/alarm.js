@@ -28,7 +28,7 @@ connection.onmessage = function (e) {
 	else if (partsarry[0] == 'status') {
 		if ( partsarry[1] == 'Save' ) {
 			document.getElementById('fixedfooter').style.background = "#008000";
-			document.getElementById('status').firstChild.nodeValue = "Einstellungen gespeichert";
+			document.getElementById('status').firstChild.nodeValue = "settings saved";
 			savecounter = 2;
 		}
 		else {

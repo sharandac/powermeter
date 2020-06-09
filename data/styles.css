@@ -427,3 +427,13 @@ input[type=text], select {
 #OSCMultIn {
   height: 400px;
 }
+input[type=button], input[type=submit], input[type=reset] {
+	background-color: #666666;
+  border: none;
+  color: white;
+  padding: 8px 16px;
+  text-decoration: none;
+  margin: 4px 2px;
+	font-size: 16px;
+	cursor: pointer;
+}

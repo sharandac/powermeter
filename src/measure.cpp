@@ -74,7 +74,7 @@ void measure_init( void ) {
   // config i2s to capture data from internal adc
   const i2s_config_t i2s_config = {
       .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN ),
-      .sample_rate = samplingFrequency/2 + atoi( config_get_MeasureSamplerate()) ,
+      .sample_rate = ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + atoi( config_get_MeasureSamplerate()) ,
       .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
       .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
       .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
@@ -255,7 +255,7 @@ float measure_get_power( int line ) {
  */
 int measure_set_samplerate( int corr ) {
   esp_err_t err;
-  err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency/2 ) + corr );
+  err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + corr );
   if (err != ESP_OK ) {
     Serial.printf("Failed set samplerate: %d\r\n", err);
     while (true);

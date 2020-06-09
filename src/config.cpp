@@ -70,6 +70,8 @@ char * config_get_MeasureCoilTurns( void ) { return( cfgdata.MeasureCoilTurns );
 void config_set_MeasureCoilTurns( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureCoilTurns ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureCoilTurns , value ); }
 char * config_get_MeasureVoltage( void ) { return( cfgdata.MeasureVoltage ); }
 void config_set_MeasureVoltage( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltage ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureVoltage , value ); }
+char * config_get_MeasureVoltageFrequency( void ) { return( cfgdata.MeasureVoltageFrequency ); }
+void config_set_MeasureVoltageFrequency( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltageFrequency ) && atoi( value ) > 49 && atoi( value ) < 61 ) strcpy( cfgdata.MeasureVoltageFrequency , value ); }
 char * config_get_MeasureOffset( void ) { return( cfgdata.MeasureOffset ); }
 void config_set_MeasureOffset( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureOffset ) ) strcpy( cfgdata.MeasureOffset , value ); }
 char * config_get_MeasureChannels( void ) { return( cfgdata.MeasureChannels ); }

@@ -52,6 +52,7 @@
     char MeasureOffset[16]="0";
     char MeasureChannels[16]="1";
     char MeasureSamplerate[16]="0";
+    char MeasureVoltageFrequency[16]="50";
   };
 
   #if CONFIG_FREERTOS_UNICORE
@@ -112,6 +113,8 @@
   void config_set_MeasureCoilTurns( char * value );
   char * config_get_MeasureVoltage( void );
   void config_set_MeasureVoltage( char * value );
+  char * config_get_MeasureVoltageFrequency( void );
+  void config_set_MeasureVoltageFrequency( char * value );
   char * config_get_MeasureOffset( void );
   void config_set_MeasureOffset( char * value );
   char * config_get_MeasureChannels( void );
