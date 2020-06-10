@@ -1,5 +1,0 @@
-.pio/
-.vscode/
-*.sh
-data/signalpath.svg
-.gitignore
