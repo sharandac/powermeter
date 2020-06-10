@@ -49,7 +49,7 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 
 # Hardware
 
-![current sensor](https://github.com/sharandac/powermeter/blob/master/data/schmeatic.png)
+![current sensor](https://github.com/sharandac/powermeter/blob/master/data/schematic.png)
 
 Please pay attention to the Burden resistor. Some current sensors have a built-in Burden resistor. In this example a SCT-013-000 without a built-in Burden resistor was used. Please check the documentation for the right Burden resistor value.
 
