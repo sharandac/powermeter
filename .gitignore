@@ -4,3 +4,4 @@
 .vscode/
 
 *.sh
+data/signalpath.svg

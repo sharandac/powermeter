@@ -43,6 +43,11 @@ After that you can configure the powermeter under the following IP-address with 
 ```bash
 http://192.168.4.1 or powermeter_xxxxxx.local
 ```
+# How it works
+
+![live view](https://github.com/sharandac/powermeter/blob/master/data/signalpath.png)
+
+# Hardware
 
 # Interface
 
