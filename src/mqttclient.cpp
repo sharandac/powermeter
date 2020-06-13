@@ -181,6 +181,13 @@ void mqtt_client_Task( void * pvParameters ) {
             snprintf( topic, sizeof( topic ), "stat/%s/realtimepower/channel%d", config_get_MQTTTopic(), channel );
             mqtt_client_publish( topic , value );
           }
+          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) + virtualchannel; channel++ ) {
+            char value[32] = "";
+            char topic[64] = "";
+            snprintf( value, sizeof( value ), "%.3f", measure_get_Irms( channel ) );
+            snprintf( topic, sizeof( topic ), "stat/%s/realtimecurrent/channel%d", config_get_MQTTTopic(), channel );
+            mqtt_client_publish( topic , value );
+          }
         }
       }
     }
