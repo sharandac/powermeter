@@ -58,7 +58,6 @@ At any time, 3 channels are read in simultaneously regardless of the settings. T
 # Interface
 
 ## live view
-![live view](https://github.com/sharandac/powermeter/blob/master/images/live-view.png)
 ![live view](https://github.com/sharandac/powermeter/blob/master/images/preview.gif)
 ## MQTT settings
 ![mqtt](https://github.com/sharandac/powermeter/blob/master/images/mqtt-setting.png)
