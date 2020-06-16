@@ -36,6 +36,7 @@ static bool APMODE = false;
  * 
  */
 void connectWiFi() {
+  int wlan_timeout = WLAN_CONNECT_TIMEOUT;
 
   if ( APMODE == true ) return;
   /*
@@ -51,13 +52,25 @@ void connectWiFi() {
      */
     while ( WiFi.status() != WL_CONNECTED ){
         WiFi.begin( config_get_WlanSSID() , config_get_WlanPassord() );
-        delay(3000);
+        delay(1000);
+        if ( wlan_timeout <= 0 ) {
+          APMODE = true;
+          break;
+        }
+        wlan_timeout--;
     }
-    /*
-     * 
-     */
-    Serial.printf("connected\r\nIP address: " );
-    Serial.println( WiFi.localIP() );
+
+    if ( APMODE == true ) {
+      WiFi.softAP( config_get_OTALocalApSSID(), config_get_OTALocalApPassword() );
+      IPAddress myIP = WiFi.softAPIP();
+      Serial.printf("failed\r\nstarting Wifi-AP with SSID \"%s\"\r\n", config_get_OTALocalApSSID() );
+      Serial.printf("AP IP address: ");
+      Serial.println(myIP);      
+    }
+    else {
+      Serial.printf("connected\r\nIP address: " );
+      Serial.println( WiFi.localIP() );
+    }
   }
 }
 
@@ -69,7 +82,7 @@ void setup()
   /*
    * doing setup Serial an config
    */
-  Serial.begin(9600);
+  Serial.begin(115200);
   config_setup();
 
   /*

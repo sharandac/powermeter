@@ -34,7 +34,7 @@
    * 
    */
   struct CFGdata {
-    char Firmware[16]="";
+    char Firmware[16]="1";
     char HostName[64]="";
     char WlanSSID[64]="";
     char WlanPassword[64]="";
@@ -46,8 +46,8 @@
     char MQTTPass[32]="";
     char MQTTTopic[32]="test";
     char MQTTInterval[32]="15";
-    char MeasureBurdenResistor[16]="62";
-    char MeasureCoilTurns[16]="1800";
+    char MeasureBurdenResistor[16]="60";
+    char MeasureCoilTurns[16]="2000";
     char MeasureVoltage[16]="230";
     char MeasureOffset[16]="0";
     char MeasureChannels[16]="1";
@@ -121,17 +121,11 @@
   void config_set_MeasureChannels( char * value );
   char * config_get_MeasureSamplerate( void );
   void config_set_MeasureSamplerate( char * value );
-  
-  char * config_get_FirmwareURL( void );
-  void config_set_FirmwareURL( char * value );
-
-  char * config_get_SPIFFSURL( void );
-  void config_set_SPIFFSURL( char * value );
 
   /*
    * firmewareversion string
    */
-  #define __FIRMWARE__            "2020060801"
+  #define __FIRMWARE__            "2020061401"
 
   /*
    * Config filename

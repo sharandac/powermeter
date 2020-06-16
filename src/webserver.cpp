@@ -126,14 +126,14 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       else if ( !strcmp("STA", cmd ) ) {
         client->printf( "status\\online" );
         client->printf("WSS\\%s", config_get_WlanSSID() );
-        client->printf("WPS\\%s", config_get_WlanPassord() );
-        client->printf("OPP\\%s", config_get_OTAWlanPin() );
+        client->printf("WPS\\%s", "********" );
+        client->printf("OPP\\%s", "********" );
         client->printf("ASS\\%s", config_get_OTALocalApSSID() );
-        client->printf("APS\\%s", config_get_OTALocalApPassword() );
+        client->printf("APS\\%s", "********" );
         client->printf("HST\\%s", config_get_HostName() );
         client->printf("MQS\\%s", config_get_MQTTServer() );
         client->printf("MQU\\%s", config_get_MQTTUser() );
-        client->printf("MQP\\%s", config_get_MQTTPass() );
+        client->printf("MQP\\%s", "********" );
         client->printf("MQT\\%s", config_get_MQTTTopic() );
         client->printf("MQI\\%s", config_get_MQTTInterval() );
         client->printf("BUR\\%s", config_get_MeasureBurdenResistor() );
@@ -183,7 +183,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
       /* WlanAP Passwort */
       else if ( !strcmp("APS", cmd ) ) {
-        config_set_OTALocalApPassword( value );
+        if ( strcmp( "********", value ) )
+          config_set_OTALocalApPassword( value );
       }
       /* Wlan SSID */
       else if ( !strcmp("WSS", cmd ) ) {
@@ -191,11 +192,13 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
       /* Wlan Passwort */
       else if ( !strcmp("WPS", cmd ) ) {
-        config_set_WlanPassord( value );
+        if ( strcmp( "********", value ) )
+          config_set_WlanPassord( value );
       }
       /* Wlan Passwort */
       else if ( !strcmp("OPP", cmd ) ) {
-        config_set_OTAWlanPin( value );
+        if ( strcmp( "********", value ) )
+          config_set_OTAWlanPin( value );
       }
       /* MQTT Server */
       else if ( !strcmp("MQS", cmd ) ) {
@@ -207,7 +210,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
       /* MQTT Pass */
       else if ( !strcmp("MQP", cmd ) ) {
-        config_set_MQTTPass( value );
+        if ( strcmp( "********", value ) )
+          config_set_MQTTPass( value );
       }
       /* MQTT Topic */
       else if ( !strcmp("MQT", cmd ) ) {
