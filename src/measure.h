@@ -43,9 +43,11 @@
   float measure_get_power( int line );
   uint16_t * measure_get_buffer( void );
   uint16_t * measure_get_fft( void );
-  void measure_Task( void * pvParameters );
-  void measure_StartTask( void );
   float measure_get_Irms( int line );
   float measure_get_Iratio( void );
+  void measure_StartTask( void );
+  void measure_StartSignalGenTask( void );
+  void measure_Task( void * pvParameters );
+  void measure_SignalGenTask( void * pvParameters );
   
 #endif // _MEASURE_H

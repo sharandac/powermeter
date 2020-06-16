@@ -42,18 +42,18 @@ bool disable_MQTT=false;
  *
  */
 void onMqttConnect(bool sessionPresent) {
-  Serial.printf( "connected to %s\r\n", config_get_MQTTServer() );
+  Serial.printf( "MQTT-Client: connected to %s\r\n", config_get_MQTTServer() );
   char topic[64] = "";
   snprintf( topic, sizeof( topic ), "cmd/%s/#", config_get_MQTTTopic() );
   mqttClient.subscribe( topic, 0 );
-  Serial.printf( "subscribe [%s]\r\n", topic );
+  Serial.printf( "MQTT-Client: subscribe [%s]\r\n", topic );
 }
 
 /*
  *
  */
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.printf( "Disconnected from MQTT\r\n" );
+  Serial.printf( "MQTT-Client: Disconnected from MQTT\r\n" );
   if ( WiFi.isConnected() )
     if ( strlen( config_get_MQTTServer() ) >= 1 && disable_MQTT == false ) {
       mqttClient.connect();
@@ -64,32 +64,25 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
  *
  */
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.printf( "Subscribe acknowledged [%d]\r\n", packetId );
+  Serial.printf( "MQTT-Client: Subscribe acknowledged [%d]\r\n", packetId );
 }
 
 /*
  *
  */
 void onMqttUnsubscribe(uint16_t packetId) {
-  Serial.printf( "Unsubscribe acknowledged [%d]\r\n", packetId );
+  Serial.printf( "MQTT-Client: Unsubscribe acknowledged [%d]\r\n", packetId );
 }
 
 /*
  *
  */
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
-  Serial.printf( "Publish received, topic: [%s] , payload: [", topic );
+  Serial.printf( "MQTT-Client: Publish received, topic: [%s] , payload: [", topic );
   for ( int i = 0 ; i < len ; i++ ) {
     printf("%c",payload[i]);
   }
   printf("]\r\n");
-}
-
-/*
- *
- */
-void onMqttPublish(uint16_t packetId) {
-  Serial.printf( "Publish acknowledged [%d]\r\n", packetId );
 }
 
 /*
@@ -121,8 +114,8 @@ void mqtt_client_Task( void * pvParameters ) {
   /*
      set the timerevent for sending MQTT and reconnect
   */
-  static unsigned long NextMillis = millis() + 15000;
-  static unsigned long NextMeasureMillis = millis() + 15000;
+  static uint64_t NextMeasureMillis = millis();
+  static uint64_t NextMillis = millis() + 15000;
   static float measure[ MEASURE_CHANELS ];
 
   memset( measure, 0, sizeof( measure ) );
@@ -132,7 +125,6 @@ void mqtt_client_Task( void * pvParameters ) {
   mqttClient.onSubscribe(onMqttSubscribe);
   mqttClient.onUnsubscribe(onMqttUnsubscribe);
   mqttClient.onMessage(onMqttMessage);
-  mqttClient.onPublish(onMqttPublish);
 
   mqttClient.setServer( config_get_MQTTServer() , 1883 );
   mqttClient.setClientId( config_get_HostName() );
@@ -140,10 +132,10 @@ void mqtt_client_Task( void * pvParameters ) {
 
   Serial.printf( "Start MQTT-Client on Core: %d\r\n", xPortGetCoreID() );
 
-  delay(1000);
+  vTaskDelay( 1000 );
 
   while( true ) {
-    delay(10);
+    vTaskDelay( 10 );
 
     if ( WiFi.isConnected() ) {
       if ( !mqttClient.connected() ) {
@@ -156,38 +148,71 @@ void mqtt_client_Task( void * pvParameters ) {
 
         if ( atoi(config_get_MeasureChannels()) == MEASURE_CHANELS ) virtualchannel = 1;
         /*
-        *  send N seconds an msg to MQTT
+        *  send N seconds an json msg to MQTT
         */
         if ( NextMillis < millis() ) {
-          NextMillis += atoi( config_get_MQTTInterval() ) * 1000;
-          char value[32] = "";
-          char topic[64] = "";
+          NextMillis += atol( config_get_MQTTInterval() ) * 1000l;
+          char value[256] = "";
+          char topic[128] = "";
+          char temp[128] = "";
+          float powersum=0;
 
-          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) + virtualchannel ; channel++ ) {
-            snprintf( value, sizeof( value ), "%.3f", measure[ channel ] / atof( config_get_MQTTInterval() ) );
-            snprintf( topic, sizeof( topic ), "stat/%s/power/channel%d", config_get_MQTTTopic(), channel );
-            mqtt_client_publish( topic , value );
+          for( int channel=0 ; channel<atoi(config_get_MeasureChannels()) ; channel++ ) {
+            powersum += measure[ channel ] / atof( config_get_MQTTInterval() );
+          }
+
+          snprintf( value, sizeof( value ), "{\"all\":{\"power\":\"%.3f\"},", powersum );
+
+          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) ; channel++ ) {
+            if ( channel != 0 ) {
+              strncat( value, ",", sizeof(value) );
+            }
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\"}", channel, measure[ channel ] / atof( config_get_MQTTInterval() ) );
+            strncat( value, temp, sizeof(value) );
             measure[ channel ] = 0;
           }
+          snprintf( temp, sizeof( temp ), ",\"Interval\":\"%s\"", config_get_MQTTInterval() );
+          strncat( value, temp, sizeof(value) );
+          strncat( value, ",\"PowerUnit\":\"kWs\"}", sizeof(value) );
+          snprintf( topic, sizeof( topic ), "stat/%s/power", config_get_MQTTTopic() );
+          mqtt_client_publish( topic , value );
         }
 
+        /*
+        *  send every second an json msg to MQTT
+        */
         if ( NextMeasureMillis < millis() ) {
-          NextMeasureMillis += 1000;
-          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()); channel++ ) {
-            char value[32] = "";
-            char topic[64] = "";
+          NextMeasureMillis += 1000l;
+          char value[256] = "";
+          char topic[128] = "";
+          char temp[128]="";
+
+          float powersum=0;
+
+          for( int channel=0 ; channel<atoi(config_get_MeasureChannels()) ; channel++ ) {
+            powersum += measure_get_power( channel ) / 1000;
+          }
+
+          snprintf( value, sizeof( value ), "{\"all\":{\"power\":\"%.3f\"},", powersum );
+
+          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) ; channel++ ) {
+
             measure[ channel ] += measure_get_power( channel ) / 1000;
-            snprintf( value, sizeof( value ), "%.3f", measure_get_power( channel ) / 1000 );
-            snprintf( topic, sizeof( topic ), "stat/%s/realtimepower/channel%d", config_get_MQTTTopic(), channel );
-            mqtt_client_publish( topic , value );
+
+            if ( channel != 0 ) {
+              strncat( value, ",", sizeof(value) );
+            }
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"current\":\"%.3f\"}", channel, measure_get_power( channel ) / 1000, measure_get_Irms( channel ) );
+            strncat( value, temp, sizeof(value) );
           }
-          for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) + virtualchannel; channel++ ) {
-            char value[32] = "";
-            char topic[64] = "";
-            snprintf( value, sizeof( value ), "%.3f", measure_get_Irms( channel ) );
-            snprintf( topic, sizeof( topic ), "stat/%s/realtimecurrent/channel%d", config_get_MQTTTopic(), channel );
-            mqtt_client_publish( topic , value );
+          if ( virtualchannel != 0 ) {
+            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( MEASURE_CHANELS ) );
+            strncat( value, temp, sizeof(value) );
           }
+          strncat( value, ",\"PowerUnit\":\"kWs\", \"CurrentUnit\":\"A\"}", sizeof(value) );
+
+          snprintf( topic, sizeof( topic ), "stat/%s/realtimepower", config_get_MQTTTopic() );
+          mqtt_client_publish( topic , value );
         }
       }
     }

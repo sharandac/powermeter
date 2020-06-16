@@ -64,7 +64,7 @@ void ntp_Task( void * pvParameters ) {
    * 
    */
   struct tm timeinfo;
-  static unsigned long NextMillis = millis();
+  static uint64_t NextMillis = millis();
   
   Serial.printf("Start NTP Task on Core: %d\r\n", xPortGetCoreID() );
 
@@ -74,7 +74,7 @@ void ntp_Task( void * pvParameters ) {
      */
     vTaskDelay( 10 );
     if ( NextMillis < millis() ) {
-      NextMillis += NTP_RENEW_INTERVAL * 1000;
+      NextMillis += NTP_RENEW_INTERVAL * 1000l;
       Serial.printf( "NTP-client: renew time\r\n" );
 
       configTime( gmtOffset_sec, daylightOffset_sec, ntpServer );

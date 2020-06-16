@@ -28,16 +28,11 @@
  *
  */
 #include <Arduino.h>
-#include "freertos/ringbuf.h"
-#include "esp_types.h"
-#include "freertos/FreeRTOS.h"
-#include "freertos/task.h"
-#include "freertos/queue.h"
-#include "driver/periph_ctrl.h"
-#include "driver/timer.h"
+#include <driver/periph_ctrl.h>
+#include <driver/timer.h>
 #include <driver/i2s.h>
-#include "driver/ledc.h"
-#include "arduinoFFT.h"
+#include <driver/ledc.h>
+#include <arduinoFFT.h>
 
 #include "measure.h"
 #include "config.h"
@@ -48,6 +43,7 @@ extern "C" {
 }
 
 TaskHandle_t _MEASURE_Task;
+TaskHandle_t _MEASURE_SignalGenTask;
 
 const i2s_port_t I2S_PORT = I2S_NUM_0;
 
@@ -134,7 +130,7 @@ void measure_mes( void ) {
   /*
    * Sample measure
    */
-  unsigned long NextMillis = millis() + 950;
+  uint64_t NextMillis = millis() + 950;
 
   while( millis() < NextMillis ){
 
@@ -328,18 +324,18 @@ void measure_StartTask( void ) {
                     2,          /* Priority of the task */
                     &_MEASURE_Task,       /* Task handle. */
                     _MEASURE_TASKCORE );  /* Core where the task should run */  
-
 }
 
 /*
  * 
  */
 void measure_Task( void * pvParameters ) {
-  static unsigned long NextMillis = millis();
+  static uint64_t NextMillis = millis();
 
   Serial.printf("Start Measurement Task on Core: %d\r\n", xPortGetCoreID() );
 
   measure_init();
+
   i2s_start(I2S_PORT);
 
   while( true ) {
@@ -352,3 +348,4 @@ void measure_Task( void * pvParameters ) {
     }
   }
 }
+
