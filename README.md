@@ -43,11 +43,11 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 ```
 # How it works
 
-![signalpath](https://github.com/sharandac/powermeter/blob/master/data/signalpath.png)
+![signalpath](https://github.com/sharandac/powermeter/blob/master/images/signalpath.png)
 
 # Hardware
 
-![current sensor](https://github.com/sharandac/powermeter/blob/master/data/schematic.png)
+![current sensor](https://github.com/sharandac/powermeter/blob/master/images/schematic.png)
 
 Please pay attention to the Burden resistor. Some current sensors have a built-in Burden resistor. In this example a SCT-013-000 without a built-in Burden resistor was used. Please check the documentation for the right Burden resistor value.
 
@@ -58,8 +58,9 @@ At any time, 3 channels are read in simultaneously regardless of the settings. T
 # Interface
 
 ## live view
-![live view](https://github.com/sharandac/powermeter/blob/master/data/live-view.png)
+![live view](https://github.com/sharandac/powermeter/blob/master/images/live-view.png)
+![live view](https://github.com/sharandac/powermeter/blob/master/images/preview.gif)
 ## MQTT settings
-![mqtt](https://github.com/sharandac/powermeter/blob/master/data/mqtt-setting.png)
+![mqtt](https://github.com/sharandac/powermeter/blob/master/images/mqtt-setting.png)
 ## measurement settings
-![measurement](https://github.com/sharandac/powermeter/blob/master/data/measurement-setting.png)
+![measurement](https://github.com/sharandac/powermeter/blob/master/images/measurement-setting.png)
