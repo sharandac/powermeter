@@ -83,7 +83,6 @@ void config_set_MeasureSamplerate( char * value ) { if ( strlen( value ) <= size
  * 
  */
 void config_setup( void ) {
-  uint8_t mac[6];
   
   if ( !SPIFFS.begin() ) {        
     /*
@@ -95,6 +94,7 @@ void config_setup( void ) {
 
   Serial.printf("Read config from SPIFFS\r\n");
   if ( !config_read( sizeof( cfgdata ), &cfgdata, CONFIGNAME ) ) {
+    uint8_t mac[6];
     Serial.printf("Write first config to SPIFFS\r\n");    
     /*
      * make an uniqe Hostname an SoftAp SSID
@@ -102,10 +102,6 @@ void config_setup( void ) {
     WiFi.macAddress( mac );
     snprintf( cfgdata.HostName, sizeof( cfgdata.HostName ), "powermeter_%02x%02x%02x", mac[3], mac[4], mac[5] );
     config_set_OTALocalApSSID( cfgdata.HostName );
-
-    /*
-     * 
-     */
     config_save( sizeof ( cfgdata ), &cfgdata, CONFIGNAME );
   }
 }

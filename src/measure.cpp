@@ -170,7 +170,7 @@ void measure_mes( void ) {
     }
 
     for( int i = 0 ; i < numbersOfSamples * MEASURE_CHANELS ; i++ ) {
-      int chan = (tempsamples[i]>>12) - 5;
+      uint16_t chan = (tempsamples[i]>>12) - 5;
       switch( chan ) {
         case  0:        *channel[chan] = tempsamples[i];
                         channel[chan]++;
