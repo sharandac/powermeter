@@ -27,7 +27,7 @@
  * \author Dirk Broßwick
  *
  */
-#include <Arduino.h>
+#include <FreeRTOS.h>
 #include <driver/periph_ctrl.h>
 #include <driver/timer.h>
 #include <driver/i2s.h>
