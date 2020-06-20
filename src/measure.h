@@ -33,6 +33,7 @@
 
   #define MEASURE_CHANNELS      3
   #define VIRTUAL_CHANNELS      4
+  #define MAX_ADC_CHANNELS      8
   #define numbersOfSamples      510
   #define numbersOfFFTSamples   32
   #define samplingFrequency     numbersOfSamples*MEASURE_CHANNELS
@@ -40,8 +41,9 @@
   #define I2S_PORT              I2S_NUM_0
 
   struct channelconfig {
-    int8_t channeltype;
-    int8_t channelmath[3];
+    int8_t type;
+    int16_t phaseshift;
+    int8_t math[3];
   };
 
   typedef enum {

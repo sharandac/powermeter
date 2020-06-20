@@ -48,17 +48,17 @@ extern "C" {
  * 
  * by example: channel 5 map to virtual channel 0, 6 to 1 and 7 to 2
  */ 
-int8_t channelmapping[] = { -1,-1,-1,-1,-1,0,1,2 };
+int8_t channelmapping[ MAX_ADC_CHANNELS ] = { -1,-1,-1,-1,-1,0,1,2 };
 
 /*
  * define virtual channel type and their mathematics
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { VIRTUALCURRENT, CHANNEL_ADD_0, CHANNEL_ADD_1, CHANNEL_ADD_2 },
+  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { VIRTUALCURRENT, 0, CHANNEL_ADD_0, CHANNEL_ADD_1, CHANNEL_ADD_2 },
 };
 
 TaskHandle_t _MEASURE_Task;
@@ -119,7 +119,7 @@ void measure_init( void ) {
   Serial.printf("Measurement: I2S driver ready\r\n");
 
   ledcAttachPin( 32 , 0);
-  ledcSetup(0, 250, 8);
+  ledcSetup(0, 100, 8);
   ledcWrite(0, 127);
 }
 
@@ -189,7 +189,7 @@ void measure_mes( void ) {
       uint8_t chan = (tempsamples[i]>>12) & 0x7;
       /* assigns the sample to the correct virtual channel */
       if ( channelmapping[ chan ] != -1 && chan < sizeof( channelmapping ) ) {
-        *channel[ channelmapping[ chan ] ] = tempsamples[i];
+        *channel[ channelmapping[ chan ] ] = tempsamples[ i ];
         channel[ channelmapping[ chan ] ]++;
       }
     }
@@ -202,13 +202,13 @@ void measure_mes( void ) {
         // sample, highpass filter and root-mean-square multiply
         lastSampleI[ i ]=sampleI[ i ];
         /* get right sample or compute it */
-        switch( channelconfig[ i ].channeltype ) {
-          case( CURRENT ):          sampleI[ i ] = samples[i][n]&0x0fff;
+        switch( channelconfig[ i ].type ) {
+          case( CURRENT ):          sampleI[ i ] = samples[ i ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ]&0x0fff;
                                     break;
           case( VIRTUALCURRENT ):   sampleI[ i ] = 0;
-                                    if ( channelconfig[i].channelmath[0] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[0] ][ n ]; }
-                                    if ( channelconfig[i].channelmath[1] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[1] ][ n ]; }
-                                    if ( channelconfig[i].channelmath[2] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[2] ][ n ]; }
+                                    if ( channelconfig[i].math[0] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[0] ][ n ]; }
+                                    if ( channelconfig[i].math[1] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[1] ][ n ]; }
+                                    if ( channelconfig[i].math[2] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[2] ][ n ]; }
                                     break;
         }
         lastFilteredI[ i ] = filteredI[ i ];
@@ -286,7 +286,7 @@ uint16_t * measure_get_fft( void ) {
 
   for ( int channel = 0 ; channel < MEASURE_CHANNELS + 1 ; channel++ ) {
     for ( int i = 0 ; i < numbersOfFFTSamples * 2 ; i++ ) {
-      vReal[i] = buffer[channel][ (i*8)%numbersOfSamples ];
+      vReal[i] = buffer_probe[channel][ (i*8)%numbersOfSamples ];
       vImag[i] = 0;
     }
     FFT.Windowing(vReal, numbersOfFFTSamples, FFT_WIN_TYP_RECTANGLE, FFT_REVERSE);
