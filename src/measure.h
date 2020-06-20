@@ -31,12 +31,34 @@
 
   #define _MEASURE_H
 
-  #define MEASURE_CHANELS       3
+  #define MEASURE_CHANNELS      3
+  #define VIRTUAL_CHANNELS      4
   #define numbersOfSamples      510
   #define numbersOfFFTSamples   32
-  #define samplingFrequency     numbersOfSamples*MEASURE_CHANELS
+  #define samplingFrequency     numbersOfSamples*MEASURE_CHANNELS
   #define DELAY                 1000
-  
+
+  struct channelconfig {
+    int8_t channeltype;
+    int8_t channelmath[3];
+  };
+
+  typedef enum {
+    NONE = -1,
+    CURRENT,
+    VIRTUALCURRENT
+  } channeltyp;
+
+  typedef enum {
+    CHANNEL_ADD_NOP = -1,
+    CHANNEL_ADD_0,
+    CHANNEL_ADD_1,
+    CHANNEL_ADD_2,
+    CHANNEL_ADD_3,
+    CHANNEL_ADD_4,
+    CHANNEL_ADD_5,
+  } channelmath;
+
   void measure_init( void );
   void measure_mes( void );
   int measure_set_samplerate( int corr );

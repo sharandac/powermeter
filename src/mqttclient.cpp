@@ -116,7 +116,7 @@ void mqtt_client_Task( void * pvParameters ) {
   */
   static uint64_t NextMeasureMillis = millis();
   static uint64_t NextMillis = millis() + 15000;
-  static float measure[ MEASURE_CHANELS ];
+  static float measure[ MEASURE_CHANNELS ];
 
   memset( measure, 0, sizeof( measure ) );
 
@@ -146,7 +146,7 @@ void mqtt_client_Task( void * pvParameters ) {
       else {
         int virtualchannel = 0;
 
-        if ( atoi(config_get_MeasureChannels()) == MEASURE_CHANELS ) virtualchannel = 1;
+        if ( atoi(config_get_MeasureChannels()) == MEASURE_CHANNELS ) virtualchannel = 1;
         /*
         *  send N seconds an json msg to MQTT
         */
@@ -206,7 +206,7 @@ void mqtt_client_Task( void * pvParameters ) {
             strncat( value, temp, sizeof(value) );
           }
           if ( virtualchannel != 0 ) {
-            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( MEASURE_CHANELS ) );
+            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( MEASURE_CHANNELS ) );
             strncat( value, temp, sizeof(value) );
           }
           strncat( value, ",\"PowerUnit\":\"kWs\", \"CurrentUnit\":\"A\"}", sizeof(value) );
