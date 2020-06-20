@@ -55,10 +55,10 @@ int8_t channelmapping[ MAX_ADC_CHANNELS ] = { -1,-1,-1,-1,-1,0,1,2 };
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { VIRTUALCURRENT, 0, CHANNEL_ADD_0, CHANNEL_ADD_1, CHANNEL_ADD_2 },
+  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
+  { VIRTUALCURRENT, 0, 0, CHANNEL_ADD_0, CHANNEL_ADD_1, CHANNEL_ADD_2 },
 };
 
 TaskHandle_t _MEASURE_Task;
@@ -68,6 +68,7 @@ double ICAL = 1.095;
 
 float Power[ VIRTUAL_CHANNELS ];
 float Irms[ VIRTUAL_CHANNELS ];
+float Vrms[ VIRTUAL_CHANNELS ];
 
 volatile int TX_buffer = -1;
 uint16_t buffer[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
@@ -133,10 +134,10 @@ void measure_mes( void ) {
   /* startcounter to prevent trash in first run */
   static int firstrun = 10;
   /* runtime variables for current calculation */
-  double sumI[ VIRTUAL_CHANNELS ];
+  double sum[ VIRTUAL_CHANNELS ];
     
   double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 * ICAL;
-  memset( sumI, 0, sizeof( sumI ) );
+  memset( sum, 0, sizeof( sum ) );
 
   /* get the current timer and calculate the exit time for capture ADC-buffer */
   uint64_t NextMillis = millis() + 950;
@@ -215,7 +216,7 @@ void measure_mes( void ) {
         filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
         buffer[ i ][ n ] = filteredI[ i ] + 2048;
         // root-mean-square method measure, square measure values and add to sumI
-        sumI[ i ] += filteredI[ i ] * filteredI[ i ];  
+        sum[ i ] += filteredI[ i ] * filteredI[ i ];  
       }
     }
     if ( TX_buffer != -1 ) {
@@ -225,20 +226,35 @@ void measure_mes( void ) {
     round++;
   }
 
-  for ( int i = 0 ; i < atoi(config_get_MeasureChannels()) + 1 ; i++ ) {
+  for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
     /*
     / Calculation of the root of the mean of the voltage and measure squared (rms)
     / Calibration coeficients applied. 
     */
-    Irms[ i ] = ( I_RATIO * sqrt( sumI[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
-
-    /* Set negative measure to zero */
-    if (Irms[ i ] < 0) {
-      Irms[ i ] = 0;
+    switch( channelconfig[ i ].type ) {
+      case CURRENT:
+        Irms[ i ] = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
+        /* Set negative measure to zero */
+        if (Irms[ i ] < 0) {
+          Irms[ i ] = 0;
+        /* Calculate Power */
+        Power[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + Power[ i ] ) / 2;
+        }
+        break;
+      case VIRTUALCURRENT:
+        Irms[ i ] = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
+        /* Set negative measure to zero */
+        if (Irms[ i ] < 0) {
+          Irms[ i ] = 0;
+        /* Calculate Power */
+        Power[i] = 0;
+        }
+        break;
+      case VOLTAGE:
+        break;
+      case VIRTUALVOLTAGE:
+        break;
     }
-
-    /* Calculate Power */
-    Power[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + Power[ i ] ) / 2;
 
     if ( firstrun > 0 ) {
       firstrun--;

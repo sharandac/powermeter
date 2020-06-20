@@ -42,6 +42,7 @@
 
   struct channelconfig {
     int8_t type;
+    float result;
     int16_t phaseshift;
     int8_t math[3];
   };
@@ -49,7 +50,9 @@
   typedef enum {
     NONE = -1,
     CURRENT,
-    VIRTUALCURRENT
+    VIRTUALCURRENT,
+    VOLTAGE,
+    VIRTUALVOLTAGE
   } channeltyp;
 
   typedef enum {
