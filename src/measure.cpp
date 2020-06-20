@@ -42,9 +42,18 @@ extern "C" {
     #include "soc/syscon_struct.h"
 }
 
+/*
+ * map 8 real channel to virtual channel
+ * -1 means not mapped
+ * 
+ * by example: channel 5 map to virtual channel 0, 6 to 1 and 7 to 2
+ */ 
 int8_t channelmapping[] = { -1,-1,-1,-1,-1,0,1,2 };
 
-struct channelconfig channelconfig[] =
+/*
+ * define virtual channel type and their mathematics
+ */
+struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
   { CURRENT, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
   { CURRENT, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
@@ -55,18 +64,15 @@ struct channelconfig channelconfig[] =
 TaskHandle_t _MEASURE_Task;
 TaskHandle_t _MEASURE_SignalGenTask;
 
-const i2s_port_t I2S_PORT = I2S_NUM_0;
-
 double ICAL = 1.095;
 
-float PowerSum[ MEASURE_CHANNELS ]; //Power Calculation
-float PowerOverAll[ MEASURE_CHANNELS ];
-float Irms_real[ MEASURE_CHANNELS + 1 ];
+float Power[ VIRTUAL_CHANNELS ];
+float Irms[ VIRTUAL_CHANNELS ];
 
 volatile int TX_buffer = -1;
-uint16_t buffer[ MEASURE_CHANNELS + 1 ][ numbersOfSamples ];
-uint16_t buffer_fft[ MEASURE_CHANNELS + 1 ][ numbersOfFFTSamples ];
-uint16_t backbuffer[ MEASURE_CHANNELS + 1 ][ numbersOfSamples ];
+uint16_t buffer[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
+uint16_t buffer_fft[ VIRTUAL_CHANNELS ][ numbersOfFFTSamples ];
+uint16_t buffer_probe[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
 
 arduinoFFT FFT = arduinoFFT();
 
@@ -118,35 +124,37 @@ void measure_init( void ) {
 }
 
 /*
- * 
+ * capture many ADC-buffer in a secound as possible and calculate some stoff
  */
 void measure_mes( void ) {
-  
-  uint16_t tempsamples[ numbersOfSamples * MEASURE_CHANNELS ];
-  uint16_t samples[ MEASURE_CHANNELS ][ numbersOfSamples ];
+    
+  /* ADC-buffer counter for measurement round per run */
   int round=0;
-  double Irms[ MEASURE_CHANNELS + 1 ];
-  double sumI[ MEASURE_CHANNELS + 1 ];
-
-  static int firstrun = 0;
-  static int lastSampleI[ MEASURE_CHANNELS + 1 ];
-  static int sampleI[ MEASURE_CHANNELS + 1 ];
-  static double lastFilteredI[ MEASURE_CHANNELS + 1 ];
-  static double filteredI[ MEASURE_CHANNELS + 1 ];
-
+  /* startcounter to prevent trash in first run */
+  static int firstrun = 10;
+  /* runtime variables for current calculation */
+  double sumI[ VIRTUAL_CHANNELS ];
+    
   double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 * ICAL;
-
   memset( sumI, 0, sizeof( sumI ) );
+
+  /* get the current timer and calculate the exit time for capture ADC-buffer */
+  uint64_t NextMillis = millis() + 950;
+
   /*
    * Sample measure
    */
-  uint64_t NextMillis = millis() + 950;
-
   while( millis() < NextMillis ){
 
-    /*
-     / i2s DMA sample buffer
-    */
+    /* unsort sampelbuffer from ADC */
+    uint16_t tempsamples[ MEASURE_CHANNELS * numbersOfSamples ];
+    /* channel sorted samplebuffer */
+    uint16_t samples[ MEASURE_CHANNELS ][ numbersOfSamples ];
+    /* runtime varibales for lowpass filter stuff */
+    static int lastSampleI[ VIRTUAL_CHANNELS ], sampleI[ VIRTUAL_CHANNELS ];
+    static double lastFilteredI[ VIRTUAL_CHANNELS ], filteredI[ VIRTUAL_CHANNELS ];
+
+    /* get an ADC buffer */
     size_t num_bytes_read=0;
     esp_err_t err;
     err = i2s_read( I2S_PORT,
@@ -161,57 +169,57 @@ void measure_mes( void ) {
     }
 
     /*
-    / sort i2s samples
-    /
-    / i2s sample buffer contains the following scheme with 16bit
-    / sample data
-    /
-    / [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
-    /
-    / each 16bit value contains the following bitscheme
-    /
-    / [15..12]     channel
-    / [11..0]      12-bit sample
-    /
-    */
+     * sort the ADC-buffer into virtual channels
+     * adc sample buffer contains the following data scheme with 16bit words
+     * 
+     * [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
+     *
+     * each 16bit word contains the following bitscheme
+     *
+     * [15..12]     channel
+     * [11..0]      12-bit sample
+     */
     uint16_t *channel[ MEASURE_CHANNELS ];
     for( int i = 0 ; i < MEASURE_CHANNELS ; i++ ) {
       channel[ i ] = &samples[ i ][ 0 ];
     }
 
     for( int i = 0 ; i < numbersOfSamples * MEASURE_CHANNELS ; i++ ) {
-      uint16_t chan = (tempsamples[i]>>12) & 0x7;
-      if ( channelmapping[ chan ] != -1 ) {
+      /* get the right channel number from die sample */
+      uint8_t chan = (tempsamples[i]>>12) & 0x7;
+      /* assigns the sample to the correct virtual channel */
+      if ( channelmapping[ chan ] != -1 && chan < sizeof( channelmapping ) ) {
         *channel[ channelmapping[ chan ] ] = tempsamples[i];
         channel[ channelmapping[ chan ] ]++;
       }
     }
 
     /*
-     * calculate current for each channel
+     * calculate current for each virtual channel
      */
     for (int n=0; n<numbersOfSamples; n++) {
-      for ( int i = 0 ; i < MEASURE_CHANNELS  + 1 ; i++ ) {
+      for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
         // sample, highpass filter and root-mean-square multiply
         lastSampleI[ i ]=sampleI[ i ];
+        /* get right sample or compute it */
         switch( channelconfig[ i ].channeltype ) {
           case( CURRENT ):          sampleI[ i ] = samples[i][n]&0x0fff;
                                     break;
           case( VIRTUALCURRENT ):   sampleI[ i ] = 0;
-                                    if ( channelconfig[i].channelmath[0] != CHANNEL_ADD_NOP ) { sampleI[i] += backbuffer[ channelconfig[i].channelmath[0] ][ n ]; }
-                                    if ( channelconfig[i].channelmath[1] != CHANNEL_ADD_NOP ) { sampleI[i] += backbuffer[ channelconfig[i].channelmath[1] ][ n ]; }
-                                    if ( channelconfig[i].channelmath[2] != CHANNEL_ADD_NOP ) { sampleI[i] += backbuffer[ channelconfig[i].channelmath[2] ][ n ]; }
+                                    if ( channelconfig[i].channelmath[0] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[0] ][ n ]; }
+                                    if ( channelconfig[i].channelmath[1] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[1] ][ n ]; }
+                                    if ( channelconfig[i].channelmath[2] != CHANNEL_ADD_NOP ) { sampleI[i] += buffer[ channelconfig[i].channelmath[2] ][ n ]; }
                                     break;
-        }        
+        }
         lastFilteredI[ i ] = filteredI[ i ];
         filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
-        backbuffer[ i ][ n ] = filteredI[ i ] + 2048;
+        buffer[ i ][ n ] = filteredI[ i ] + 2048;
         // root-mean-square method measure, square measure values and add to sumI
         sumI[ i ] += filteredI[ i ] * filteredI[ i ];  
       }
     }
     if ( TX_buffer != -1 ) {
-      memcpy( &buffer[0][0], &backbuffer[0][0] , sizeof( buffer ) );
+      memcpy( &buffer_probe[0][0], &buffer[0][0] , sizeof( buffer ) );
       TX_buffer = -1;
     }
     round++;
@@ -223,23 +231,19 @@ void measure_mes( void ) {
     / Calibration coeficients applied. 
     */
     Irms[ i ] = ( I_RATIO * sqrt( sumI[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
-    Irms_real[ i ] = Irms[ i ];
 
-    /*
-    / Set negative measure to zero
-    */
+    /* Set negative measure to zero */
     if (Irms[ i ] < 0) {
       Irms[ i ] = 0;
     }
 
-    /*
-    / Calculate Power
-    */
-    PowerSum[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + PowerSum[ i ] ) / 2;
+    /* Calculate Power */
+    Power[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + Power[ i ] ) / 2;
 
-    if (firstrun <= 10) {
-      firstrun++;
-      PowerSum[ i ] = 0;
+    if ( firstrun > 0 ) {
+      firstrun--;
+      Irms[ i ] = 0;
+      Power[ i ] = 0;
     }
   }
 }
@@ -248,7 +252,7 @@ void measure_mes( void ) {
  * 
  */
 float measure_get_power( int line ) {
-  return( PowerSum[ line ] );
+  return( Power[ line ] );
 }
 
 /*
@@ -270,7 +274,7 @@ int measure_set_samplerate( int corr ) {
 uint16_t * measure_get_buffer( void ) {
   TX_buffer = 0;
   while ( TX_buffer == 0 ) {}
-  return( &buffer[0][0] ); 
+  return( &buffer_probe[0][0] ); 
 }
 
 /*
@@ -299,15 +303,8 @@ uint16_t * measure_get_fft( void ) {
 /*
  * 
  */
-void measure_set_poweroverall( int line, float value) {
-  PowerOverAll[ line ] = value;
-  return;
-}
-/*
- * 
- */
 float measure_get_Irms( int line ) {
-  return( Irms_real[ line ] );
+  return( Irms[ line ] );
 }
 
 /*

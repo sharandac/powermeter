@@ -37,6 +37,7 @@
   #define numbersOfFFTSamples   32
   #define samplingFrequency     numbersOfSamples*MEASURE_CHANNELS
   #define DELAY                 1000
+  #define I2S_PORT              I2S_NUM_0
 
   struct channelconfig {
     int8_t channeltype;
