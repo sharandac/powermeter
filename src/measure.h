@@ -31,39 +31,54 @@
 
   #define _MEASURE_H
 
-  #define MEASURE_CHANNELS      3
-  #define VIRTUAL_CHANNELS      4
   #define MAX_ADC_CHANNELS      8
+  #define VIRTUAL_ADC_CHANNELS  3
+  #define VIRTUAL_CHANNELS      4
+
   #define numbersOfSamples      510
   #define numbersOfFFTSamples   32
-  #define samplingFrequency     numbersOfSamples*MEASURE_CHANNELS
+  #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
   #define DELAY                 1000
   #define I2S_PORT              I2S_NUM_0
 
   struct channelconfig {
     int8_t type;
-    float result;
     int16_t phaseshift;
-    int8_t math[3];
+    int8_t operation[5];
   };
 
-  typedef enum {
+  enum {
     NONE = -1,
     CURRENT,
     VIRTUALCURRENT,
     VOLTAGE,
     VIRTUALVOLTAGE
-  } channeltyp;
+  };
 
-  typedef enum {
-    CHANNEL_ADD_NOP = -1,
-    CHANNEL_ADD_0,
-    CHANNEL_ADD_1,
-    CHANNEL_ADD_2,
-    CHANNEL_ADD_3,
-    CHANNEL_ADD_4,
-    CHANNEL_ADD_5,
-  } channelmath;
+  #define OPMASK 0xf0
+
+  enum {
+    NOP = 0,
+    ADD = 0x10,
+    MUL = 0x20,
+    STORE = 0x30,
+    ZERO = 0x40,
+    SUB = 0x50,
+    FILTER = 0x60,
+    NOFILTER = 0x70
+  };
+
+  enum {
+    CHANNEL_NOP = -1,
+    CHANNEL_0,
+    CHANNEL_1,
+    CHANNEL_2,
+    CHANNEL_3,
+    CHANNEL_4,
+    CHANNEL_5,
+    CHANNEL_6,
+    CHANNEL_7,
+  };
 
   void measure_init( void );
   void measure_mes( void );

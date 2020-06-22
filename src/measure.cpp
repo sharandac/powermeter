@@ -43,22 +43,26 @@ extern "C" {
 }
 
 /*
- * map 8 real channel to virtual channel
+ * map 8 real adc channels to adc virtual channels
  * -1 means not mapped
  * 
  * by example: channel 5 map to virtual channel 0, 6 to 1 and 7 to 2
  */ 
-int8_t channelmapping[ MAX_ADC_CHANNELS ] = { -1,-1,-1,-1,-1,0,1,2 };
+int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_0, CHANNEL_1, CHANNEL_2 };
+/* unsort sampelbuffer from ADC */
+uint16_t adc_tempsamples[ VIRTUAL_ADC_CHANNELS * numbersOfSamples ];
+/* channel sorted samplebuffer */
+uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];
 
 /*
  * define virtual channel type and their mathematics
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { CURRENT, 0, 0, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP, CHANNEL_ADD_NOP },
-  { VIRTUALCURRENT, 0, 0, CHANNEL_ADD_0, CHANNEL_ADD_1, CHANNEL_ADD_2 },
+  { CURRENT, 0, STORE|CHANNEL_0, FILTER, NOP, NOP, NOP },
+  { CURRENT, 170, STORE|CHANNEL_1, FILTER, NOP, NOP, NOP },
+  { CURRENT, 340, STORE|CHANNEL_2, FILTER, NOP, NOP, NOP },
+  { VIRTUALCURRENT, 0, ZERO, ADD|CHANNEL_0, ADD|CHANNEL_1, ADD|CHANNEL_2, FILTER },
 };
 
 TaskHandle_t _MEASURE_Task;
@@ -92,7 +96,7 @@ void measure_init( void ) {
       .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
       .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
       .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,     
-      .dma_buf_count = MEASURE_CHANNELS * 2,                          
+      .dma_buf_count = VIRTUAL_ADC_CHANNELS * 2,                          
       .dma_buf_len = numbersOfSamples * 2,
     };
 
@@ -110,7 +114,7 @@ void measure_init( void ) {
   i2s_stop(I2S_PORT);
   vTaskDelay(5000/portTICK_RATE_MS);
   // 3 Items in pattern table
-  SYSCON.saradc_ctrl.sar1_patt_len = MEASURE_CHANNELS - 1;
+  SYSCON.saradc_ctrl.sar1_patt_len = VIRTUAL_ADC_CHANNELS - 1;
   // [7:4] Channel
   // [3:2] Bit Width; 3=12bit, 2=11bit, 1=10bit, 0=9bit
   // [1:0] Attenuation; 3=11dB, 2=6dB, 1=2.5dB, 0=0dB
@@ -147,20 +151,16 @@ void measure_mes( void ) {
    */
   while( millis() < NextMillis ){
 
-    /* unsort sampelbuffer from ADC */
-    uint16_t tempsamples[ MEASURE_CHANNELS * numbersOfSamples ];
-    /* channel sorted samplebuffer */
-    uint16_t samples[ MEASURE_CHANNELS ][ numbersOfSamples ];
     /* runtime varibales for lowpass filter stuff */
-    static int lastSampleI[ VIRTUAL_CHANNELS ], sampleI[ VIRTUAL_CHANNELS ];
-    static double lastFilteredI[ VIRTUAL_CHANNELS ], filteredI[ VIRTUAL_CHANNELS ];
+    static int sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];
+    static double filteredI[ VIRTUAL_CHANNELS ], lastFilteredI[ VIRTUAL_CHANNELS ];
 
     /* get an ADC buffer */
     size_t num_bytes_read=0;
     esp_err_t err;
     err = i2s_read( I2S_PORT,
-                    (char *)tempsamples,
-                    sizeof(tempsamples),     // the doc says bytes, but its elements.
+                    (char *)adc_tempsamples,
+                    sizeof(adc_tempsamples),     // the doc says bytes, but its elements.
                     &num_bytes_read,
                     portMAX_DELAY ); // no timeout
 
@@ -180,17 +180,17 @@ void measure_mes( void ) {
      * [15..12]     channel
      * [11..0]      12-bit sample
      */
-    uint16_t *channel[ MEASURE_CHANNELS ];
-    for( int i = 0 ; i < MEASURE_CHANNELS ; i++ ) {
-      channel[ i ] = &samples[ i ][ 0 ];
+    uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];
+    for( int i = 0 ; i < VIRTUAL_ADC_CHANNELS ; i++ ) {
+      channel[ i ] = &adc_samples[ i ][ 0 ];
     }
 
-    for( int i = 0 ; i < numbersOfSamples * MEASURE_CHANNELS ; i++ ) {
+    for( int i = 0 ; i < numbersOfSamples * VIRTUAL_ADC_CHANNELS ; i++ ) {
       /* get the right channel number from die sample */
-      uint8_t chan = (tempsamples[i]>>12) & 0x7;
+      uint8_t chan = (adc_tempsamples[i]>>12) & 0x7;
       /* assigns the sample to the correct virtual channel */
       if ( channelmapping[ chan ] != -1 && chan < sizeof( channelmapping ) ) {
-        *channel[ channelmapping[ chan ] ] = tempsamples[ i ];
+        *channel[ channelmapping[ chan ] ] = adc_tempsamples[ i ];
         channel[ channelmapping[ chan ] ]++;
       }
     }
@@ -203,20 +203,41 @@ void measure_mes( void ) {
         // sample, highpass filter and root-mean-square multiply
         lastSampleI[ i ]=sampleI[ i ];
         /* get right sample or compute it */
-        switch( channelconfig[ i ].type ) {
-          case( CURRENT ):          sampleI[ i ] = samples[ i ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ]&0x0fff;
-                                    break;
-          case( VIRTUALCURRENT ):   sampleI[ i ] = 0;
-                                    if ( channelconfig[i].math[0] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[0] ][ n ]; }
-                                    if ( channelconfig[i].math[1] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[1] ][ n ]; }
-                                    if ( channelconfig[i].math[2] != CHANNEL_ADD_NOP ) { sampleI[ i ] += buffer[ channelconfig[i].math[2] ][ n ]; }
-                                    break;
+        for( int operation = 0 ; operation < 5 ; operation++ ) {
+          switch( channelconfig[i].operation[ operation ] & OPMASK ) {
+            case NOP:       
+              break;
+            case ADD:      
+              sampleI[ i ] += buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              break;
+            case MUL:
+              sampleI[ i ] = sampleI[ i ] * buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              break;
+            case ZERO:
+              sampleI[ i ] = 0;
+              break;
+            case STORE:
+              sampleI[ i ] = adc_samples[ i ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
+              break;
+            case SUB:
+              sampleI[ i ] -= buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              break;
+            case FILTER:
+              lastFilteredI[ i ] = filteredI[ i ];
+              filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+              buffer[ i ][ n ] = filteredI[ i ] + 2048;
+              // root-mean-square method measure, square measure values and add to sumI
+              sum[ i ] += filteredI[ i ] * filteredI[ i ];
+              break;
+            case NOFILTER:
+              lastFilteredI[ i ] = filteredI[ i ];
+              filteredI[ i ] = 1 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+              buffer[ i ][ n ] = filteredI[ i ] + 2048;
+              // root-mean-square method measure, square measure values and add to sumI
+              sum[ i ] += filteredI[ i ] * filteredI[ i ];
+              break;
+          }
         }
-        lastFilteredI[ i ] = filteredI[ i ];
-        filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
-        buffer[ i ][ n ] = filteredI[ i ] + 2048;
-        // root-mean-square method measure, square measure values and add to sumI
-        sum[ i ] += filteredI[ i ] * filteredI[ i ];  
       }
     }
     if ( TX_buffer != -1 ) {
@@ -237,18 +258,18 @@ void measure_mes( void ) {
         /* Set negative measure to zero */
         if (Irms[ i ] < 0) {
           Irms[ i ] = 0;
+        }
         /* Calculate Power */
         Power[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + Power[ i ] ) / 2;
-        }
         break;
       case VIRTUALCURRENT:
         Irms[ i ] = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
         /* Set negative measure to zero */
         if (Irms[ i ] < 0) {
           Irms[ i ] = 0;
-        /* Calculate Power */
-        Power[i] = 0;
+          /* Calculate Power */
         }
+        Power[i] = 0;
         break;
       case VOLTAGE:
         break;
@@ -258,10 +279,13 @@ void measure_mes( void ) {
 
     if ( firstrun > 0 ) {
       firstrun--;
-      Irms[ i ] = 0;
       Power[ i ] = 0;
+      Irms[ i ] = 0;
+      Vrms[ i ] = 0;
     }
+    Serial.printf("I%d=%0.3f/P%d=%.3f ",i,Irms[i], i, Power[i] );
   }
+  Serial.printf("\r\n");
 }
 
 /*
@@ -300,7 +324,7 @@ uint16_t * measure_get_fft( void ) {
   double vReal[ numbersOfFFTSamples * 2 ];
   double vImag[ numbersOfFFTSamples * 2 ];
 
-  for ( int channel = 0 ; channel < MEASURE_CHANNELS + 1 ; channel++ ) {
+  for ( int channel = 0 ; channel < VIRTUAL_CHANNELS ; channel++ ) {
     for ( int i = 0 ; i < numbersOfFFTSamples * 2 ; i++ ) {
       vReal[i] = buffer_probe[channel][ (i*8)%numbersOfSamples ];
       vImag[i] = 0;
