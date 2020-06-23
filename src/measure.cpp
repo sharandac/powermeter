@@ -48,21 +48,17 @@ extern "C" {
  * 
  * by example: channel 5 map to virtual channel 0, 6 to 1 and 7 to 2
  */ 
-int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_0, CHANNEL_1, CHANNEL_2 };
-/* unsort sampelbuffer from ADC */
-uint16_t adc_tempsamples[ VIRTUAL_ADC_CHANNELS * numbersOfSamples ];
-/* channel sorted samplebuffer */
-uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];
+int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_3, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_4, CHANNEL_5, CHANNEL_0, CHANNEL_1, CHANNEL_2 };
 
 /*
  * define virtual channel type and their mathematics
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, 0, STORE|CHANNEL_0, FILTER, NOP, NOP, NOP },
-  { CURRENT, 170, STORE|CHANNEL_1, FILTER, NOP, NOP, NOP },
-  { CURRENT, 340, STORE|CHANNEL_2, FILTER, NOP, NOP, NOP },
-  { VIRTUALCURRENT, 0, ZERO, ADD|CHANNEL_0, ADD|CHANNEL_1, ADD|CHANNEL_2, FILTER },
+  { CURRENT, 0, GET_ADC|CHANNEL_0, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
+  { CURRENT, 128, GET_ADC|CHANNEL_1, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
+  { CURRENT, 256, GET_ADC|CHANNEL_2, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
+  { VIRTUALCURRENT, 0, ZERO, ADD|CHANNEL_0, ADD|CHANNEL_1, ADD|CHANNEL_2, NOFILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP }
 };
 
 TaskHandle_t _MEASURE_Task;
@@ -78,8 +74,6 @@ volatile int TX_buffer = -1;
 uint16_t buffer[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
 uint16_t buffer_fft[ VIRTUAL_CHANNELS ][ numbersOfFFTSamples ];
 uint16_t buffer_probe[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
-
-arduinoFFT FFT = arduinoFFT();
 
 /*
  * 
@@ -118,7 +112,8 @@ void measure_init( void ) {
   // [7:4] Channel
   // [3:2] Bit Width; 3=12bit, 2=11bit, 1=10bit, 0=9bit
   // [1:0] Attenuation; 3=11dB, 2=6dB, 1=2.5dB, 0=0dB
-  SYSCON.saradc_sar1_patt_tab[0] = 0x6f7f5f00;
+  SYSCON.saradc_sar1_patt_tab[0] = 0x0f7f5f6f;
+  SYSCON.saradc_sar1_patt_tab[1] = 0x3f4f0000;
   // make the adc conversation more accurate
   SYSCON.saradc_ctrl.sar_clk_div = 6;
   Serial.printf("Measurement: I2S driver ready\r\n");
@@ -132,8 +127,7 @@ void measure_init( void ) {
  * capture many ADC-buffer in a secound as possible and calculate some stoff
  */
 void measure_mes( void ) {
-    
-  /* ADC-buffer counter for measurement round per run */
+  ;/* ADC-buffer counter for measurement round per run */
   int round=0;
   /* startcounter to prevent trash in first run */
   static int firstrun = 10;
@@ -152,87 +146,91 @@ void measure_mes( void ) {
   while( millis() < NextMillis ){
 
     /* runtime varibales for lowpass filter stuff */
-    static int sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];
+    static double sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];
     static double filteredI[ VIRTUAL_CHANNELS ], lastFilteredI[ VIRTUAL_CHANNELS ];
-
-    /* get an ADC buffer */
-    size_t num_bytes_read=0;
-    esp_err_t err;
-    err = i2s_read( I2S_PORT,
-                    (char *)adc_tempsamples,
-                    sizeof(adc_tempsamples),     // the doc says bytes, but its elements.
-                    &num_bytes_read,
-                    portMAX_DELAY ); // no timeout
-
-    if (err != ESP_OK) {
-      Serial.printf("Error while reading DMA Buffer: %d", err );
-      while(1);
-    }
-
-    /*
-     * sort the ADC-buffer into virtual channels
-     * adc sample buffer contains the following data scheme with 16bit words
-     * 
-     * [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
-     *
-     * each 16bit word contains the following bitscheme
-     *
-     * [15..12]     channel
-     * [11..0]      12-bit sample
-     */
     uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];
+    /* unsort sampelbuffer from ADC */
+    uint16_t adc_tempsamples[ numbersOfSamples ];
+    /* channel sorted samplebuffer */
+    uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];
+
     for( int i = 0 ; i < VIRTUAL_ADC_CHANNELS ; i++ ) {
       channel[ i ] = &adc_samples[ i ][ 0 ];
     }
 
-    for( int i = 0 ; i < numbersOfSamples * VIRTUAL_ADC_CHANNELS ; i++ ) {
-      /* get the right channel number from die sample */
-      uint8_t chan = (adc_tempsamples[i]>>12) & 0x7;
-      /* assigns the sample to the correct virtual channel */
-      if ( channelmapping[ chan ] != -1 && chan < sizeof( channelmapping ) ) {
-        *channel[ channelmapping[ chan ] ] = adc_tempsamples[ i ];
-        channel[ channelmapping[ chan ] ]++;
+    for( int adc_chunck = 0 ; adc_chunck < VIRTUAL_ADC_CHANNELS ; adc_chunck++ ) {
+      /* get an ADC buffer */
+      size_t num_bytes_read=0;
+      esp_err_t err;
+      err = i2s_read( I2S_PORT,
+                      (char *)adc_tempsamples,
+                      sizeof(adc_tempsamples),     // the doc says bytes, but its elements.
+                      &num_bytes_read,
+                      portMAX_DELAY ); // no timeout
+
+      if (err != ESP_OK) {
+        Serial.printf("Error while reading DMA Buffer: %d", err );
+        while(1);
+      }
+      /*
+      * sort the ADC-buffer into virtual channels
+      * adc sample buffer contains the following data scheme with 16bit words
+      * 
+      * [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
+      *
+      * each 16bit word contains the following bitscheme
+      *
+      * [15..12]     channel
+      * [11..0]      12-bit sample
+      */
+      for( int i = 0 ; i < numbersOfSamples ; i++ ) {
+        /* get the right channel number from die sample */
+        int8_t chan = (adc_tempsamples[i]>>12) & 0xf;
+        /* assigns the sample to the right virtual channel */
+        if ( channelmapping[ chan ] != CHANNEL_NOP && chan < MAX_ADC_CHANNELS ) {
+          *channel[ channelmapping[ chan ] ] = adc_tempsamples[ i ] & 0x0fff;
+          channel[ channelmapping[ chan ] ]++;
+        }
       }
     }
-
     /*
-     * calculate current for each virtual channel
+     * compute each sample for each virtual channel
      */
     for (int n=0; n<numbersOfSamples; n++) {
       for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
-        // sample, highpass filter and root-mean-square multiply
         lastSampleI[ i ]=sampleI[ i ];
         /* get right sample or compute it */
-        for( int operation = 0 ; operation < 5 ; operation++ ) {
+        for( int operation = 0 ; operation < sizeof( channelconfig[0].operation ) ; operation++ ) {
           switch( channelconfig[i].operation[ operation ] & OPMASK ) {
             case NOP:       
               break;
             case ADD:      
-              sampleI[ i ] += buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              sampleI[ i ] += filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
               break;
             case MUL:
-              sampleI[ i ] = sampleI[ i ] * buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              sampleI[ i ] = sampleI[ i ] * filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
               break;
             case ZERO:
               sampleI[ i ] = 0;
               break;
-            case STORE:
-              sampleI[ i ] = adc_samples[ i ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
+            case GET_ADC:
+              sampleI[ i ] = adc_samples[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
               break;
             case SUB:
-              sampleI[ i ] -= buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ];
+              sampleI[ i ] -= filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
               break;
             case FILTER:
               lastFilteredI[ i ] = filteredI[ i ];
               filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
-              buffer[ i ][ n ] = filteredI[ i ] + 2048;
-              // root-mean-square method measure, square measure values and add to sumI
-              sum[ i ] += filteredI[ i ] * filteredI[ i ];
               break;
             case NOFILTER:
               lastFilteredI[ i ] = filteredI[ i ];
-              filteredI[ i ] = 1 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+              filteredI[ i ] = sampleI[ i ];
+              break;
+            case STORE_INTO_BUFFER:
               buffer[ i ][ n ] = filteredI[ i ] + 2048;
+              break;
+            case STORE_SUM_SQUARE:
               // root-mean-square method measure, square measure values and add to sumI
               sum[ i ] += filteredI[ i ] * filteredI[ i ];
               break;
@@ -323,15 +321,16 @@ uint16_t * measure_get_buffer( void ) {
 uint16_t * measure_get_fft( void ) {
   double vReal[ numbersOfFFTSamples * 2 ];
   double vImag[ numbersOfFFTSamples * 2 ];
+  arduinoFFT FFT = arduinoFFT( vReal, vImag, numbersOfFFTSamples * 2, samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 );
 
   for ( int channel = 0 ; channel < VIRTUAL_CHANNELS ; channel++ ) {
     for ( int i = 0 ; i < numbersOfFFTSamples * 2 ; i++ ) {
-      vReal[i] = buffer_probe[channel][ (i*8)%numbersOfSamples ];
+      vReal[i] = buffer_probe[channel][ (i*6)%numbersOfSamples ];
       vImag[i] = 0;
     }
-    FFT.Windowing(vReal, numbersOfFFTSamples, FFT_WIN_TYP_RECTANGLE, FFT_REVERSE);
-    FFT.Compute(vReal, vImag, numbersOfFFTSamples * 2, FFT_REVERSE );
-    FFT.ComplexToMagnitude(vReal, vImag, numbersOfFFTSamples * 2 );
+    FFT.Windowing( FFT_WIN_TYP_RECTANGLE, FFT_REVERSE);
+    FFT.Compute( FFT_REVERSE );
+    FFT.ComplexToMagnitude();
     
     for( int i = 1 ; i < numbersOfFFTSamples; i++ ){
       buffer_fft[channel][i] = vReal[i];

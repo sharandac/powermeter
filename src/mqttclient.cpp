@@ -146,7 +146,7 @@ void mqtt_client_Task( void * pvParameters ) {
       else {
         int virtualchannel = 0;
 
-        if ( atoi(config_get_MeasureChannels()) == VIRTUAL_ADC_CHANNELS ) virtualchannel = 1;
+        if ( atoi(config_get_MeasureChannels()) == 3 ) virtualchannel = 1;
         /*
         *  send N seconds an json msg to MQTT
         */
@@ -206,7 +206,7 @@ void mqtt_client_Task( void * pvParameters ) {
             strncat( value, temp, sizeof(value) );
           }
           if ( virtualchannel != 0 ) {
-            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( VIRTUAL_ADC_CHANNELS ) );
+            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
             strncat( value, temp, sizeof(value) );
           }
           strncat( value, ",\"PowerUnit\":\"kWs\", \"CurrentUnit\":\"A\"}", sizeof(value) );

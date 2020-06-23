@@ -98,9 +98,9 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         int scale=1;
         int virtualchannel = 0;
 
-        if ( atoi(config_get_MeasureChannels()) > 1 ) scale = 3;
-        if ( atoi(config_get_MeasureChannels()) > 2 ) scale = 6;
-        if ( atoi(config_get_MeasureChannels()) == VIRTUAL_ADC_CHANNELS ) virtualchannel = 1;
+        if ( atoi(config_get_MeasureChannels()) > 1 ) scale = 2;
+        if ( atoi(config_get_MeasureChannels()) > 2 ) scale = 3;
+        if ( atoi(config_get_MeasureChannels()) == 3 ) virtualchannel = 1;
 
         sprintf( tmp,"OScopeProbe\\%d\\%d\\%d\\%f\\", atoi(config_get_MeasureChannels()) + virtualchannel , numbersOfSamples/scale, numbersOfFFTSamples, measure_get_Iratio() );
         strcat( stringbuffer, tmp );
@@ -158,15 +158,11 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 
         for( int line=0 ; line<atoi(config_get_MeasureChannels()) ; line++ ) {
           powersum += measure_get_power( line );
-          sprintf( tmp, " / P%d = %.3fkW", line+1, measure_get_power( line ) / 1000 );
+          sprintf( tmp, " ; Irms%d = %.3fA/P%d = %.3fkW", line+1, measure_get_Irms( line ), line+1, measure_get_power( line ) / 1000 );
           strcat( request, tmp );
         }
-        for( int line=0 ; line<atoi(config_get_MeasureChannels()) ; line++ ) {
-          sprintf( tmp, " / Irms%d = %.3fA", line+1, measure_get_Irms( line ) );
-          strcat( request, tmp );
-        }
-        if ( atoi(config_get_MeasureChannels()) == VIRTUAL_ADC_CHANNELS ) {
-          sprintf( tmp, " / Irmsn = %.3fA", measure_get_Irms( VIRTUAL_ADC_CHANNELS ) );
+        if ( atoi(config_get_MeasureChannels()) == 3 ) {
+          sprintf( tmp, " ; Irmsn = %.3fA", measure_get_Irms( VIRTUAL_CHANNELS - 1 ) );
           strcat( request, tmp );
         }
         strcat( request, " )");

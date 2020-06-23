@@ -32,10 +32,10 @@
   #define _MEASURE_H
 
   #define MAX_ADC_CHANNELS      8
-  #define VIRTUAL_ADC_CHANNELS  3
+  #define VIRTUAL_ADC_CHANNELS  6
   #define VIRTUAL_CHANNELS      4
 
-  #define numbersOfSamples      510
+  #define numbersOfSamples      384
   #define numbersOfFFTSamples   32
   #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
   #define DELAY                 1000
@@ -44,7 +44,7 @@
   struct channelconfig {
     int8_t type;
     int16_t phaseshift;
-    int8_t operation[5];
+    uint8_t operation[8];
   };
 
   enum {
@@ -61,11 +61,13 @@
     NOP = 0,
     ADD = 0x10,
     MUL = 0x20,
-    STORE = 0x30,
+    GET_ADC = 0x30,
     ZERO = 0x40,
     SUB = 0x50,
     FILTER = 0x60,
-    NOFILTER = 0x70
+    NOFILTER = 0x70,
+    STORE_INTO_BUFFER = 0x80,
+    STORE_SUM_SQUARE = 0x90
   };
 
   enum {
