@@ -55,18 +55,18 @@ int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_3, CHANNEL_NOP, CHANNEL_NO
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, 0, GET_ADC|CHANNEL_0, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
-  { CURRENT, 128, GET_ADC|CHANNEL_1, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
-  { CURRENT, 256, GET_ADC|CHANNEL_2, FILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP, NOP, NOP, NOP },
-  { VIRTUALCURRENT, 0, ZERO, ADD|CHANNEL_0, ADD|CHANNEL_1, ADD|CHANNEL_2, NOFILTER, STORE_INTO_BUFFER, STORE_SUM_SQUARE, NOP }
+  { CURRENT, 0, GET_ADC|CHANNEL_0, FILTER, STORE_INTO_BUFFER|CHANNEL_0, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_3, FILTER, STORE_INTO_BUFFER|CHANNEL_1, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { CURRENT, 0, GET_ADC|CHANNEL_1, FILTER, STORE_INTO_BUFFER|CHANNEL_2, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_4, FILTER, STORE_INTO_BUFFER|CHANNEL_3, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { CURRENT, 0, GET_ADC|CHANNEL_2, FILTER, STORE_INTO_BUFFER|CHANNEL_4, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_5, FILTER, STORE_INTO_BUFFER|CHANNEL_5, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { VIRTUALCURRENT, 0, SET_ZERO, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, NOFILTER, STORE_INTO_BUFFER|CHANNEL_6, STORE_SQUARE_SUM, NOP }
 };
 
+/* taske handle */
 TaskHandle_t _MEASURE_Task;
-TaskHandle_t _MEASURE_SignalGenTask;
 
-double ICAL = 1.095;
-
-float Power[ VIRTUAL_CHANNELS ];
 float Irms[ VIRTUAL_CHANNELS ];
 float Vrms[ VIRTUAL_CHANNELS ];
 
@@ -115,26 +115,28 @@ void measure_init( void ) {
   SYSCON.saradc_sar1_patt_tab[0] = 0x0f7f5f6f;
   SYSCON.saradc_sar1_patt_tab[1] = 0x3f4f0000;
   // make the adc conversation more accurate
-  SYSCON.saradc_ctrl.sar_clk_div = 6;
+  SYSCON.saradc_ctrl.sar_clk_div = 5;
   Serial.printf("Measurement: I2S driver ready\r\n");
 
   ledcAttachPin( 32 , 0);
   ledcSetup(0, 100, 8);
   ledcWrite(0, 127);
+
+  measure_set_samplerate( atoi( config_get_MeasurePhaseshift() ) );
 }
 
 /*
- * capture many ADC-buffer in a secound as possible and calculate some stoff
+ * get as much adc buffer as possible in one second and calculate some stuff
  */
 void measure_mes( void ) {
-  ;/* ADC-buffer counter for measurement round per run */
+
   int round=0;
   /* startcounter to prevent trash in first run */
   static int firstrun = 10;
-  /* runtime variables for current calculation */
+  /* runtime variables for current, voltage or power calculation */
   double sum[ VIRTUAL_CHANNELS ];
     
-  double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 * ICAL;
+  double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096;
   memset( sum, 0, sizeof( sum ) );
 
   /* get the current timer and calculate the exit time for capture ADC-buffer */
@@ -193,6 +195,9 @@ void measure_mes( void ) {
         }
       }
     }
+    int noVoltage = 0;
+    if ( atof( config_get_MeasureVoltage() ) > 1 )
+      noVoltage = 1;
     /*
      * compute each sample for each virtual channel
      */
@@ -207,17 +212,20 @@ void measure_mes( void ) {
             case ADD:      
               sampleI[ i ] += filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
               break;
+            case SUB:
+              sampleI[ i ] -= filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
+              break;
             case MUL:
               sampleI[ i ] = sampleI[ i ] * filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
               break;
-            case ZERO:
+            case DIV:      
+              sampleI[ i ] = sampleI[ i ] * filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
+              break;
+            case SET_ZERO:
               sampleI[ i ] = 0;
               break;
             case GET_ADC:
-              sampleI[ i ] = adc_samples[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ ( n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
-              break;
-            case SUB:
-              sampleI[ i ] -= filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
+              sampleI[ i ] = adc_samples[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
               break;
             case FILTER:
               lastFilteredI[ i ] = filteredI[ i ];
@@ -228,11 +236,24 @@ void measure_mes( void ) {
               filteredI[ i ] = sampleI[ i ];
               break;
             case STORE_INTO_BUFFER:
-              buffer[ i ][ n ] = filteredI[ i ] + 2048;
+              if ( channelconfig[i].type == VOLTAGE && noVoltage == 1 ) {
+                buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ] = 2048;
+              }
+              else {
+                buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ] = filteredI[ i ] + 2048;
+              }
               break;
-            case STORE_SUM_SQUARE:
+            case STORE_SQUARE_SUM:
               // root-mean-square method measure, square measure values and add to sumI
               sum[ i ] += filteredI[ i ] * filteredI[ i ];
+              break;
+            case STORE_SUM:
+              // root-mean-square method measure, square measure values and add to sumI
+              sum[ i ] += filteredI[ i ];
+              break;
+            case DIV_4096:
+              // root-mean-square method measure, square measure values and add to sumI
+              sampleI[ i ] = filteredI[ i ] / 4096;
               break;
           }
         }
@@ -245,6 +266,9 @@ void measure_mes( void ) {
     round++;
   }
 
+  float *Irms_channel=&Irms[0];
+  float *Vrms_channel=&Vrms[0];
+
   for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
     /*
     / Calculation of the root of the mean of the voltage and measure squared (rms)
@@ -252,46 +276,50 @@ void measure_mes( void ) {
     */
     switch( channelconfig[ i ].type ) {
       case CURRENT:
-        Irms[ i ] = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
-        /* Set negative measure to zero */
-        if (Irms[ i ] < 0) {
-          Irms[ i ] = 0;
-        }
-        /* Calculate Power */
-        Power[i] = ( Irms[i] * atof( config_get_MeasureVoltage() ) + Power[ i ] ) / 2;
+        *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) );
+        Serial.printf("I=%.3fA ", *Irms_channel );
+        if ( firstrun > 0 ) *Irms_channel = 0;
+        Irms_channel++;
         break;
       case VIRTUALCURRENT:
-        Irms[ i ] = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) - atof( config_get_MeasureOffset() );
-        /* Set negative measure to zero */
-        if (Irms[ i ] < 0) {
-          Irms[ i ] = 0;
-          /* Calculate Power */
-        }
-        Power[i] = 0;
+        *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) );
+        Serial.printf("I=%.3fA ", *Irms_channel );
+        if ( firstrun > 0 ) *Irms_channel = 0;
+        Irms_channel++;
         break;
       case VOLTAGE:
-        break;
-      case VIRTUALVOLTAGE:
+        if ( atof( config_get_MeasureVoltage() ) < 1 ) {
+          *Vrms_channel = atof( config_get_MeasureVoltage() ) * sqrt( sum[ i ] / ( numbersOfSamples * round ) );
+        }
+        else {
+          *Vrms_channel = atof( config_get_MeasureVoltage() );
+        }
+        Serial.printf("U=%.3fV ", *Vrms_channel );
+        if ( firstrun > 0 ) *Vrms_channel = 0;
+        Vrms_channel++;
         break;
     }
 
     if ( firstrun > 0 ) {
       firstrun--;
-      Power[ i ] = 0;
-      Irms[ i ] = 0;
-      Vrms[ i ] = 0;
     }
-    Serial.printf("I%d=%0.3f/P%d=%.3f ",i,Irms[i], i, Power[i] );
   }
   Serial.printf("\r\n");
 }
 
+
 /*
- * 
+ *
  */
-float measure_get_power( int line ) {
-  return( Power[ line ] );
+int measure_set_phaseshift( int corr ) {
+  for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+    if ( channelconfig[ i ].type == VOLTAGE ) {
+      channelconfig[ i ].phaseshift = corr;
+    }
+  }
+  return( 0 );
 }
+
 
 /*
  *
@@ -347,10 +375,24 @@ float measure_get_Irms( int line ) {
 }
 
 /*
+ * 
+ */
+float measure_get_Vrms( int line ) {
+  return( Vrms[ line ] );
+}
+
+/*
+ * 
+ */
+float measure_get_power( int line ) {
+  return( Irms[ line ] * Vrms[ line ] );
+}
+
+/*
  *
  */
 float measure_get_Iratio( void ) {
-  return( atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 * ICAL );
+  return( atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 );
 }
 
 /*

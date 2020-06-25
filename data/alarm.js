@@ -106,7 +106,10 @@ function GotOScope(data)
 		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
 		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
 		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
-		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
+		if ( round == 3 && !document.getElementById("channel3").checked ) continue;
+		if ( round == 4 && !document.getElementById("channel4").checked ) continue;
+		if ( round == 5 && !document.getElementById("channel5").checked ) continue;
+		if ( round == 6 && !document.getElementById("channelv").checked ) continue;
 
 		otx.beginPath();
 		if ( round == 0 ) {
@@ -151,7 +154,11 @@ function GotOScope(data)
 		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
 		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
 		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
-		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
+		if ( round == 3 && !document.getElementById("channel3").checked ) continue;
+		if ( round == 4 && !document.getElementById("channel4").checked ) continue;
+		if ( round == 5 && !document.getElementById("channel5").checked ) continue;
+		if ( round == 6 && !document.getElementById("channelv").checked ) continue;
+
 
 		ftx.beginPath();
 		if ( round == 0 ) {
@@ -195,6 +202,7 @@ function GotOScope(data)
   ftx.fillText("Spectrum",10,30);
   ftx.stroke();
 
+
 	ftx.beginPath();
 	ftx.strokeStyle = "#FF8080";
 	for (i = 1; (iratio * mult * i) < ( fcanvas.clientHeight ); i++)
@@ -212,7 +220,7 @@ function GotOScope(data)
 	otx.beginPath();
 	otx.strokeStyle = "#FF8080";
 
-	for (i = 1; (iratio * mult * i) < ( ocanvas.clientHeight / 2); i++)
+  for (i = 1; (iratio * mult * i) < ( ocanvas.clientHeight / 2); i++)
 	{
 		otx.moveTo(0, ocanvas.clientHeight / 2 + (iratio * mult * i));
 		otx.lineTo(otx.canvas.width, ocanvas.clientHeight / 2 + (iratio * mult * i));
@@ -276,6 +284,16 @@ function GotOScope(data)
 function ToggleOScopePause()
 {
 	pause_osc = !pause_osc;
+}
+
+function PhaseshiftPlus()
+{
+	if ( connect ) connection.send( "PS+" );	
+}
+
+function PhaseshiftMinus()
+{
+	if ( connect ) connection.send( "PS-" );		
 }
 
 function SampleratePlus()

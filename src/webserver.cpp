@@ -92,22 +92,25 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
       /* get samplebuffer */
       else if ( !strcmp("OSC", cmd ) ) {
-        char stringbuffer[ numbersOfSamples * 6 + 96 ]="";
+        char stringbuffer[ numbersOfSamples * 6 + numbersOfFFTSamples * 6 + 96 ]="";
         char tmp[64]="";
         uint16_t * mybuffer;
-        int scale=1;
+        int scale=2;
         int virtualchannel = 0;
 
-        if ( atoi(config_get_MeasureChannels()) > 1 ) scale = 2;
-        if ( atoi(config_get_MeasureChannels()) > 2 ) scale = 3;
-        if ( atoi(config_get_MeasureChannels()) == 3 ) virtualchannel = 1;
+        if ( atoi(config_get_MeasureChannels()) > 1 ) scale = 8;
+        if ( atoi(config_get_MeasureChannels()) > 2 ) scale = 8;
+        if ( atoi(config_get_MeasureChannels()) == 3 ) {
+          scale = 8;
+          virtualchannel = 1;
+        }
 
-        sprintf( tmp,"OScopeProbe\\%d\\%d\\%d\\%f\\", atoi(config_get_MeasureChannels()) + virtualchannel , numbersOfSamples/scale, numbersOfFFTSamples, measure_get_Iratio() );
+        sprintf( tmp,"OScopeProbe\\%d\\%d\\%d\\%f\\", atoi(config_get_MeasureChannels()) * 2 + virtualchannel , numbersOfSamples/scale, numbersOfFFTSamples, measure_get_Iratio() );
         strcat( stringbuffer, tmp );
 
         mybuffer = measure_get_buffer();
 
-        for( int i = 0 ; i < numbersOfSamples * ( atoi(config_get_MeasureChannels()) + virtualchannel ) ; i=i+scale ) {
+        for( int i = 0 ; i < numbersOfSamples * ( atoi(config_get_MeasureChannels()) * 2 + virtualchannel ) ; i=i+scale ) {
           sprintf(tmp, "%03x", mybuffer[ i ] > 0x0fff?0x0fff:mybuffer[ i ] );
           strcat( stringbuffer, tmp );
         }
@@ -115,7 +118,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         strcat( stringbuffer, "\\" );
         mybuffer = measure_get_fft();
 
-        for( int i = 0 ; i < numbersOfFFTSamples * ( atoi(config_get_MeasureChannels()) + virtualchannel ) ; i++ ) {
+        for( int i = 0 ; i < numbersOfFFTSamples * ( atoi(config_get_MeasureChannels()) * 2 + virtualchannel ) ; i++ ) {
           sprintf(tmp, "%03x", mybuffer[ i ] > 0x0fff?0x0fff:mybuffer[ i ] );
           strcat( stringbuffer, tmp );
         }
@@ -140,9 +143,9 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         client->printf("COI\\%s", config_get_MeasureCoilTurns() );
         client->printf("VOL\\%s", config_get_MeasureVoltage() );
         client->printf("HRZ\\%s", config_get_MeasureVoltageFrequency() );
-        client->printf("OFF\\%s", config_get_MeasureOffset() );
         client->printf("CHS\\%s", config_get_MeasureChannels() );
         client->printf("RAT\\%s", config_get_MeasureSamplerate() );
+        client->printf("PHS\\%s", config_get_MeasurePhaseshift() );
       }
       /* get status-line */
       else if ( !strcmp("STS", cmd ) ) {
@@ -155,14 +158,14 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
           powersum += measure_get_power( line );
         }
         sprintf( request, "status\\online ( Psum = %.3fkW"  , powersum / 1000 );
-
+        
         for( int line=0 ; line<atoi(config_get_MeasureChannels()) ; line++ ) {
           powersum += measure_get_power( line );
-          sprintf( tmp, " ; Irms%d = %.3fA/P%d = %.3fkW", line+1, measure_get_Irms( line ), line+1, measure_get_power( line ) / 1000 );
+          sprintf( tmp, " ; Ch%d %.1fV / %.1fA / %.3fkW", line+1, measure_get_Vrms( line ), measure_get_Irms( line ), measure_get_power( line ) / 1000 );
           strcat( request, tmp );
         }
         if ( atoi(config_get_MeasureChannels()) == 3 ) {
-          sprintf( tmp, " ; Irmsn = %.3fA", measure_get_Irms( VIRTUAL_CHANNELS - 1 ) );
+          sprintf( tmp, " ; Irmsn = %.1fA", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
           strcat( request, tmp );
         }
         strcat( request, " )");
@@ -235,10 +238,6 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         int samplerate = atoi( config_get_MeasureSamplerate() );
         measure_set_samplerate( samplerate );
       }
-      /* store offset */
-      else if ( !strcmp("OFF", cmd ) ) {
-        config_set_MeasureOffset( value );
-      }
       /* store numbers of channels */
       else if ( !strcmp("CHS", cmd ) ) {
         config_set_MeasureChannels( value );
@@ -248,11 +247,34 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         config_set_MeasureSamplerate( value );
         measure_set_samplerate( atoi( value ) );
       }
+      /* store smaple-rate */
+      else if ( !strcmp("PHS", cmd ) ) {
+        config_set_MeasurePhaseshift( value );
+        measure_set_phaseshift( atoi( value ) );
+      }
+      /* phaseshift + */
+      else if ( !strcmp("PS+", cmd ) ) {
+        char phaseshiftstring[16]="0";
+        int phaseshift = atoi( config_get_MeasurePhaseshift() );
+        phaseshift += 1;
+        snprintf( phaseshiftstring, sizeof( phaseshiftstring ), "%d", phaseshift );
+        config_set_MeasurePhaseshift( phaseshiftstring );
+        measure_set_phaseshift( phaseshift );
+      }
+      /* phaseshift - */
+      else if ( !strcmp("PS-", cmd ) ) {
+        char phaseshiftstring[16]="0";
+        int phaseshift = atoi( config_get_MeasurePhaseshift() );
+        phaseshift -= 1;
+        snprintf( phaseshiftstring, sizeof( phaseshiftstring ), "%d", phaseshift );
+        config_set_MeasurePhaseshift( phaseshiftstring );
+        measure_set_phaseshift( phaseshift );
+      }
       /* sample-rate +1Hz */
       else if ( !strcmp("FQ+", cmd ) ) {
         char sampleratestring[16]="0";
         int samplerate = atoi( config_get_MeasureSamplerate() );
-        samplerate += 1;
+        samplerate += 5;
         snprintf( sampleratestring, sizeof( sampleratestring ), "%d", samplerate );
         config_set_MeasureSamplerate( sampleratestring );
         measure_set_samplerate( samplerate );
@@ -261,7 +283,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       else if ( !strcmp("FQ-", cmd ) ) {
         char sampleratestring[16]="0";
         int samplerate = atoi( config_get_MeasureSamplerate() );
-        samplerate -= 1;
+        samplerate -= 5;
         snprintf( sampleratestring, sizeof( sampleratestring ), "%d", samplerate );
         config_set_MeasureSamplerate( sampleratestring );
         measure_set_samplerate( samplerate );
