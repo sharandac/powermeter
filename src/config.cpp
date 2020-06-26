@@ -69,21 +69,20 @@ void config_set_MeasureBurdenResistor( char * value ) { if ( strlen( value ) <= 
 char * config_get_MeasureCoilTurns( void ) { return( cfgdata.MeasureCoilTurns ); }
 void config_set_MeasureCoilTurns( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureCoilTurns ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureCoilTurns , value ); }
 char * config_get_MeasureVoltage( void ) { return( cfgdata.MeasureVoltage ); }
-void config_set_MeasureVoltage( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltage ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureVoltage , value ); }
+void config_set_MeasureVoltage( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltage ) && atof( value ) > 0 ) strcpy( cfgdata.MeasureVoltage , value ); }
 char * config_get_MeasureVoltageFrequency( void ) { return( cfgdata.MeasureVoltageFrequency ); }
 void config_set_MeasureVoltageFrequency( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltageFrequency ) && atoi( value ) > 49 && atoi( value ) < 61 ) strcpy( cfgdata.MeasureVoltageFrequency , value ); }
-char * config_get_MeasureOffset( void ) { return( cfgdata.MeasureOffset ); }
-void config_set_MeasureOffset( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureOffset ) ) strcpy( cfgdata.MeasureOffset , value ); }
 char * config_get_MeasureChannels( void ) { return( cfgdata.MeasureChannels ); }
 void config_set_MeasureChannels( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureChannels ) && atoi( value ) > 0 && atoi( value ) <= 3 ) strcpy( cfgdata.MeasureChannels , value ); }
 char * config_get_MeasureSamplerate( void ) { return( cfgdata.MeasureSamplerate ); }
 void config_set_MeasureSamplerate( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureSamplerate ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasureSamplerate , value ); }
+char * config_get_MeasurePhaseshift( void ) { return( cfgdata.MeasurePhaseshift ); }
+void config_set_MeasurePhaseshift( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasurePhaseshift ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasurePhaseshift , value ); }
 
 /*
  * 
  */
 void config_setup( void ) {
-  uint8_t mac[6];
   
   if ( !SPIFFS.begin() ) {        
     /*
@@ -95,6 +94,7 @@ void config_setup( void ) {
 
   Serial.printf("Read config from SPIFFS\r\n");
   if ( !config_read( sizeof( cfgdata ), &cfgdata, CONFIGNAME ) ) {
+    uint8_t mac[6];
     Serial.printf("Write first config to SPIFFS\r\n");    
     /*
      * make an uniqe Hostname an SoftAp SSID
@@ -102,10 +102,6 @@ void config_setup( void ) {
     WiFi.macAddress( mac );
     snprintf( cfgdata.HostName, sizeof( cfgdata.HostName ), "powermeter_%02x%02x%02x", mac[3], mac[4], mac[5] );
     config_set_OTALocalApSSID( cfgdata.HostName );
-
-    /*
-     * 
-     */
     config_save( sizeof ( cfgdata ), &cfgdata, CONFIGNAME );
   }
 }

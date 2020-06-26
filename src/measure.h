@@ -31,19 +31,78 @@
 
   #define _MEASURE_H
 
-  #define MEASURE_CHANELS       3
-  #define numbersOfSamples      510
+  #define MAX_ADC_CHANNELS      8
+  #define VIRTUAL_ADC_CHANNELS  6
+  #define VIRTUAL_CHANNELS      7
+
+  #define numbersOfSamples      384
   #define numbersOfFFTSamples   32
-  #define samplingFrequency     numbersOfSamples*MEASURE_CHANELS
+  #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
   #define DELAY                 1000
-  
+  #define I2S_PORT              I2S_NUM_0
+
+  struct channelconfig {
+    uint8_t type;
+    int16_t phaseshift;
+    uint8_t operation[8];
+  };
+
+  enum {
+    CHANNEL_NOP = -1,
+    CURRENT,
+    VIRTUALCURRENT,
+    VOLTAGE,
+    VIRTUALVOLTAGE,
+    POWER,
+    VIRTUALPOWER
+  };
+
+  #define OPMASK 0xf0
+
+  enum {
+    NOP = 0x00,
+    ADD = 0x10,
+    SUB = 0x20,
+    MUL = 0x30,
+    DIV = 0x40,
+    GET_ADC = 0x50,
+    SET_ZERO = 0x60,
+    FILTER = 0x70,
+    NOFILTER = 0x80,
+    STORE_INTO_BUFFER = 0x90,
+    STORE_SQUARE_SUM = 0xa0,
+    STORE_SUM = 0xb0,
+    DIV_4096 = 0xc0
+  };
+
+  enum {
+    CHANNEL_0,
+    CHANNEL_1,
+    CHANNEL_2,
+    CHANNEL_3,
+    CHANNEL_4,
+    CHANNEL_5,
+    CHANNEL_6,
+    CHANNEL_7,
+    CHANNEL_8,
+    CHANNEL_9,
+    CHANNEL_10,
+    CHANNEL_11,
+    CHANNEL_12,
+    CHANNEL_13,
+    CHANNEL_14,
+    CHANNEL_15,
+  };
+
   void measure_init( void );
   void measure_mes( void );
+  int measure_set_phaseshift( int corr );
   int measure_set_samplerate( int corr );
-  float measure_get_power( int line );
   uint16_t * measure_get_buffer( void );
   uint16_t * measure_get_fft( void );
   float measure_get_Irms( int line );
+  float measure_get_Vrms( int line );
+  float measure_get_power( int line );
   float measure_get_Iratio( void );
   void measure_StartTask( void );
   void measure_StartSignalGenTask( void );

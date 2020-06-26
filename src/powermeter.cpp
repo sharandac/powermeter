@@ -36,7 +36,6 @@ static bool APMODE = false;
  * 
  */
 void connectWiFi() {
-  int wlan_timeout = WLAN_CONNECT_TIMEOUT;
 
   if ( APMODE == true ) return;
   /*
@@ -45,6 +44,7 @@ void connectWiFi() {
   WiFi.setHostname( config_get_HostName() );
 
   if ( WiFi.status() != WL_CONNECTED ) {
+    int wlan_timeout = WLAN_CONNECT_TIMEOUT;
 
     Serial.printf("WiFi lost, restart ... ");
     /*
