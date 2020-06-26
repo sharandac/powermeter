@@ -49,7 +49,7 @@
     char MeasureBurdenResistor[16]="60";
     char MeasureCoilTurns[16]="2000";
     char MeasureVoltage[16]="230";
-    char MeasureOffset[16]="0";
+    char MeasurePhaseshift[16]="0";
     char MeasureChannels[16]="1";
     char MeasureSamplerate[16]="0";
     char MeasureVoltageFrequency[16]="50";
@@ -115,12 +115,12 @@
   void config_set_MeasureVoltage( char * value );
   char * config_get_MeasureVoltageFrequency( void );
   void config_set_MeasureVoltageFrequency( char * value );
-  char * config_get_MeasureOffset( void );
-  void config_set_MeasureOffset( char * value );
   char * config_get_MeasureChannels( void );
   void config_set_MeasureChannels( char * value );
   char * config_get_MeasureSamplerate( void );
   void config_set_MeasureSamplerate( char * value );
+  char * config_get_MeasurePhaseshift( void );
+  void config_set_MeasurePhaseshift( char * value );
 
   /*
    * firmewareversion string

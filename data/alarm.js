@@ -106,21 +106,19 @@ function GotOScope(data)
 		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
 		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
 		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
-		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
+		if ( round == 3 && !document.getElementById("channel3").checked ) continue;
+		if ( round == 4 && !document.getElementById("channel4").checked ) continue;
+		if ( round == 5 && !document.getElementById("channel5").checked ) continue;
+		if ( round == 6 && !document.getElementById("channelv").checked ) continue;
 
 		otx.beginPath();
-		if ( round == 0 ) {
-			otx.strokeStyle = "#0000FF";
-		}
-		if ( round == 1 ) {
-			otx.strokeStyle = "#00FF00";
-		}
-		if ( round == 2 ) {
-			otx.strokeStyle = "#00FFFF";
-		}
-		if ( round == 3 ) {
-			otx.strokeStyle = "#FF0000";
-		}
+		if ( round == 0 ) otx.strokeStyle = "#ff0000";
+		if ( round == 2 ) otx.strokeStyle = "#c00000";
+		if ( round == 4 ) otx.strokeStyle = "#800000";
+		if ( round == 1 ) otx.strokeStyle = "#0000FF";
+		if ( round == 3 ) otx.strokeStyle = "#0000c0";
+		if ( round == 5 ) otx.strokeStyle = "#000080";
+		if ( round == 6 ) otx.strokeStyle = "#400000";
 
 		var lastsamp = parseInt( data.substr( samps * round ,3),16 );
 
@@ -151,21 +149,21 @@ function GotOScope(data)
 		if ( round == 0 && !document.getElementById("channel0").checked ) continue;
 		if ( round == 1 && !document.getElementById("channel1").checked ) continue;
 		if ( round == 2 && !document.getElementById("channel2").checked ) continue;
-		if ( round == 3 && !document.getElementById("channelv").checked ) continue;
+		if ( round == 3 && !document.getElementById("channel3").checked ) continue;
+		if ( round == 4 && !document.getElementById("channel4").checked ) continue;
+		if ( round == 5 && !document.getElementById("channel5").checked ) continue;
+		if ( round == 6 && !document.getElementById("channelv").checked ) continue;
+
 
 		ftx.beginPath();
-		if ( round == 0 ) {
-			ftx.strokeStyle = "#0000FF";
-		}
-		if ( round == 1 ) {
-			ftx.strokeStyle = "#00FF00";
-		}
-		if ( round == 2 ) {
-			ftx.strokeStyle = "#00FFFF";
-		}
-		if ( round == 3 ) {
-			ftx.strokeStyle = "#FF0000";
-		}
+		if ( round == 0 ) ftx.strokeStyle = "#ff0000";
+		if ( round == 2 ) ftx.strokeStyle = "#c00000";
+		if ( round == 4 ) ftx.strokeStyle = "#800000";
+		if ( round == 1 ) ftx.strokeStyle = "#0000FF";
+		if ( round == 3 ) ftx.strokeStyle = "#0000c0";
+		if ( round == 5 ) ftx.strokeStyle = "#000080";
+		if ( round == 6 ) ftx.strokeStyle = "#400000";
+
 
 		var lastsamp = parseInt( fftdata.substr( fftsamps * round ,3),16 ) * mult;
 
@@ -195,8 +193,9 @@ function GotOScope(data)
   ftx.fillText("Spectrum",10,30);
   ftx.stroke();
 
+
 	ftx.beginPath();
-	ftx.strokeStyle = "#FF8080";
+	ftx.strokeStyle = "#c0c0c0";
 	for (i = 1; (iratio * mult * i) < ( fcanvas.clientHeight ); i++)
 	{
 		ftx.moveTo(0, fcanvas.clientHeight - (iratio * mult * i) );
@@ -210,9 +209,9 @@ function GotOScope(data)
 	ftx.stroke();
 	
 	otx.beginPath();
-	otx.strokeStyle = "#FF8080";
+	otx.strokeStyle = "#c0c0c0";
 
-	for (i = 1; (iratio * mult * i) < ( ocanvas.clientHeight / 2); i++)
+  for (i = 1; (iratio * mult * i) < ( ocanvas.clientHeight / 2); i++)
 	{
 		otx.moveTo(0, ocanvas.clientHeight / 2 + (iratio * mult * i));
 		otx.lineTo(otx.canvas.width, ocanvas.clientHeight / 2 + (iratio * mult * i));
@@ -223,7 +222,7 @@ function GotOScope(data)
 	otx.stroke();
 	otx.beginPath();
 	
-	otx.strokeStyle = "#FF0000";
+	otx.strokeStyle = "#c0c0c0";
 	otx.moveTo(0, ocanvas.clientHeight / 2);
 	otx.lineTo(ocanvas.clientWidth, ocanvas.clientHeight / 2);
 
@@ -259,16 +258,28 @@ function GotOScope(data)
 
 	otx.stroke();
 
-	var samp = parseInt(data.substr(i * 3, 3), 16) - 2048;
+  otx.beginPath();
+	otx.fillStyle = "#bF0000";
+  otx.fillRect(10,60, 10,10);
+  otx.font = "15px Arial";
+  otx.fillText("current",30,70);
+  otx.stroke();
 
   otx.beginPath();
-	ftx.strokeStyle = "#000000";
+	otx.fillStyle = "#0000bF";
+  otx.fillRect(10,80, 10,10);
+  otx.font = "15px Arial";
+  otx.fillText("voltage",30,90);
+  otx.stroke();
+
+  otx.beginPath();
+	otx.fillStyle = "#000000";
   otx.font = "30px Arial";
   otx.fillText("Oscilloscope",10,30);
   otx.font = "15px Arial";
-  otx.fillText("div: 5ms/10A",10,50);
+  otx.fillText("div: 5 or 4.17ms / 10A",10,50);
   otx.stroke();
-
+  
 	if (!pause_osc)
 		OScopeProbe();
 }
@@ -276,6 +287,16 @@ function GotOScope(data)
 function ToggleOScopePause()
 {
 	pause_osc = !pause_osc;
+}
+
+function PhaseshiftPlus()
+{
+	if ( connect ) connection.send( "PS+" );	
+}
+
+function PhaseshiftMinus()
+{
+	if ( connect ) connection.send( "PS-" );		
 }
 
 function SampleratePlus()

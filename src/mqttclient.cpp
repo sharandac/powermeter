@@ -116,9 +116,13 @@ void mqtt_client_Task( void * pvParameters ) {
   */
   static uint64_t NextMeasureMillis = millis();
   static uint64_t NextMillis = millis() + 15000;
-  static float measure[ MEASURE_CHANELS ];
+  static float measure_power[ VIRTUAL_CHANNELS ];
+  static float measure_voltage[ VIRTUAL_CHANNELS ];
+  static float measure_current[ VIRTUAL_CHANNELS ];
 
-  memset( measure, 0, sizeof( measure ) );
+  memset( measure_power, 0, sizeof( measure_power ) );
+  memset( measure_voltage, 0, sizeof( measure_voltage ) );
+  memset( measure_current, 0, sizeof( measure_current ) );
 
   mqttClient.onConnect(onMqttConnect);
   mqttClient.onDisconnect(onMqttDisconnect);
@@ -146,7 +150,7 @@ void mqtt_client_Task( void * pvParameters ) {
       else {
         int virtualchannel = 0;
 
-        if ( atoi(config_get_MeasureChannels()) == MEASURE_CHANELS ) virtualchannel = 1;
+        if ( atoi(config_get_MeasureChannels()) == 3 ) virtualchannel = 1;
         /*
         *  send N seconds an json msg to MQTT
         */
@@ -158,7 +162,7 @@ void mqtt_client_Task( void * pvParameters ) {
           float powersum=0;
 
           for( int channel=0 ; channel<atoi(config_get_MeasureChannels()) ; channel++ ) {
-            powersum += measure[ channel ] / atof( config_get_MQTTInterval() );
+            powersum += measure_power[ channel ] / atof( config_get_MQTTInterval() );
           }
 
           snprintf( value, sizeof( value ), "{\"all\":{\"power\":\"%.3f\"},", powersum );
@@ -167,13 +171,18 @@ void mqtt_client_Task( void * pvParameters ) {
             if ( channel != 0 ) {
               strncat( value, ",", sizeof(value) );
             }
-            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\"}", channel, measure[ channel ] / atof( config_get_MQTTInterval() ) );
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\"}", channel
+                                                                                                                          , measure_power[ channel ] / atof( config_get_MQTTInterval() ) / 1000
+                                                                                                                          , measure_voltage[ channel ] / atof( config_get_MQTTInterval() )
+                                                                                                                          , measure_current[ channel ] / atof( config_get_MQTTInterval() ) );
             strncat( value, temp, sizeof(value) );
-            measure[ channel ] = 0;
+            measure_power[ channel ] = 0;
+            measure_voltage[ channel ] = 0;
+            measure_current[ channel ] = 0;
           }
           snprintf( temp, sizeof( temp ), ",\"Interval\":\"%s\"", config_get_MQTTInterval() );
           strncat( value, temp, sizeof(value) );
-          strncat( value, ",\"PowerUnit\":\"kWs\"}", sizeof(value) );
+          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\"}", sizeof(value) );
           snprintf( topic, sizeof( topic ), "stat/%s/power", config_get_MQTTTopic() );
           mqtt_client_publish( topic , value );
         }
@@ -183,7 +192,7 @@ void mqtt_client_Task( void * pvParameters ) {
         */
         if ( NextMeasureMillis < millis() ) {
           NextMeasureMillis += 1000l;
-          char value[256] = "";
+          char value[1024] = "";
           char topic[128] = "";
           char temp[128]="";
 
@@ -197,19 +206,21 @@ void mqtt_client_Task( void * pvParameters ) {
 
           for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) ; channel++ ) {
 
-            measure[ channel ] += measure_get_power( channel ) / 1000;
+            measure_power[ channel ] += measure_get_power( channel );
+            measure_voltage[ channel ] += measure_get_Vrms( channel );
+            measure_current[ channel ] += measure_get_Irms( channel );
 
             if ( channel != 0 ) {
               strncat( value, ",", sizeof(value) );
             }
-            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"current\":\"%.3f\"}", channel, measure_get_power( channel ) / 1000, measure_get_Irms( channel ) );
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\"}", channel, ( measure_get_Vrms( channel ) * measure_get_Irms( channel ) ) / 1000, measure_get_Vrms( channel ), measure_get_Irms( channel ) );
             strncat( value, temp, sizeof(value) );
           }
           if ( virtualchannel != 0 ) {
-            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( MEASURE_CHANELS ) );
+            snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
             strncat( value, temp, sizeof(value) );
           }
-          strncat( value, ",\"PowerUnit\":\"kWs\", \"CurrentUnit\":\"A\"}", sizeof(value) );
+          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\"}", sizeof(value) );
 
           snprintf( topic, sizeof( topic ), "stat/%s/realtimepower", config_get_MQTTTopic() );
           mqtt_client_publish( topic , value );

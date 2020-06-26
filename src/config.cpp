@@ -69,15 +69,15 @@ void config_set_MeasureBurdenResistor( char * value ) { if ( strlen( value ) <= 
 char * config_get_MeasureCoilTurns( void ) { return( cfgdata.MeasureCoilTurns ); }
 void config_set_MeasureCoilTurns( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureCoilTurns ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureCoilTurns , value ); }
 char * config_get_MeasureVoltage( void ) { return( cfgdata.MeasureVoltage ); }
-void config_set_MeasureVoltage( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltage ) && atoi( value ) > 0 ) strcpy( cfgdata.MeasureVoltage , value ); }
+void config_set_MeasureVoltage( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltage ) && atof( value ) > 0 ) strcpy( cfgdata.MeasureVoltage , value ); }
 char * config_get_MeasureVoltageFrequency( void ) { return( cfgdata.MeasureVoltageFrequency ); }
 void config_set_MeasureVoltageFrequency( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureVoltageFrequency ) && atoi( value ) > 49 && atoi( value ) < 61 ) strcpy( cfgdata.MeasureVoltageFrequency , value ); }
-char * config_get_MeasureOffset( void ) { return( cfgdata.MeasureOffset ); }
-void config_set_MeasureOffset( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureOffset ) ) strcpy( cfgdata.MeasureOffset , value ); }
 char * config_get_MeasureChannels( void ) { return( cfgdata.MeasureChannels ); }
 void config_set_MeasureChannels( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureChannels ) && atoi( value ) > 0 && atoi( value ) <= 3 ) strcpy( cfgdata.MeasureChannels , value ); }
 char * config_get_MeasureSamplerate( void ) { return( cfgdata.MeasureSamplerate ); }
 void config_set_MeasureSamplerate( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureSamplerate ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasureSamplerate , value ); }
+char * config_get_MeasurePhaseshift( void ) { return( cfgdata.MeasurePhaseshift ); }
+void config_set_MeasurePhaseshift( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasurePhaseshift ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasurePhaseshift , value ); }
 
 /*
  * 
