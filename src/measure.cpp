@@ -196,7 +196,7 @@ void measure_mes( void ) {
       }
     }
     int noVoltage = 0;
-    if ( atof( config_get_MeasureVoltage() ) > 1 )
+    if ( atof( config_get_MeasureVoltage() ) >= 5 )
       noVoltage = 1;
     /*
      * compute each sample for each virtual channel
@@ -288,7 +288,7 @@ void measure_mes( void ) {
         Irms_channel++;
         break;
       case VOLTAGE:
-        if ( atof( config_get_MeasureVoltage() ) < 1 ) {
+        if ( atof( config_get_MeasureVoltage() ) < 5 ) {
           *Vrms_channel = atof( config_get_MeasureVoltage() ) * sqrt( sum[ i ] / ( numbersOfSamples * round ) );
         }
         else {
