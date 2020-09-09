@@ -161,11 +161,11 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         
         for( int line=0 ; line<atoi(config_get_MeasureChannels()) ; line++ ) {
           powersum += measure_get_power( line );
-          sprintf( tmp, " ; Ch%d: U=%.1fV / I=%.1fA / P=%.3fkW", line+1, measure_get_Vrms( line ), measure_get_Irms( line ), measure_get_power( line ) / 1000 );
+          sprintf( tmp, " ; Ch%d: U=%.1fV / I=%.3fA / P=%.3fkW", line+1, measure_get_Vrms( line ), measure_get_Irms( line ), measure_get_power( line ) / 1000 );
           strcat( request, tmp );
         }
         if ( atoi(config_get_MeasureChannels()) == 3 ) {
-          sprintf( tmp, " ; Irmsn = %.1fA", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
+          sprintf( tmp, " ; Irmsn = %.3fA", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
           strcat( request, tmp );
         }
         strcat( request, " )");

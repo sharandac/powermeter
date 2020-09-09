@@ -165,7 +165,7 @@ void mqtt_client_Task( void * pvParameters ) {
             powersum += measure_power[ channel ] / atof( config_get_MQTTInterval() );
           }
 
-          snprintf( value, sizeof( value ), "{\"all\":{\"power\":\"%.3f\"},", powersum );
+          snprintf( value, sizeof( value ), "{\"id\":\"%s\",\"all\":{\"power\":\"%.3f\",\"PowerUnit\":\"kWs\"},", config_get_HostName(), powersum );
 
           for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) ; channel++ ) {
             if ( channel != 0 ) {
@@ -202,7 +202,7 @@ void mqtt_client_Task( void * pvParameters ) {
             powersum += measure_get_power( channel ) / 1000;
           }
 
-          snprintf( value, sizeof( value ), "{\"all\":{\"power\":\"%.3f\"},", powersum );
+          snprintf( value, sizeof( value ), "{\"id\":\"%s\",\"all\":{\"power\":\"%.3f\",\"PowerUnit\":\"kWs\"},", config_get_HostName(), powersum );
 
           for ( int channel = 0 ; channel < atoi(config_get_MeasureChannels()) ; channel++ ) {
 
