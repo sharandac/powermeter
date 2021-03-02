@@ -122,7 +122,8 @@ void measure_init( void ) {
   ledcSetup(0, 100, 8);
   ledcWrite(0, 127);
 
-  measure_set_samplerate( atoi( config_get_MeasurePhaseshift() ) );
+  measure_set_phaseshift( atoi( config_get_MeasurePhaseshift() ) );
+  measure_set_samplerate( atoi( config_get_MeasureSamplerate() ) );
 }
 
 /*
