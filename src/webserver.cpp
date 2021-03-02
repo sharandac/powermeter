@@ -274,7 +274,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       else if ( !strcmp("FQ+", cmd ) ) {
         char sampleratestring[16]="0";
         int samplerate = atoi( config_get_MeasureSamplerate() );
-        samplerate += 5;
+        samplerate += 1;
         snprintf( sampleratestring, sizeof( sampleratestring ), "%d", samplerate );
         config_set_MeasureSamplerate( sampleratestring );
         measure_set_samplerate( samplerate );
@@ -283,7 +283,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       else if ( !strcmp("FQ-", cmd ) ) {
         char sampleratestring[16]="0";
         int samplerate = atoi( config_get_MeasureSamplerate() );
-        samplerate -= 5;
+        samplerate -= 1;
         snprintf( sampleratestring, sizeof( sampleratestring ), "%d", samplerate );
         config_set_MeasureSamplerate( sampleratestring );
         measure_set_samplerate( samplerate );
