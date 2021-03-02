@@ -1,3 +1,12 @@
+<p align="center">
+<img src="https://img.shields.io/github/last-commit/sharandac/powermeter.svg?style=for-the-badge" />
+&nbsp;
+<img src="https://img.shields.io/github/license/sharandac/powermeter.svg?style=for-the-badge" />
+&nbsp;
+<a href="https://www.buymeacoffee.com/sharandac" target="_blank"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%82%AC5-orange?style=for-the-badge&logo=buy-me-a-coffee" /></a>
+</p>
+<hr/>
+
 # powermeter
 
 A simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
@@ -63,3 +72,12 @@ At any time, 3 channels are read in simultaneously regardless of the settings. T
 ![mqtt](https://github.com/sharandac/powermeter/blob/master/images/mqtt-setting.png)
 ## measurement settings
 ![measurement](https://github.com/sharandac/powermeter/blob/master/images/measurement-setting.png)
+
+# Contributors
+
+Every Contribution to this repository is highly welcome! Don't fear to create pull requests which enhance or fix the project, you are going to help everybody.
+<p>
+If you want to donate to the author then you can buy me a coffee.
+<br/><br/>
+<a href="https://www.buymeacoffee.com/sharandac" target="_blank"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-%E2%82%AC5-orange?style=for-the-badge&logo=buy-me-a-coffee" /></a>
+</p>
