@@ -33,6 +33,7 @@
 #include <driver/i2s.h>
 #include <driver/ledc.h>
 #include <arduinoFFT.h>
+#include <math.h>
 
 #include "measure.h"
 #include "config.h"
@@ -75,6 +76,12 @@ uint16_t buffer[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
 uint16_t buffer_fft[ VIRTUAL_CHANNELS ][ numbersOfFFTSamples ];
 uint16_t buffer_probe[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
 
+double HerzvReal[ numbersOfSamples * 4 ];
+double HerzvImag[ numbersOfSamples * 4 ];
+double phaseshift, oldphaseshift;
+double netfrequency;
+
+
 /*
  * 
  */
@@ -96,12 +103,12 @@ void measure_init( void ) {
 
   err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
   if (err != ESP_OK) { 
-    Serial.printf("Failed installing driver: %d\r\n", err);
+    log_e("Failed installing driver: %d\r\n", err);
     while (true);
   }
   err = i2s_set_adc_mode( ADC_UNIT_1, (adc1_channel_t)6 );
   if (err != ESP_OK ) {
-    Serial.printf("Failed installing driver: %d\r\n", err);
+    log_e("Failed installing driver: %d\r\n", err);
     while (true);
   }
 
@@ -116,7 +123,7 @@ void measure_init( void ) {
   SYSCON.saradc_sar1_patt_tab[1] = 0x3f4f0000;
   // make the adc conversation more accurate
   SYSCON.saradc_ctrl.sar_clk_div = 5;
-  Serial.printf("Measurement: I2S driver ready\r\n");
+  log_i("Measurement: I2S driver ready\r\n");
 
   ledcAttachPin( 32 , 0);
   ledcSetup(0, 100, 8);
@@ -131,141 +138,189 @@ void measure_init( void ) {
  */
 void measure_mes( void ) {
 
-  int round=0;
-  /* startcounter to prevent trash in first run */
-  static int firstrun = 10;
-  /* runtime variables for current, voltage or power calculation */
-  double sum[ VIRTUAL_CHANNELS ];
-    
-  double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096;
-  memset( sum, 0, sizeof( sum ) );
+  int round=0;                      /** @brief round counter */
+  int noVoltage = 0;                /** @brief set to 1 */
+  static int firstrun = 10;         /** @brief startcounter to prevent trash in first run */
+  double sum[ VIRTUAL_CHANNELS ];   /** @brief runtime variables for current, voltage or power calculation */
+  double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096; /** @brief I ratio value */
 
-  /* get the current timer and calculate the exit time for capture ADC-buffer */
+  memset( sum, 0, sizeof( sum ) );
+  /**
+   * get the current timer and calculate the exit time for capture ADC-buffer
+   */
   uint64_t NextMillis = millis() + 950;
 
-  /*
-   * Sample measure
+  if ( atof( config_get_MeasureVoltage() ) >= 5 )
+    noVoltage = 1;
+
+  /**
+   * get numbersOfSamples * VIRTUAL_ADC_CHANNELS each round
+   * one round is 40/33.3ms (depending on network freuency) or two network frecuency periods
+   * after 950 ms calculate each channel value like Vrms/Irms or network frequency/paseshift
    */
-  while( millis() < NextMillis ){
+  while( millis() < NextMillis ) {
 
-    /* runtime varibales for lowpass filter stuff */
-    static double sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];
-    static double filteredI[ VIRTUAL_CHANNELS ], lastFilteredI[ VIRTUAL_CHANNELS ];
-    uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];
-    /* unsort sampelbuffer from ADC */
-    uint16_t adc_tempsamples[ numbersOfSamples ];
-    /* channel sorted samplebuffer */
-    uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];
-
+    static double sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];         /** @brief runtime varibales for lowpass filter stuff */
+    static double filteredI[ VIRTUAL_CHANNELS ], lastFilteredI[ VIRTUAL_CHANNELS ];     /** @brief runtime varibales for lowpass filter stuff */
+    uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];                                          /** @brief channel pointer list */
+    uint16_t adc_tempsamples[ numbersOfSamples ];                                       /** @brief unsort sampelbuffer from ADC */
+    uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];                   /** @brief channel sorted samplebuffer */
+    /**
+     * create a channel pointer list for later and faster use
+     */
     for( int i = 0 ; i < VIRTUAL_ADC_CHANNELS ; i++ ) {
       channel[ i ] = &adc_samples[ i ][ 0 ];
     }
-
+    /**
+     * get an chunk of data from adc and sort it in
+     */
     for( int adc_chunck = 0 ; adc_chunck < VIRTUAL_ADC_CHANNELS ; adc_chunck++ ) {
-      /* get an ADC buffer */
+      /**
+       * get an ADC buffer 
+       */
       size_t num_bytes_read=0;
       esp_err_t err;
       err = i2s_read( I2S_PORT,
-                      (char *)adc_tempsamples,
-                      sizeof(adc_tempsamples),     // the doc says bytes, but its elements.
-                      &num_bytes_read,
-                      portMAX_DELAY ); // no timeout
-
-      if (err != ESP_OK) {
-        Serial.printf("Error while reading DMA Buffer: %d", err );
-        while(1);
+                      (char *)adc_tempsamples,      /* pointer to the adc_tempsample */
+                      sizeof( adc_tempsamples ),    /* the doc says bytes, but its elements */
+                      &num_bytes_read,              /* pointer to an size_t variable to store number of bytes read */
+                      portMAX_DELAY );              /* no timeout */
+      /**
+       * handle error
+       */
+      if ( err != ESP_OK ) {
+        log_e("Error while reading DMA Buffer: %d", err );
+        while( 1 );
       }
-      /*
-      * sort the ADC-buffer into virtual channels
-      * adc sample buffer contains the following data scheme with 16bit words
-      * 
-      * [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
-      *
-      * each 16bit word contains the following bitscheme
-      *
-      * [15..12]     channel
-      * [11..0]      12-bit sample
-      */
+      /**
+       * sort the ADC-buffer into virtual channels
+       * adc sample buffer contains the following data scheme with 16bit words
+       * 
+       * [CH6][CH6][CH7][CH7][CH5][CH5][CH6][CH6][CH7].....
+       *
+       * each 16bit word contains the following bitscheme
+       *
+       * [15..12]     channel
+       * [11..0]      12-bit sample
+       */
       for( int i = 0 ; i < numbersOfSamples ; i++ ) {
-        /* get the right channel number from die sample */
-        int8_t chan = (adc_tempsamples[i]>>12) & 0xf;
-        /* assigns the sample to the right virtual channel */
+        /**
+         * get the right channel number from die sample and store it
+         */
+        int8_t chan = ( adc_tempsamples[ i ] >> 12 ) & 0xf;
+        /**
+         * assigns the sample to the right virtual channel by use channel pointer list
+         */
         if ( channelmapping[ chan ] != CHANNEL_NOP && chan < MAX_ADC_CHANNELS ) {
           *channel[ channelmapping[ chan ] ] = adc_tempsamples[ i ] & 0x0fff;
           channel[ channelmapping[ chan ] ]++;
         }
       }
     }
-    int noVoltage = 0;
-    if ( atof( config_get_MeasureVoltage() ) >= 5 )
-      noVoltage = 1;
-    /*
+    /**
      * compute each sample for each virtual channel
      */
-    for (int n=0; n<numbersOfSamples; n++) {
+    for ( int n = 0; n < numbersOfSamples; n++ ) {
       for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+        /**
+         * store the last sample for filtering
+         */
         lastSampleI[ i ]=sampleI[ i ];
-        /* get right sample or compute it */
-        for( int operation = 0 ; operation < sizeof( channelconfig[0].operation ) ; operation++ ) {
+        /**
+         * get right sample or compute it
+         */
+        for( int operation = 0 ; operation < sizeof( channelconfig[ 0 ].operation ) ; operation++ ) {
+          /**
+           * mask the channel out and store it in a separate variable for later use
+           */
+          int op_channel = channelconfig[ i ].operation[ operation ] & ~OPMASK;
+          /**
+           * oparate the current channel operateion
+           */
           switch( channelconfig[i].operation[ operation ] & OPMASK ) {
-            case NOP:       
-              break;
-            case ADD:      
-              sampleI[ i ] += filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
-              break;
-            case SUB:
-              sampleI[ i ] -= filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
-              break;
-            case MUL:
-              sampleI[ i ] = sampleI[ i ] * filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
-              break;
-            case DIV:      
-              sampleI[ i ] = sampleI[ i ] * filteredI[ channelconfig[ i ].operation[ operation ] & ~OPMASK ];
-              break;
-            case SET_ZERO:
-              sampleI[ i ] = 0;
-              break;
-            case GET_ADC:
-              sampleI[ i ] = adc_samples[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
-              break;
-            case FILTER:
-              lastFilteredI[ i ] = filteredI[ i ];
-              filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
-              break;
-            case NOFILTER:
-              lastFilteredI[ i ] = filteredI[ i ];
-              filteredI[ i ] = sampleI[ i ];
-              break;
-            case STORE_INTO_BUFFER:
-              if ( channelconfig[i].type == VOLTAGE && noVoltage == 1 ) {
-                buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ] = 2048;
-              }
-              else {
-                buffer[ channelconfig[ i ].operation[ operation ] & ~OPMASK ][ n ] = filteredI[ i ] + 2048;
-              }
-              break;
-            case STORE_SQUARE_SUM:
-              // root-mean-square method measure, square measure values and add to sumI
-              sum[ i ] += filteredI[ i ] * filteredI[ i ];
-              break;
-            case STORE_SUM:
-              // root-mean-square method measure, square measure values and add to sumI
-              sum[ i ] += filteredI[ i ];
-              break;
-            case DIV_4096:
-              // root-mean-square method measure, square measure values and add to sumI
-              sampleI[ i ] = filteredI[ i ] / 4096;
-              break;
+            case NOP:                   break;
+            case ADD:                   sampleI[ i ] += filteredI[ op_channel ];
+                                        break;
+            case SUB:                   sampleI[ i ] -= filteredI[ op_channel ];
+                                        break;
+            case MUL:                   sampleI[ i ] = sampleI[ i ] * filteredI[ op_channel ];
+                                        break;
+            case DIV:                   sampleI[ i ] = sampleI[ i ] * filteredI[ op_channel ];
+                                        break;
+            case SET_ZERO:              sampleI[ i ] = 0;
+                                        break;
+            case GET_ADC:               sampleI[ i ] = adc_samples[ op_channel ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
+                                        break;
+            case FILTER:                lastFilteredI[ i ] = filteredI[ i ];
+                                        filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+                                        break;
+            case NOFILTER:              lastFilteredI[ i ] = filteredI[ i ];
+                                        filteredI[ i ] = sampleI[ i ];
+                                        break;
+            case STORE_INTO_BUFFER:     if ( channelconfig[i].type == VOLTAGE && noVoltage == 1 ) {
+                                            buffer[ op_channel ][ n ] = 2048;
+                                        }
+                                        else {
+                                            buffer[ op_channel ][ n ] = filteredI[ i ] + 2048;
+                                        }
+                                        break;
+            case STORE_SQUARE_SUM:      sum[ i ] += filteredI[ i ] * filteredI[ i ];
+                                        break;
+            case STORE_SUM:             sum[ i ] += filteredI[ i ];
+                                        break;
+            case DIV_4096:              sampleI[ i ] = filteredI[ i ] / 4096;
+                                        break;
+            default:                    log_e("Error, channel operation not allowed!");
+                                        while( 1 );
           }
         }
       }
     }
+    /**
+     * get fill probebuffer if requensted
+     */
     if ( TX_buffer != -1 ) {
       memcpy( &buffer_probe[0][0], &buffer[0][0] , sizeof( buffer ) );
       TX_buffer = -1;
     }
+    /**
+     * copy channel 1 into probebuffer for get network frequency
+     */
+    if ( round < 4 ) {
+        for( int sample = 0 ; sample < numbersOfSamples ; sample++ ) {
+            HerzvReal[ ( round * numbersOfSamples ) + sample ] = buffer[ 1 ][ sample ];
+            HerzvImag[ ( round * numbersOfSamples ) + sample ] = 0;
+        }
+    }
+    /**
+     * loop into next round and count it
+     */
     round++;
   }
+
+    /**
+     * if netfrequency monitoring channel monitors voltage
+     * else set netfrequency to 50 or 60hz
+     */
+    if ( channelconfig[ 1 ].type == VOLTAGE && noVoltage == 0 ) {
+        /**
+         * calculate the phaseshift between last phaseshift
+         */
+        arduinoFFT FFT = arduinoFFT( HerzvReal, HerzvImag, numbersOfSamples * 4, ( numbersOfSamples ) * atoi( config_get_MeasureVoltageFrequency() ) );
+        FFT.Windowing( FFT_WIN_TYP_HAMMING, FFT_REVERSE);
+        FFT.Compute( FFT_REVERSE );
+        oldphaseshift = phaseshift;
+        phaseshift = atan2( HerzvReal[24], HerzvImag[24] ) * ( 180.0 / M_PI ) + 180;
+        /**
+         * prevent chaotic phaseshift values higher then 180 degrees
+         */
+        if ( ( phaseshift - oldphaseshift ) < 180 && ( phaseshift - oldphaseshift ) > -180 ) {
+            netfrequency = ( netfrequency + ( phaseshift - oldphaseshift ) * ( ( 1.0f / M_PI ) / 360 ) + atoi( config_get_MeasureVoltageFrequency() ) ) / 2;
+        }
+    }
+    else {
+        netfrequency = atoi( config_get_MeasureVoltageFrequency() );
+    }
 
   float *Irms_channel=&Irms[0];
   float *Vrms_channel=&Vrms[0];
@@ -308,23 +363,28 @@ void measure_mes( void ) {
   Serial.printf("\r\n");
 }
 
-
-/*
- *
- */
 int measure_set_phaseshift( int corr ) {
-  for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
-    if ( channelconfig[ i ].type == VOLTAGE ) {
-      channelconfig[ i ].phaseshift = corr;
+    int retval = -1;
+    
+    /**
+     * check correctio value is in range
+     */
+    if ( corr >= numbersOfSamples ) {
+        return( retval );
     }
-  }
-  return( 0 );
+    /**
+     * set phaseshift for all voltage channels
+     */
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+        if ( channelconfig[ i ].type == VOLTAGE ) {
+            channelconfig[ i ].phaseshift = corr;
+        }
+    }
+    retval = 0;
+
+    return( retval );
 }
 
-
-/*
- *
- */
 int measure_set_samplerate( int corr ) {
   esp_err_t err;
   err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + corr );
@@ -335,18 +395,12 @@ int measure_set_samplerate( int corr ) {
   return( ESP_OK );
 }
 
-/*
- *
- */
 uint16_t * measure_get_buffer( void ) {
   TX_buffer = 0;
   while ( TX_buffer == 0 ) {}
   return( &buffer_probe[0][0] ); 
 }
 
-/*
- *
- */
 uint16_t * measure_get_fft( void ) {
   double vReal[ numbersOfFFTSamples * 2 ];
   double vImag[ numbersOfFFTSamples * 2 ];
@@ -368,58 +422,43 @@ uint16_t * measure_get_fft( void ) {
   return( &buffer_fft[0][0] );
 }
 
-/*
- * 
- */
+double measure_get_max_freq( void ) {
+    return( netfrequency );
+}
+
 float measure_get_Irms( int line ) {
   return( Irms[ line ] );
 }
 
-/*
- * 
- */
 float measure_get_Vrms( int line ) {
   return( Vrms[ line ] );
 }
 
-/*
- * 
- */
 float measure_get_power( int line ) {
   return( Irms[ line ] * Vrms[ line ] );
 }
 
-/*
- *
- */
 float measure_get_Iratio( void ) {
   return( atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 );
 }
 
-/*
- * 
- */
 void measure_StartTask( void ) {
   xTaskCreatePinnedToCore(
-                    measure_Task,   /* Function to implement the task */
+                    measure_Task,               /* Function to implement the task */
                     "measure measurement Task", /* Name of the task */
-                    10000,      /* Stack size in words */
-                    NULL,       /* Task input parameter */
-                    2,          /* Priority of the task */
-                    &_MEASURE_Task,       /* Task handle. */
-                    _MEASURE_TASKCORE );  /* Core where the task should run */  
+                    10000,                      /* Stack size in words */
+                    NULL,                       /* Task input parameter */
+                    2,                          /* Priority of the task */
+                    &_MEASURE_Task,             /* Task handle. */
+                    _MEASURE_TASKCORE );        /* Core where the task should run */  
 }
 
-/*
- * 
- */
 void measure_Task( void * pvParameters ) {
   static uint64_t NextMillis = millis();
 
-  Serial.printf("Start Measurement Task on Core: %d\r\n", xPortGetCoreID() );
+  log_i("Start Measurement Task on Core: %d\r\n", xPortGetCoreID() );
 
   measure_init();
-
   i2s_start(I2S_PORT);
 
   while( true ) {

@@ -29,84 +29,103 @@
  */
 #ifndef _MEASURE_H
 
-  #define _MEASURE_H
+    #define _MEASURE_H
 
-  #define MAX_ADC_CHANNELS      8
-  #define VIRTUAL_ADC_CHANNELS  6
-  #define VIRTUAL_CHANNELS      7
+    #define MAX_ADC_CHANNELS      8
+    #define VIRTUAL_ADC_CHANNELS  6
+    #define VIRTUAL_CHANNELS      7
 
-  #define numbersOfSamples      384
-  #define numbersOfFFTSamples   32
-  #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
-  #define DELAY                 1000
-  #define I2S_PORT              I2S_NUM_0
+    #define numbersOfSamples      256
+    #define numbersOfFFTSamples   32
+    #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
+    #define DELAY                 1000
+    #define I2S_PORT              I2S_NUM_0
 
-  struct channelconfig {
-    uint8_t type;
-    int16_t phaseshift;
-    uint8_t operation[8];
-  };
+    #define OPMASK 0xf0
 
-  enum {
-    CHANNEL_NOP = -1,
-    CURRENT,
-    VIRTUALCURRENT,
-    VOLTAGE,
-    VIRTUALVOLTAGE,
-    POWER,
-    VIRTUALPOWER
-  };
+    struct channelconfig {
+        uint8_t type;
+        int16_t phaseshift;
+        uint8_t operation[8];
+    };
 
-  #define OPMASK 0xf0
+    enum {
+        CHANNEL_NOP = -1,
+        CURRENT,
+        VIRTUALCURRENT,
+        VOLTAGE,
+        VIRTUALVOLTAGE,
+        POWER,
+        VIRTUALPOWER
+    };
 
-  enum {
-    NOP = 0x00,
-    ADD = 0x10,
-    SUB = 0x20,
-    MUL = 0x30,
-    DIV = 0x40,
-    GET_ADC = 0x50,
-    SET_ZERO = 0x60,
-    FILTER = 0x70,
-    NOFILTER = 0x80,
-    STORE_INTO_BUFFER = 0x90,
-    STORE_SQUARE_SUM = 0xa0,
-    STORE_SUM = 0xb0,
-    DIV_4096 = 0xc0
-  };
+    enum {
+        NOP = 0x00,
+        ADD = 0x10,
+        SUB = 0x20,
+        MUL = 0x30,
+        DIV = 0x40,
+        GET_ADC = 0x50,
+        SET_ZERO = 0x60,
+        FILTER = 0x70,
+        NOFILTER = 0x80,
+        STORE_INTO_BUFFER = 0x90,
+        STORE_SQUARE_SUM = 0xa0,
+        STORE_SUM = 0xb0,
+        DIV_4096 = 0xc0
+    };
 
-  enum {
-    CHANNEL_0,
-    CHANNEL_1,
-    CHANNEL_2,
-    CHANNEL_3,
-    CHANNEL_4,
-    CHANNEL_5,
-    CHANNEL_6,
-    CHANNEL_7,
-    CHANNEL_8,
-    CHANNEL_9,
-    CHANNEL_10,
-    CHANNEL_11,
-    CHANNEL_12,
-    CHANNEL_13,
-    CHANNEL_14,
-    CHANNEL_15,
-  };
+    enum {
+        CHANNEL_0,
+        CHANNEL_1,
+        CHANNEL_2,
+        CHANNEL_3,
+        CHANNEL_4,
+        CHANNEL_5,
+        CHANNEL_6,
+        CHANNEL_7,
+        CHANNEL_8,
+        CHANNEL_9,
+        CHANNEL_10,
+        CHANNEL_11,
+        CHANNEL_12,
+        CHANNEL_13,
+        CHANNEL_14,
+        CHANNEL_15,
+    };
 
-  void measure_init( void );
-  void measure_mes( void );
-  int measure_set_phaseshift( int corr );
-  int measure_set_samplerate( int corr );
-  uint16_t * measure_get_buffer( void );
-  uint16_t * measure_get_fft( void );
-  float measure_get_Irms( int line );
-  float measure_get_Vrms( int line );
-  float measure_get_power( int line );
-  float measure_get_Iratio( void );
-  void measure_StartTask( void );
-  void measure_StartSignalGenTask( void );
-  void measure_Task( void * pvParameters );
-  void measure_SignalGenTask( void * pvParameters );
+    /**
+     * @brief 
+     */
+    void measure_init( void );
+    /**
+     * @brief
+     */
+    void measure_mes( void );
+    /**
+     * @brief set phaseshift correction value for all voltage channels in numbers of samples
+     * @param   corr    correction value in sample
+     * @return  0 if ok or failed
+     */
+    int measure_set_phaseshift( int corr );
+    /**
+     * @brief set the samplerate correction value in numbers of sample 
+     * @param   corr    correction value in numbers of samples
+     * @return  0 if ok or failed
+     * @note it is very import for precise network frequency to calibrate
+     * the samplerate with this value
+     */
+    int measure_set_samplerate( int corr );
+    uint16_t * measure_get_buffer( void );
+    uint16_t * measure_get_fft( void );
+    double measure_get_max_freq( void );
+    float measure_get_Irms( int line );
+    float measure_get_Vrms( int line );
+    float measure_get_power( int line );
+    float measure_get_Iratio( void );
+    void measure_StartTask( void );
+    void measure_StartSignalGenTask( void );
+    void measure_Task( void * pvParameters );
+    void measure_SignalGenTask( void * pvParameters );
   
 #endif // _MEASURE_H

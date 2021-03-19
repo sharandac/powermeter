@@ -171,10 +171,11 @@ void mqtt_client_Task( void * pvParameters ) {
             if ( channel != 0 ) {
               strncat( value, ",", sizeof(value) );
             }
-            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\"}", channel
-                                                                                                                          , measure_power[ channel ] / atof( config_get_MQTTInterval() ) / 1000
-                                                                                                                          , measure_voltage[ channel ] / atof( config_get_MQTTInterval() )
-                                                                                                                          , measure_current[ channel ] / atof( config_get_MQTTInterval() ) );
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\",\"frequence\":\"%.3f\"}"   , channel
+                                                                                                                                                    , measure_power[ channel ] / atof( config_get_MQTTInterval() ) / 1000
+                                                                                                                                                    , measure_voltage[ channel ] / atof( config_get_MQTTInterval() )
+                                                                                                                                                    , measure_current[ channel ] / atof( config_get_MQTTInterval() )
+                                                                                                                                                    , measure_get_max_freq() );
             strncat( value, temp, sizeof(value) );
             measure_power[ channel ] = 0;
             measure_voltage[ channel ] = 0;
@@ -182,7 +183,7 @@ void mqtt_client_Task( void * pvParameters ) {
           }
           snprintf( temp, sizeof( temp ), ",\"Interval\":\"%s\"", config_get_MQTTInterval() );
           strncat( value, temp, sizeof(value) );
-          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\"}", sizeof(value) );
+          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\",\"FrequenceUnit\":\"Hz\"}", sizeof(value) );
           snprintf( topic, sizeof( topic ), "stat/%s/power", config_get_MQTTTopic() );
           mqtt_client_publish( topic , value );
         }
@@ -213,14 +214,18 @@ void mqtt_client_Task( void * pvParameters ) {
             if ( channel != 0 ) {
               strncat( value, ",", sizeof(value) );
             }
-            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\"}", channel, ( measure_get_Vrms( channel ) * measure_get_Irms( channel ) ) / 1000, measure_get_Vrms( channel ), measure_get_Irms( channel ) );
+            snprintf( temp, sizeof( temp ), "\"channel%d\":{\"power\":\"%.3f\",\"voltage\":\"%.3f\",\"current\":\"%.3f\",\"frequence\":\"%.3f\"}"   , channel
+                                                                                                                                                    , ( measure_get_Vrms( channel ) * measure_get_Irms( channel ) ) / 1000
+                                                                                                                                                    , measure_get_Vrms( channel )
+                                                                                                                                                    , measure_get_Irms( channel )
+                                                                                                                                                    , measure_get_max_freq() );
             strncat( value, temp, sizeof(value) );
           }
           if ( virtualchannel != 0 ) {
             snprintf( temp, sizeof( temp ), ",\"channel3\":{\"current\":\"%.3f\"}", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
             strncat( value, temp, sizeof(value) );
           }
-          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\"}", sizeof(value) );
+          strncat( value, ",\"PowerUnit\":\"kWs\", \"VoltageUnit\":\"V\", \"CurrentUnit\":\"A\",\"FrequenceUnit\":\"Hz\"}", sizeof(value) );
 
           snprintf( topic, sizeof( topic ), "stat/%s/realtimepower", config_get_MQTTTopic() );
           mqtt_client_publish( topic , value );

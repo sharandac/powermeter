@@ -168,6 +168,9 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
           sprintf( tmp, " ; Irmsn = %.3fA", measure_get_Irms( atoi(config_get_MeasureChannels()) ) );
           strcat( request, tmp );
         }
+
+        sprintf( tmp, " ; f = %.3fHz", measure_get_max_freq() );
+        strcat( request, tmp );
         strcat( request, " )");
 
         client->printf( request );
