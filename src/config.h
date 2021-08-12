@@ -53,7 +53,8 @@
     char MeasureChannels[16]="1";
     char MeasureSamplerate[16]="0";
     char MeasureVoltageFrequency[16]="50";
-  };
+    char MeasureCurrentOffset[16]="0";
+};
 
   #if CONFIG_FREERTOS_UNICORE
   
@@ -121,6 +122,8 @@
   void config_set_MeasureSamplerate( char * value );
   char * config_get_MeasurePhaseshift( void );
   void config_set_MeasurePhaseshift( char * value );
+  char * config_get_MeasureCurrentOffset( void );
+  void config_set_MeasureCurrentOffset( char * value );
 
   /*
    * firmewareversion string

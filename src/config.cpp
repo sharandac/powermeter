@@ -78,7 +78,8 @@ char * config_get_MeasureSamplerate( void ) { return( cfgdata.MeasureSamplerate 
 void config_set_MeasureSamplerate( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureSamplerate ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasureSamplerate , value ); }
 char * config_get_MeasurePhaseshift( void ) { return( cfgdata.MeasurePhaseshift ); }
 void config_set_MeasurePhaseshift( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasurePhaseshift ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasurePhaseshift , value ); }
-
+char * config_get_MeasureCurrentOffset( void ) { return( cfgdata.MeasureCurrentOffset ); }
+void config_set_MeasureCurrentOffset( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureCurrentOffset ) && atoi( value ) > -1 && atoi( value ) <= 1 ) strcpy( cfgdata.MeasureCurrentOffset , value ); }
 /*
  * 
  */

@@ -146,6 +146,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         client->printf("CHS\\%s", config_get_MeasureChannels() );
         client->printf("RAT\\%s", config_get_MeasureSamplerate() );
         client->printf("PHS\\%s", config_get_MeasurePhaseshift() );
+        client->printf("COF\\%s", config_get_MeasureCurrentOffset() );
       }
       /* get status-line */
       else if ( !strcmp("STS", cmd ) ) {
@@ -290,6 +291,10 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         snprintf( sampleratestring, sizeof( sampleratestring ), "%d", samplerate );
         config_set_MeasureSamplerate( sampleratestring );
         measure_set_samplerate( samplerate );
+      }
+      /* store smaple-rate */
+      else if ( !strcmp("COF", cmd ) ) {
+        config_set_MeasureCurrentOffset( value );
       }
     free( cmd );
     }

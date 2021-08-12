@@ -332,7 +332,7 @@ void measure_mes( void ) {
     */
     switch( channelconfig[ i ].type ) {
       case CURRENT:
-        *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) );
+        *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) + atof( config_get_MeasureCurrentOffset() );
         Serial.printf("I=%.3fA ", *Irms_channel );
         if ( firstrun > 0 ) *Irms_channel = 0;
         Irms_channel++;
