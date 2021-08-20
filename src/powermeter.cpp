@@ -91,7 +91,7 @@ void setup()
   Serial.printf("scan for SSID \"%s\" ... ", config_get_WlanSSID() );  
   if ( ota_scan( config_get_WlanSSID() ) == OTA_WLAN_OK ) {
     WiFi.mode( WIFI_STA );
-    Serial.printf("found\r\nconnect to %s\r\n", config_get_WlanSSID() );
+    Serial.printf("found\r\nconnect to %s (%s)\r\n", config_get_WlanSSID(), config_get_WlanPassord() );
     WiFi.begin( config_get_WlanSSID() , config_get_WlanPassord() );    
   }
   else {

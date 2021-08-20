@@ -28,11 +28,16 @@
  *
  */
 #include <WiFi.h>
+
+#include "powermeter_config.h"
+
 #include "config.h"
 #include "FS.h"
 #include "SPIFFS.h"
 
-struct CFGdata cfgdata;
+
+powermeter_config_t cfgdata;
+// struct CFGdata cfgdata;
 
 /*
  * 
@@ -85,75 +90,54 @@ void config_set_MeasureCurrentOffset( char * value ) { if ( strlen( value ) <= s
  */
 void config_setup( void ) {
   
-  if ( !SPIFFS.begin() ) {        
-    /*
-     * format SPIFFS if not aviable
-     */
-    SPIFFS.format();
-    Serial.printf("formating SPIFFS\r\n");
-  }
+    if ( !SPIFFS.begin() ) {        
+        /*
+         * format SPIFFS if not aviable
+         */
+        SPIFFS.format();
+        log_i("formating SPIFFS\r\n");
+    }
 
-  Serial.printf("Read config from SPIFFS\r\n");
-  if ( !config_read( sizeof( cfgdata ), &cfgdata, CONFIGNAME ) ) {
-    uint8_t mac[6];
-    Serial.printf("Write first config to SPIFFS\r\n");    
-    /*
-     * make an uniqe Hostname an SoftAp SSID
-     */
-    WiFi.macAddress( mac );
-    snprintf( cfgdata.HostName, sizeof( cfgdata.HostName ), "powermeter_%02x%02x%02x", mac[3], mac[4], mac[5] );
-    config_set_OTALocalApSSID( cfgdata.HostName );
-    config_save( sizeof ( cfgdata ), &cfgdata, CONFIGNAME );
-  }
+    log_i("Read config from SPIFFS\r\n");
+
+    if ( !cfgdata.load() ) {    
+        config_read( sizeof( cfgdata ), &cfgdata, CONFIGNAME );
+        // SPIFFS.remove( CONFIGNAME );
+        cfgdata.save();
+    }
 }
 
 /*
  * 
  */
-int config_save( int len, struct CFGdata *buf, const char * name ) {
-  int retval = 0;
-
-  File file = SPIFFS.open( name, "w" );
-
-  if ( !file ) {
-    Serial.printf("Can't open file: %s\r\n", name );
-  }
-  else {
-    file.write( ( unsigned char *) buf, len );
-    file.close();
-    retval = len;
-  }
-  return( retval );
+int config_save( void ) {
+    int retval = 0;
+    cfgdata.save();
+    return( retval );
 }
 
 /*
  * 
  */
-int config_read ( int len, struct CFGdata *buf, const char * name ) {
+int config_read ( int len, struct powermeter_config_t *buf, const char * name ) {
   int retval = 0;
   
   File file = SPIFFS.open( name, "r" );
 
   if (!file) {
-    Serial.printf("Can't open '%s'!\r\n", name );
+      log_i("Can't open '%s'!\r\n", name );
   }
   else {
     int filesize = file.size();
     if ( filesize > len ) {
-      Serial.printf("Failed to read configfile. Wrong filesize!\r\n" );
+        log_i("Failed to read configfile. Wrong filesize!\r\n" );
     }
     else {
-      file.read( ( unsigned char *) buf, filesize );
-      retval = filesize;
+        file.read( ( unsigned char *) buf, filesize );
+        retval = filesize;
     }
     file.close();
   }
   return( retval );
 }
 
-/*
- * 
- */
-void config_saveall( void ) {
-  config_save( sizeof ( cfgdata ), &cfgdata, CONFIGNAME );  
-}

@@ -77,9 +77,8 @@
   #endif // CONFIG_FREERTOS_UNICORE
 
   void config_setup( void );
-  int config_save( int len, struct CFGdata *buf, const char * name );
-  int config_read( int len, struct CFGdata *buf, const char * name );
-  void config_saveall( void );
+  int config_save( void );
+  int config_read( int len, struct powermeter_config_t *buf, const char * name );
 
   char * config_get_HostName( void );
   void config_set_HostName( char * value );
@@ -134,6 +133,7 @@
    * Config filename
    */
   #define CONFIGNAME              "/config.cfg"
+  #define JSON_CONFIGNAME              "/config.json"
 
   /*
    *  WLAN-Daten

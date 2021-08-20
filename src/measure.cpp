@@ -389,7 +389,7 @@ int measure_set_samplerate( int corr ) {
   esp_err_t err;
   err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + corr );
   if (err != ESP_OK ) {
-    Serial.printf("Failed set samplerate: %d\r\n", err);
+    log_e("Failed set samplerate: %d\r\n", err);
     while (true);
   }
   return( ESP_OK );

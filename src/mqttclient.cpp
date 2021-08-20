@@ -42,18 +42,18 @@ bool disable_MQTT=false;
  *
  */
 void onMqttConnect(bool sessionPresent) {
-  Serial.printf( "MQTT-Client: connected to %s\r\n", config_get_MQTTServer() );
+  log_i( "MQTT-Client: connected to %s\r\n", config_get_MQTTServer() );
   char topic[64] = "";
   snprintf( topic, sizeof( topic ), "cmd/%s/#", config_get_MQTTTopic() );
   mqttClient.subscribe( topic, 0 );
-  Serial.printf( "MQTT-Client: subscribe [%s]\r\n", topic );
+  log_i( "MQTT-Client: subscribe [%s]\r\n", topic );
 }
 
 /*
  *
  */
 void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
-  Serial.printf( "MQTT-Client: Disconnected from MQTT\r\n" );
+  log_i( "MQTT-Client: Disconnected from MQTT\r\n" );
   if ( WiFi.isConnected() )
     if ( strlen( config_get_MQTTServer() ) >= 1 && disable_MQTT == false ) {
       mqttClient.connect();
@@ -64,14 +64,14 @@ void onMqttDisconnect(AsyncMqttClientDisconnectReason reason) {
  *
  */
 void onMqttSubscribe(uint16_t packetId, uint8_t qos) {
-  Serial.printf( "MQTT-Client: Subscribe acknowledged [%d]\r\n", packetId );
+  log_i( "MQTT-Client: Subscribe acknowledged [%d]\r\n", packetId );
 }
 
 /*
  *
  */
 void onMqttUnsubscribe(uint16_t packetId) {
-  Serial.printf( "MQTT-Client: Unsubscribe acknowledged [%d]\r\n", packetId );
+  log_i( "MQTT-Client: Unsubscribe acknowledged [%d]\r\n", packetId );
 }
 
 /*
@@ -80,9 +80,9 @@ void onMqttUnsubscribe(uint16_t packetId) {
 void onMqttMessage(char* topic, char* payload, AsyncMqttClientMessageProperties properties, size_t len, size_t index, size_t total) {
   Serial.printf( "MQTT-Client: Publish received, topic: [%s] , payload: [", topic );
   for ( int i = 0 ; i < len ; i++ ) {
-    printf("%c",payload[i]);
+    Serial.printf("%c",payload[i]);
   }
-  printf("]\r\n");
+  Serial.printf("]\r\n");
 }
 
 /*

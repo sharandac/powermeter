@@ -87,7 +87,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
        */
       /* store all values into SPIFFFS */
       if ( !strcmp("SAV", cmd ) ) {
-        config_saveall();
+        config_save();
         client->printf("status\\Save" );
       }
       /* get samplebuffer */
@@ -337,7 +337,7 @@ void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_
     } else {
       Serial.println("Update complete");
       Serial.flush();
-      config_saveall();
+      config_save();
       ESP.restart();
     }
   }
@@ -422,7 +422,7 @@ void asyncwebserver_setup(void){
 
   asyncserver.on("/reset", HTTP_GET, []( AsyncWebServerRequest * request ) {
     request->send(200, "text/plain", "Reset\r\n" );
-    config_saveall();
+    config_save();
     delay(3000);
     ESP.restart();    
   });
