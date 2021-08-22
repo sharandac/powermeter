@@ -132,9 +132,9 @@ bool BaseJsonConfig::save( uint32_t size ) {
         
         size_t outSize = 0;
         if (prettyJson)
-        outSize = serializeJsonPretty(doc, file);
+            outSize = serializeJsonPretty(doc, file);
         else
-        outSize = serializeJson(doc, file);
+            outSize = serializeJson(doc, file);
 
         if (result == true && outSize == 0) {
             log_e("Failed to write config file %s", fileName);
@@ -169,9 +169,9 @@ bool BaseJsonConfig::save() {
         
         size_t outSize = 0;
         if (prettyJson)
-        outSize = serializeJsonPretty(doc, file);
+            outSize = serializeJsonPretty(doc, file);
         else
-        outSize = serializeJson(doc, file);
+            outSize = serializeJson(doc, file);
 
         if (result == true && outSize == 0) {
             log_e("Failed to write config file %s", fileName);

@@ -76,10 +76,10 @@ bool powermeter_config_t::onDefault( void ) {
     uint8_t mac[6];
     log_i("Write first config to SPIFFS\r\n");    
     /*
-     * make an uniqe Hostname an SoftAp SSID
+     * make an uniqe Hostname for the SoftAp SSID
      */
     WiFi.macAddress( mac );
     snprintf( HostName, sizeof( HostName ), "powermeter_%02x%02x%02x", mac[3], mac[4], mac[5] );
     snprintf( OTALocalApSSID, sizeof( OTALocalApSSID ), "powermeter_%02x%02x%02x", mac[3], mac[4], mac[5] );
-    return true;
+    return false;
 }
