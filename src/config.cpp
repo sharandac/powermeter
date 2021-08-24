@@ -111,9 +111,7 @@ void config_setup( void ) {
  * 
  */
 int config_save( void ) {
-    int retval = 0;
-    cfgdata.save();
-    return( retval );
+    return( cfgdata.save() );
 }
 
 /*

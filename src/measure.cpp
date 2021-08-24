@@ -252,7 +252,7 @@ void measure_mes( void ) {
             case GET_ADC:               sampleI[ i ] = adc_samples[ op_channel ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
                                         break;
             case FILTER:                lastFilteredI[ i ] = filteredI[ i ];
-                                        filteredI[ i ] = 0.9989 * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+                                        filteredI[ i ] = ( 0.9989 - ( 0.001 * op_channel ) ) * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
                                         break;
             case NOFILTER:              lastFilteredI[ i ] = filteredI[ i ];
                                         filteredI[ i ] = sampleI[ i ];
@@ -472,3 +472,123 @@ void measure_Task( void * pvParameters ) {
   }
 }
 
+uint8_t measure_get_channel_type( uint16_t channel ){
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+        
+    return( channelconfig[ channel ].type );
+}
+
+void measure_set_channel_type( uint16_t channel, uint8_t value ){
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+        
+    channelconfig[ channel ].type = value;
+    log_i("set channel %d type to %d", channel, channelconfig[ channel ].type );
+}
+
+
+int16_t measure_get_channel_phaseshift( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+
+    return( channelconfig[ channel ].phaseshift );
+}
+
+void measure_set_channel_phaseshift( uint16_t channel, int16_t value ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    channelconfig[ channel ].phaseshift = value;
+    log_i("set channel %d phaseshift to %d", channel, channelconfig[ channel ].phaseshift );
+}
+
+uint8_t * measure_get_channel_opcodeseq( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( NULL );
+
+    return( channelconfig[ channel ].operation );
+}
+
+char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *dest ) {
+    char microcode_tmp[ 3 ] = "";
+    uint8_t *opcode = channelconfig[ channel ].operation;
+
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( NULL );
+
+    if ( !dest ) {
+        return( NULL );
+    }
+
+    for( int a = 0 ; a < MAX_MICROCODE_OPS ; a++ ) {
+        snprintf( microcode_tmp, sizeof( microcode_tmp ), "%02x", *opcode );
+        strncat( dest, microcode_tmp, len );
+        opcode++;
+    }
+
+    return( dest );
+}
+
+void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
+    char microcode[ VIRTUAL_CHANNELS * 3 ] = "";
+    char microcode_tmp[ 3 ] = "";
+    uint8_t *opcode = value;
+
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    memcpy( channelconfig[ channel ].operation, value, MAX_MICROCODE_OPS );
+
+    for( int a = 0 ; a < MAX_MICROCODE_OPS ; a++ ) {
+        snprintf( microcode_tmp, sizeof( microcode_tmp ), "%02x", *opcode );
+        strncat( microcode, microcode_tmp, sizeof( microcode ) );
+        opcode++;
+    }
+
+    log_i("set channel %d microcode to \"%s\"", channel, microcode );
+}
+
+void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
+    char spanset[] = "0123456789ABCDEFabcdef";
+    char *ptr = (char *)value;
+    uint8_t opcode_binary = 0;
+    int opcode_pos = 0;
+
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    log_i("set channel %d microcode to \"%s\"", channel, ptr );
+
+    /**
+     * check string for illigal format
+     */
+    while( *ptr ) {
+        ptr = strpbrk( ptr, spanset );
+        if ( !ptr ) {
+            log_e("abort, wrong format");
+            break;
+        }
+        opcode_binary = ( ( *ptr <= '9') ? *ptr - '0' : ( *ptr & 0x7) + 9 ) << 4;
+        ptr++;
+
+        ptr = strpbrk( ptr, spanset );
+        if ( !ptr ) {
+            log_e("abort, wrong format");
+            break;
+        }
+        opcode_binary = opcode_binary + ( ( *ptr <= '9') ? *ptr - '0' : ( *ptr & 0x7) + 9 );
+        ptr++;
+
+        if ( opcode_pos < MAX_MICROCODE_OPS ) {
+            log_d("opcode = %02x, pos = %d", opcode_binary, opcode_pos );
+            channelconfig[ channel ].operation[ opcode_pos ] = opcode_binary;
+            opcode_pos++;
+        }
+        else {
+            log_e("no more space for opcodes");
+            break;
+        }
+    }
+    return;
+}

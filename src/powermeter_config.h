@@ -58,7 +58,7 @@
         virtual bool onLoad(JsonDocument& document);
         virtual bool onSave(JsonDocument& document);
         virtual bool onDefault( void );
-        virtual size_t getJsonBufferSize() { return 8192; }
+        virtual size_t getJsonBufferSize() { return 32768; }
     } ;
 
 #endif // _POWERMETER_CONFIG_H

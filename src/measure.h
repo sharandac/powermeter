@@ -35,6 +35,8 @@
     #define VIRTUAL_ADC_CHANNELS  6
     #define VIRTUAL_CHANNELS      7
 
+    #define MAX_MICROCODE_OPS     8
+
     #define numbersOfSamples      256
     #define numbersOfFFTSamples   32
     #define samplingFrequency     numbersOfSamples*VIRTUAL_ADC_CHANNELS
@@ -46,7 +48,7 @@
     struct channelconfig {
         uint8_t type;
         int16_t phaseshift;
-        uint8_t operation[8];
+        uint8_t operation[ MAX_MICROCODE_OPS ];
     };
 
     enum {
@@ -127,5 +129,13 @@
     void measure_StartSignalGenTask( void );
     void measure_Task( void * pvParameters );
     void measure_SignalGenTask( void * pvParameters );
-  
+    uint8_t measure_get_channel_type( uint16_t channel );
+    void measure_set_channel_type( uint16_t channel, uint8_t value );
+    int16_t measure_get_channel_phaseshift( uint16_t channel );
+    void measure_set_channel_phaseshift( uint16_t channel, int16_t value );
+    uint8_t * measure_get_channel_opcodeseq( uint16_t channel );
+    char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *dest );
+    void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value );
+    void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value );
+
 #endif // _MEASURE_H

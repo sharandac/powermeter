@@ -21,10 +21,13 @@
  */
 #include <WiFi.h>
 #include "powermeter_config.h"
+#include "measure.h"
 
 powermeter_config_t::powermeter_config_t() : BaseJsonConfig( POWERMETER_JSON_CONFIG_FILE ) {}
 
-bool powermeter_config_t::onSave(JsonDocument& doc) {
+bool powermeter_config_t::onSave(JsonDocument& doc) {    
+    log_i("save config");
+
     doc["powermeter"]["firmware"] = Firmware;
     doc["powermeter"]["hostName"] = HostName;
     doc["powermeter"]["wifi"]["SSID"] = WlanSSID;
@@ -45,10 +48,21 @@ bool powermeter_config_t::onSave(JsonDocument& doc) {
     doc["powermeter"]["measure"]["Samplerate"] = MeasureSamplerate;
     doc["powermeter"]["measure"]["VoltageFrequency"] = MeasureVoltageFrequency;
     doc["powermeter"]["measure"]["CurrentOffset"] = MeasureCurrentOffset;
+    doc["powermeter"]["measure"]["VirtualChannels"] = VIRTUAL_CHANNELS;
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+        char microcode[ VIRTUAL_CHANNELS * 3 ] = "";
+        doc["powermeter"]["measure"]["VirtualChannel"][ i ]["channel"] = i;
+        doc["powermeter"]["measure"]["VirtualChannel"][ i ]["type"] = measure_get_channel_type( i );
+        doc["powermeter"]["measure"]["VirtualChannel"][ i ]["phaseshift"] = measure_get_channel_phaseshift( i );
+        doc["powermeter"]["measure"]["VirtualChannel"][ i ]["mircocode"] = measure_get_channel_opcodeseq_str( i, sizeof( microcode ), microcode );
+    }
+
     return true;
 }
 
 bool powermeter_config_t::onLoad(JsonDocument& doc) {
+    int virtualchannels = 0;
+
     strncpy( Firmware, doc["powermeter"]["firmware"] | "1", sizeof( Firmware ) );
     strncpy( HostName, doc["powermeter"]["hostName"] | "powermeter", sizeof( HostName ) );
     strncpy( WlanSSID, doc["powermeter"]["wifi"]["SSID"] | "", sizeof( WlanSSID ) );
@@ -68,7 +82,18 @@ bool powermeter_config_t::onLoad(JsonDocument& doc) {
     strncpy( MeasureChannels, doc["powermeter"]["measure"]["Channels"] | "1", sizeof( MeasureChannels ) );
     strncpy( MeasureSamplerate, doc["powermeter"]["measure"]["Samplerate"] | "0", sizeof( MeasureSamplerate ) );
     strncpy( MeasureVoltageFrequency, doc["powermeter"]["measure"]["VoltageFrequency"] | "50", sizeof( MeasureVoltageFrequency ) );
-    strncpy( MeasureCurrentOffset, doc["powermeter"]["measure"]["CurrentOffset"] | "0", sizeof( MeasureCurrentOffset ) ); 
+    strncpy( MeasureCurrentOffset, doc["powermeter"]["measure"]["CurrentOffset"] | "0", sizeof( MeasureCurrentOffset ) );
+
+    virtualchannels = doc["powermeter"]["measure"]["VirtualChannels"] | VIRTUAL_CHANNELS;
+    for( int i = 0 ; i < virtualchannels ; i++ ) {
+        int channel = doc["powermeter"]["measure"]["VirtualChannel"][ i ]["channel"];
+        const char *opcodeseq_str = doc["powermeter"]["measure"]["VirtualChannel"][ i ]["mircocode"];
+
+        measure_set_channel_type( channel, doc["powermeter"]["measure"]["VirtualChannel"][ i ]["type"].as<uint8_t>() );
+        measure_set_channel_phaseshift( channel, doc["powermeter"]["measure"]["VirtualChannel"][ i ]["phaseshift"].as<int16_t>() );
+        measure_set_channel_opcodeseq_str( channel, opcodeseq_str );        
+    }
+
     return true;
 }
 

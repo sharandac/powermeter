@@ -420,9 +420,16 @@ void asyncwebserver_setup(void){
     }
   });
 
+  asyncserver.on("/default", HTTP_GET, []( AsyncWebServerRequest * request ) {
+    request->send(200, "text/plain", "Reset to default\r\n" );
+    SPIFFS.remove( "powermeter.json" );
+    SPIFFS.remove( "config.cfg" );
+    delay(3000);
+    ESP.restart();    
+  });
+  
   asyncserver.on("/reset", HTTP_GET, []( AsyncWebServerRequest * request ) {
     request->send(200, "text/plain", "Reset\r\n" );
-    config_save();
     delay(3000);
     ESP.restart();    
   });
