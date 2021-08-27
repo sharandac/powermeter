@@ -1,0 +1,146 @@
+<html>
+<head>
+   <meta charset='utf-8'>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="styles.css">
+<script src="jquery-latest.min.js" type="text/javascript"></script>
+<script src="alarm.js" type="text/javascript"></script>
+<script src="script.js"></script>
+</head>
+<body>
+<div id='cssmenu'>
+<ul>
+   <li><a href='index.htm'>Main</a></li>
+   <li><a href='measure.htm'>Measurement</a></li>
+   <li><a href='live.htm'>Live view</a></li>
+   <li><a href='mqtt.htm'>MQTT settings</a></li>
+   <li><a href='wlan.htm'>WLAN settings</a></li>
+   <li><a href='update.htm'>Web update</a></li>
+   <li><a href='info.htm'>Info</a></li>
+</ul>
+</div>
+<h1>microcode editor</h1>
+<div class="vbox">
+  <div class="box">
+    <h3>select virtual channel</h3>
+  </div>
+  <div class="box">
+    <div class="select-wrapper"><select id="CHC" name="CHC" onclick='SaveSetting("CHC");refreshValue();refreshOpcode();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+  </div>
+</div>
+<div class="hbox">
+  <div class="vbox">
+    <div class="box">
+      <h3>channel type</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="CHT" name="CHT"><option value="0">CURRENT</option><option value="2">VOLTAGE</option><option value="1">VIRTUALCURRENT</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 0</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_0" name="opcode_0" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_0" name="channel_0"onclick='refreshOpcodeStr()';><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode  1</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_1" name="opcode_1" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_1" name="channel_1" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 2</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_2" name="opcode_2" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_2" name="channel_2" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 3</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_3" name="opcode_3" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_3" name="channel_3" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 4</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_4" name="opcode_4" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_4" name="channel_4" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 5</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_5" name="opcode_5" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_5" name="channel_5" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 6</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_6" name="opcode_6" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_6" name="channel_6" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode 7</h3>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="opcode_7" name="opcode_7" onclick='refreshOpcodeStr();'><option value="0">NOP</option><option value="1">ADD</option><option value="2">SUB</option><option value="3">MUL</option><option value="4">DIV</option><option value="5">GET ADC</option><option value="6">SET ZERO</option><option value="7">FILTER</option><option value="8">NOFILTER</option><option value="9">STORE INTO BUFFER</option><option value="a">STORE SQUARE SUM</option><option value="b">STORE SUM</option><option value="c">DIV 4096</option><option value="d">NEG</option></select></div>
+    </div>
+    <div class="box">
+      <div class="select-wrapper"><select id="channel_7" name="channel_7" onclick='refreshOpcodeStr();'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>opcode sequence</h3>
+    </div>
+    <div class="box">
+      <input type='text' size='63' id='CHO' onchange='refreshOpcode();'></input>
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<button type='button' onclick='SaveSetting("CHO");SaveSetting("CHT");refreshValue();' class='button'>save</button><br><br>
+<br>
+<br>
+<br>
+<div id='fixedfooter'><span id='status'>offline</span></div>
+</body>
+</html>

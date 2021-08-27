@@ -270,7 +270,9 @@ void measure_mes( void ) {
                                         break;
             case DIV_4096:              sampleI[ i ] = filteredI[ i ] / 4096;
                                         break;
-            default:                    log_e("Error, channel operation not allowed!");
+            case NEG:                   sampleI[ i ] = filteredI[ i ] * -1.0;
+                                        break;
+            default:                    log_e("channel operation not allowed!");
                                         while( 1 );
           }
         }
@@ -564,6 +566,9 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
      * check string for illigal format
      */
     while( *ptr ) {
+        /**
+         * get first nibble of opcode
+         */
         ptr = strpbrk( ptr, spanset );
         if ( !ptr ) {
             log_e("abort, wrong format");
@@ -571,7 +576,9 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
         }
         opcode_binary = ( ( *ptr <= '9') ? *ptr - '0' : ( *ptr & 0x7) + 9 ) << 4;
         ptr++;
-
+        /**
+         * get 2'nd nibble of opcode
+         */
         ptr = strpbrk( ptr, spanset );
         if ( !ptr ) {
             log_e("abort, wrong format");
@@ -579,7 +586,9 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
         }
         opcode_binary = opcode_binary + ( ( *ptr <= '9') ? *ptr - '0' : ( *ptr & 0x7) + 9 );
         ptr++;
-
+        /**
+         * check if we have space for next opcode
+         */
         if ( opcode_pos < MAX_MICROCODE_OPS ) {
             log_d("opcode = %02x, pos = %d", opcode_binary, opcode_pos );
             channelconfig[ channel ].operation[ opcode_pos ] = opcode_binary;

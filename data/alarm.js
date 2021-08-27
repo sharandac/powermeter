@@ -9,18 +9,18 @@ setInterval(function () { if ( connect == true ) getStatus();}, 1000);
 
 connection.onopen = function () {
 	connect = true; 	
-//	console.log('STA');
+	console.log('STA');
 	connection.send('STA');
 };
 
 connection.onerror = function (error) {
 	connect = false; 
-//	console.log('WebSocket Error ', error);
+	console.log('WebSocket Error ', error);
 	connection = new WebSocket('ws://' + location.hostname + '/ws', ['arduino']); 
 };
 
 connection.onmessage = function (e) {
-//	console.log('Server: ', e.data);
+	console.log('Server: ', e.data);
 	partsarry = e.data.split('\\');
 	if (partsarry[0] == 'OScopeProbe') {
 		GotOScope(e.data );
@@ -37,19 +37,19 @@ connection.onmessage = function (e) {
 		}
 	}
 	else {
-		if ( document.getElementById( partsarry[0] ) ) { document.getElementById( partsarry[0] ).value = partsarry[1]; }
+		if ( document.getElementById( partsarry[0] ) ) { document.getElementById( partsarry[0] ).value = partsarry[1]; refreshOpcode(); }
 	}
 }
 
 function refreshValue() {
-//	console.log( "send: SAV" );
+	console.log( "send: SAV" );
 	if ( connect ) connection.send( "SAV" );
-//	console.log('send: STA');
+	console.log('send: STA');
 	if ( connect ) connection.send('STA');
 }
 
 function getStatus() {
-//	console.log('send: STS');
+	console.log('send: STS');
 	if ( connect ) connection.send('STS');
 	counter = counter - 1;
 	savecounter = savecounter -1;
@@ -64,13 +64,72 @@ function getStatus() {
 	}
 }
 
+function refreshOpcode() {
+  var data = document.getElementById( 'CHO' ).value;
+  var opcode = data.substr( 0, 1);
+  document.getElementById( 'opcode_0' ).value = opcode;
+  var opcode = data.substr( 2, 1);
+  document.getElementById( 'opcode_1' ).value = opcode;
+  var opcode = data.substr( 4, 1);
+  document.getElementById( 'opcode_2' ).value = opcode;
+  var opcode = data.substr( 6, 1);
+  document.getElementById( 'opcode_3' ).value = opcode;
+  var opcode = data.substr( 8, 1);
+  document.getElementById( 'opcode_4' ).value = opcode;
+  var opcode = data.substr( 10, 1);
+  document.getElementById( 'opcode_5' ).value = opcode;
+  var opcode = data.substr( 12, 1);
+  document.getElementById( 'opcode_6' ).value = opcode;
+  var opcode = data.substr( 14, 1);
+  document.getElementById( 'opcode_7' ).value = opcode;
+
+  var channel = data.substr( 1, 1);
+  document.getElementById( 'channel_0' ).value = channel;
+  var channel = data.substr( 3, 1);
+  document.getElementById( 'channel_1' ).value = channel;
+  var channel = data.substr( 5, 1);
+  document.getElementById( 'channel_2' ).value = channel;
+  var channel = data.substr( 7, 1);
+  document.getElementById( 'channel_3' ).value = channel;
+  var channel = data.substr( 9, 1);
+  document.getElementById( 'channel_4' ).value = channel;
+  var channel = data.substr( 11, 1);
+  document.getElementById( 'channel_5' ).value = channel;
+  var channel = data.substr( 13, 1);
+  document.getElementById( 'channel_6' ).value = channel;
+  var channel = data.substr( 15, 1);
+  document.getElementById( 'channel_7' ).value = channel;
+}
+
+function refreshOpcodeStr() {
+  var opcode_str = '';
+  opcode_str += document.getElementById( 'opcode_0' ).value;
+  opcode_str += document.getElementById( 'channel_0' ).value;
+  opcode_str += document.getElementById( 'opcode_1' ).value;
+  opcode_str += document.getElementById( 'channel_1' ).value;
+  opcode_str += document.getElementById( 'opcode_2' ).value;
+  opcode_str += document.getElementById( 'channel_2' ).value;
+  opcode_str += document.getElementById( 'opcode_3' ).value;
+  opcode_str += document.getElementById( 'channel_3' ).value;
+  opcode_str += document.getElementById( 'opcode_4' ).value;
+  opcode_str += document.getElementById( 'channel_4' ).value;
+  opcode_str += document.getElementById( 'opcode_5' ).value;
+  opcode_str += document.getElementById( 'channel_5' ).value;
+  opcode_str += document.getElementById( 'opcode_6' ).value;
+  opcode_str += document.getElementById( 'channel_6' ).value;
+  opcode_str += document.getElementById( 'opcode_7' ).value;
+  opcode_str += document.getElementById( 'channel_7' ).value;
+document.getElementById( 'CHO' ).value = opcode_str;
+  console.log( opcode_str );
+}
+
 function SaveSetting( value ) {
-//	console.log( "send: " + value  + "\\" + document.getElementById( value ).value );
+	console.log( "send: " + value  + "\\" + document.getElementById( value ).value );
 	if ( connect ) connection.send( value + "\\" + document.getElementById( value ).value );
 }
 
 function OScopeProbe() {
-//	console.log( "send: OSC" );
+	console.log( "send: OSC" );
 	if ( connect ) connection.send( "OSC" );
 }
 

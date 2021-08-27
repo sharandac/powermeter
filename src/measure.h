@@ -74,7 +74,8 @@
         STORE_INTO_BUFFER = 0x90,
         STORE_SQUARE_SUM = 0xa0,
         STORE_SUM = 0xb0,
-        DIV_4096 = 0xc0
+        DIV_4096 = 0xc0,
+        NEG = 0xd0
     };
 
     enum {

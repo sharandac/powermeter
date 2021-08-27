@@ -51,6 +51,7 @@ TaskHandle_t _WEBSERVER_Task;
  * websocket-eventroutine
  */
 void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len) {
+  static int selectedchannel = 0;
   /*
    * queue the event-type
    */
@@ -127,6 +128,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       }
       /* get all store values */
       else if ( !strcmp("STA", cmd ) ) {
+        char tmp[64]="";
         client->printf( "status\\online" );
         client->printf("WSS\\%s", config_get_WlanSSID() );
         client->printf("WPS\\%s", "********" );
@@ -147,6 +149,9 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         client->printf("RAT\\%s", config_get_MeasureSamplerate() );
         client->printf("PHS\\%s", config_get_MeasurePhaseshift() );
         client->printf("COF\\%s", config_get_MeasureCurrentOffset() );
+        client->printf("CHC\\%d", selectedchannel );
+        client->printf("CHT\\%01x", measure_get_channel_type( selectedchannel ) );
+        client->printf("CHO\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
       }
       /* get status-line */
       else if ( !strcmp("STS", cmd ) ) {
@@ -295,6 +300,18 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       /* store smaple-rate */
       else if ( !strcmp("COF", cmd ) ) {
         config_set_MeasureCurrentOffset( value );
+      }
+      /* set channel */
+      else if ( !strcmp("CHC", cmd ) ) {
+        selectedchannel = atoi( value );
+      }
+      /* set channel type*/
+      else if ( !strcmp("CHT", cmd ) ) {
+        measure_set_channel_type( selectedchannel , atoi( value ) );
+      }
+      /* set channel opcodes*/
+      else if ( !strcmp("CHO", cmd ) ) {
+        measure_set_channel_opcodeseq_str( selectedchannel ,value );
       }
     free( cmd );
     }

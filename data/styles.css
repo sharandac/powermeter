@@ -437,3 +437,46 @@ input[type=button], input[type=submit], input[type=reset] {
 	font-size: 16px;
 	cursor: pointer;
 }
+
+
+li a, .dropbtn {
+    display: inline-block;
+    color: black;
+    text-align: center;
+    padding: 14px 10px;
+    text-decoration: none;
+}
+
+.select-wrapper {
+  width: 200px;
+}
+
+select {
+  -moz-appearance: none;
+  -webkit-appearance: none;
+  appearance: none;
+  border: none;
+  width: 100%;
+  height: 40px;
+  -moz-padding-start: calc(10px - 3px);
+  padding-left: 10px;
+  color: #000;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 16px;
+}
+
+.hbox {
+      float: left;
+      padding: 5px;
+}
+
+.vbox {
+      width: 100%;
+      float: left;
+      padding: 5px;
+}
+
+.box {
+     float: left;
+     padding: 5px;
+}
