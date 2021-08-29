@@ -13,7 +13,6 @@
 <ul>
    <li><a href='index.htm'>Main</a></li>
    <li><a href='measure.htm'>Measurement</a></li>
-   <li><a href='microcode.htm'>Microcode editor</a></li>
    <li><a href='live.htm'>Live view</a></li>
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
@@ -21,9 +20,13 @@
    <li><a href='info.htm'>Info</a></li>
 </ul>
 </div>
+<h1>host settings</h1>
+<label>hostname</label><br>
+<input type='text' size='63' id='HST'></input>
 <br>
 <br>
-<center>&copy; 2020 / Dirk Bro&szlig;wick / Email: dirk.brosswick@googlemail.com</center>
+<button type='button' onclick='SaveSetting("HST");refreshValue();' class='button'>save</button><br><br>
+<br>
 <br>
 <br>
 <div id='fixedfooter'><span id='status'>offline</span></div>
