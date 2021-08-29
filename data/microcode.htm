@@ -13,6 +13,7 @@
 <ul>
    <li><a href='index.htm'>Main</a></li>
    <li><a href='measure.htm'>Measurement</a></li>
+   <li><a href='microcode.htm'>Microcode editor</a></li>
    <li><a href='live.htm'>Live view</a></li>
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
@@ -36,6 +37,14 @@
     </div>
     <div class="box">
       <div class="select-wrapper"><select id="CHT" name="CHT"><option value="0">CURRENT</option><option value="2">VOLTAGE</option><option value="1">VIRTUALCURRENT</option></select></div>
+    </div>
+  </div>
+  <div class="vbox">
+    <div class="box">
+      <h3>phaseshift</h3>
+    </div>
+    <div class="box">
+      <input type='text' size='63' id='CPS'></input>
     </div>
   </div>
   <div class="vbox">
@@ -137,7 +146,7 @@
 </div>
 <br>
 <br>
-<button type='button' onclick='SaveSetting("CHO");SaveSetting("CHT");refreshValue();' class='button'>save</button><br><br>
+<button type='button' onclick='SaveSetting("CHO");SaveSetting("CHT");SaveSetting("CPS");refreshValue();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>

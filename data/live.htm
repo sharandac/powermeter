@@ -13,6 +13,7 @@
 <ul>
    <li><a href='index.htm'>Main</a></li>
    <li><a href='measure.htm'>Measurement</a></li>
+   <li><a href='microcode.htm'>Microcode editor</a></li>
    <li><a href='live.htm'>Live view</a></li>
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
@@ -38,17 +39,19 @@
         <td>
             samplerate <input type=button onclick="SampleratePlus(); " id=SampleratePlusButton value="+">
             <input type=button onclick="SamplerateMinus(); " id=SamplerateMinusButton value="-">
+<!--
             phaseshift <input type=button onclick="PhaseshiftPlus(); " id=SampleratePlusButton value="+">
             <input type=button onclick="PhaseshiftMinus(); " id=SamplerateMinusButton value="-">
+-->
             <input type=button onclick="ToggleOScopePause(); OScopeProbe();" id=OScopeProbeButton value="|| / >">
             zoom: <output id="OSCMultOut"></output><br>
             <input type="checkbox" id="channel0" checked><label for="channel0">I1</label>
-            <input type="checkbox" id="channel1" checked><label for="channel1">U1</label>
+            <input type="checkbox" id="channel1" checked><label for="channel1">U1</label><br>
             <input type="checkbox" id="channel2" checked><label for="channel2">I2</label>
-            <input type="checkbox" id="channelv" checked><label for="channelv">In</label>
-            <input type="checkbox" id="channel3" checked><label for="channel3">U2</label>
+            <input type="checkbox" id="channel3" checked><label for="channel3">U2</label><br>
             <input type="checkbox" id="channel4" checked><label for="channel4">I3</label>
-            <input type="checkbox" id="channel5" checked><label for="channel5">U3</label>
+            <input type="checkbox" id="channel5" checked><label for="channel5">U3</label><br>
+            <input type="checkbox" id="channelv" checked><label for="channelv">In</label>
         </td>
       <tr>
       </tr>

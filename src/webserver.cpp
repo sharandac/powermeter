@@ -147,10 +147,10 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         client->printf("HRZ\\%s", config_get_MeasureVoltageFrequency() );
         client->printf("CHS\\%s", config_get_MeasureChannels() );
         client->printf("RAT\\%s", config_get_MeasureSamplerate() );
-        client->printf("PHS\\%s", config_get_MeasurePhaseshift() );
         client->printf("COF\\%s", config_get_MeasureCurrentOffset() );
         client->printf("CHC\\%d", selectedchannel );
         client->printf("CHT\\%01x", measure_get_channel_type( selectedchannel ) );
+        client->printf("CPS\\%d", measure_get_channel_phaseshift( selectedchannel ) );
         client->printf("CHO\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
       }
       /* get status-line */
@@ -256,29 +256,6 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         config_set_MeasureSamplerate( value );
         measure_set_samplerate( atoi( value ) );
       }
-      /* store smaple-rate */
-      else if ( !strcmp("PHS", cmd ) ) {
-        config_set_MeasurePhaseshift( value );
-        measure_set_phaseshift( atoi( value ) );
-      }
-      /* phaseshift + */
-      else if ( !strcmp("PS+", cmd ) ) {
-        char phaseshiftstring[16]="0";
-        int phaseshift = atoi( config_get_MeasurePhaseshift() );
-        phaseshift += 1;
-        snprintf( phaseshiftstring, sizeof( phaseshiftstring ), "%d", phaseshift );
-        config_set_MeasurePhaseshift( phaseshiftstring );
-        measure_set_phaseshift( phaseshift );
-      }
-      /* phaseshift - */
-      else if ( !strcmp("PS-", cmd ) ) {
-        char phaseshiftstring[16]="0";
-        int phaseshift = atoi( config_get_MeasurePhaseshift() );
-        phaseshift -= 1;
-        snprintf( phaseshiftstring, sizeof( phaseshiftstring ), "%d", phaseshift );
-        config_set_MeasurePhaseshift( phaseshiftstring );
-        measure_set_phaseshift( phaseshift );
-      }
       /* sample-rate +1Hz */
       else if ( !strcmp("FQ+", cmd ) ) {
         char sampleratestring[16]="0";
@@ -308,6 +285,10 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
       /* set channel type*/
       else if ( !strcmp("CHT", cmd ) ) {
         measure_set_channel_type( selectedchannel , atoi( value ) );
+      }
+      /* set channel type*/
+      else if ( !strcmp("CPS", cmd ) ) {
+        measure_set_channel_phaseshift( selectedchannel , atoi( value ) );
       }
       /* set channel opcodes*/
       else if ( !strcmp("CHO", cmd ) ) {

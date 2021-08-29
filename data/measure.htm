@@ -13,6 +13,7 @@
 <ul>
    <li><a href='index.htm'>Main</a></li>
    <li><a href='measure.htm'>Measurement</a></li>
+   <li><a href='microcode.htm'>Microcode editor</a></li>
    <li><a href='live.htm'>Live view</a></li>
    <li><a href='mqtt.htm'>MQTT settings</a></li>
    <li><a href='wlan.htm'>WLAN settings</a></li>
@@ -31,15 +32,13 @@
 <input type='text' size='63' id='VOL'></input>
 <label>AC voltage frequency in Hz</label><br>
 <input type='text' size='63' id='HRZ'></input>
-<label>AC voltage phaseshift</label><br>
-<input type='text' size='63' id='PHS'></input>
 <label>sample rate correction value in Hz</label><br>
 <input type='text' size='63' id='RAT'></input>
 <label>Current offset in A ( from -0.999 to 0.999 )</label><br>
 <input type='text' size='63' id='COF'></input>
 <br>
 <br>
-<button type='button' onclick='SaveSetting("CHS");SaveSetting("HRZ");SaveSetting("PHS");SaveSetting("RAT");SaveSetting("BUR");SaveSetting("COI");SaveSetting("VOL");SaveSetting("COF");refreshValue();' class='button'>save</button><br><br>
+<button type='button' onclick='SaveSetting("CHS");SaveSetting("HRZ");SaveSetting("RAT");SaveSetting("BUR");SaveSetting("COI");SaveSetting("VOL");SaveSetting("COF");refreshValue();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>

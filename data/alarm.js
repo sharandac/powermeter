@@ -119,7 +119,7 @@ function refreshOpcodeStr() {
   opcode_str += document.getElementById( 'channel_6' ).value;
   opcode_str += document.getElementById( 'opcode_7' ).value;
   opcode_str += document.getElementById( 'channel_7' ).value;
-document.getElementById( 'CHO' ).value = opcode_str;
+  document.getElementById( 'CHO' ).value = opcode_str;
   console.log( opcode_str );
 }
 

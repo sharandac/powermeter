@@ -43,7 +43,6 @@ bool powermeter_config_t::onSave(JsonDocument& doc) {
     doc["powermeter"]["measure"]["BurdenResistor"] = MeasureBurdenResistor;
     doc["powermeter"]["measure"]["CoilTurns"] = MeasureCoilTurns;
     doc["powermeter"]["measure"]["Voltage"] = MeasureVoltage;
-    doc["powermeter"]["measure"]["Phaseshift"] = MeasurePhaseshift;
     doc["powermeter"]["measure"]["Channels"] = MeasureChannels;
     doc["powermeter"]["measure"]["Samplerate"] = MeasureSamplerate;
     doc["powermeter"]["measure"]["VoltageFrequency"] = MeasureVoltageFrequency;
@@ -78,7 +77,6 @@ bool powermeter_config_t::onLoad(JsonDocument& doc) {
     strncpy( MeasureBurdenResistor, doc["powermeter"]["measure"]["BurdenResistor"] | "60", sizeof( MeasureBurdenResistor ) );
     strncpy( MeasureCoilTurns, doc["powermeter"]["measure"]["CoilTurns"] | "2000", sizeof( MeasureCoilTurns ) );
     strncpy( MeasureVoltage, doc["powermeter"]["measure"]["Voltage"] | "230", sizeof( MeasureVoltage ) );
-    strncpy( MeasurePhaseshift, doc["powermeter"]["measure"]["Phaseshift"] | "0", sizeof( MeasurePhaseshift ) );
     strncpy( MeasureChannels, doc["powermeter"]["measure"]["Channels"] | "1", sizeof( MeasureChannels ) );
     strncpy( MeasureSamplerate, doc["powermeter"]["measure"]["Samplerate"] | "0", sizeof( MeasureSamplerate ) );
     strncpy( MeasureVoltageFrequency, doc["powermeter"]["measure"]["VoltageFrequency"] | "50", sizeof( MeasureVoltageFrequency ) );

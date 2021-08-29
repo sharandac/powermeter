@@ -56,12 +56,12 @@ int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_3, CHANNEL_NOP, CHANNEL_NO
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] =
 { 
-  { CURRENT, 0, GET_ADC|CHANNEL_0, FILTER, STORE_INTO_BUFFER|CHANNEL_0, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
-  { VOLTAGE, 0, GET_ADC|CHANNEL_3, FILTER, STORE_INTO_BUFFER|CHANNEL_1, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
-  { CURRENT, 0, GET_ADC|CHANNEL_1, FILTER, STORE_INTO_BUFFER|CHANNEL_2, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
-  { VOLTAGE, 0, GET_ADC|CHANNEL_4, FILTER, STORE_INTO_BUFFER|CHANNEL_3, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
-  { CURRENT, 0, GET_ADC|CHANNEL_2, FILTER, STORE_INTO_BUFFER|CHANNEL_4, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
-  { VOLTAGE, 0, GET_ADC|CHANNEL_5, FILTER, STORE_INTO_BUFFER|CHANNEL_5, STORE_SQUARE_SUM, NOP, NOP, NOP, NOP },
+  { CURRENT, 0, GET_ADC|CHANNEL_0, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_0, STORE_SQUARE_SUM },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_3, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_1, STORE_SQUARE_SUM },
+  { CURRENT, 0, GET_ADC|CHANNEL_1, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_2, STORE_SQUARE_SUM },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_4, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_3, STORE_SQUARE_SUM },
+  { CURRENT, 0, GET_ADC|CHANNEL_2, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_4, STORE_SQUARE_SUM },
+  { VOLTAGE, 0, GET_ADC|CHANNEL_5, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_5, STORE_SQUARE_SUM },
   { VIRTUALCURRENT, 0, SET_ZERO, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, NOFILTER, STORE_INTO_BUFFER|CHANNEL_6, STORE_SQUARE_SUM, NOP }
 };
 
@@ -78,7 +78,7 @@ uint16_t buffer_probe[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
 
 double HerzvReal[ numbersOfSamples * 4 ];
 double HerzvImag[ numbersOfSamples * 4 ];
-double phaseshift, oldphaseshift;
+double netfrequency_phaseshift, netfrequency_oldphaseshift;
 double netfrequency;
 
 
@@ -125,11 +125,6 @@ void measure_init( void ) {
   SYSCON.saradc_ctrl.sar_clk_div = 5;
   log_i("Measurement: I2S driver ready\r\n");
 
-  ledcAttachPin( 32 , 0);
-  ledcSetup(0, 100, 8);
-  ledcWrite(0, 127);
-
-  measure_set_phaseshift( atoi( config_get_MeasurePhaseshift() ) );
   measure_set_samplerate( atoi( config_get_MeasureSamplerate() ) );
 }
 
@@ -252,7 +247,7 @@ void measure_mes( void ) {
             case GET_ADC:               sampleI[ i ] = adc_samples[ op_channel ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
                                         break;
             case FILTER:                lastFilteredI[ i ] = filteredI[ i ];
-                                        filteredI[ i ] = ( 0.9989 - ( 0.001 * op_channel ) ) * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+                                        filteredI[ i ] = ( 0.9989 - ( 0.01 * op_channel ) ) * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
                                         break;
             case NOFILTER:              lastFilteredI[ i ] = filteredI[ i ];
                                         filteredI[ i ] = sampleI[ i ];
@@ -311,13 +306,13 @@ void measure_mes( void ) {
         arduinoFFT FFT = arduinoFFT( HerzvReal, HerzvImag, numbersOfSamples * 4, ( numbersOfSamples ) * atoi( config_get_MeasureVoltageFrequency() ) );
         FFT.Windowing( FFT_WIN_TYP_HAMMING, FFT_REVERSE);
         FFT.Compute( FFT_REVERSE );
-        oldphaseshift = phaseshift;
-        phaseshift = atan2( HerzvReal[24], HerzvImag[24] ) * ( 180.0 / M_PI ) + 180;
+        netfrequency_oldphaseshift = netfrequency_phaseshift;
+        netfrequency_phaseshift = atan2( HerzvReal[24], HerzvImag[24] ) * ( 180.0 / M_PI ) + 180;
         /**
          * prevent chaotic phaseshift values higher then 180 degrees
          */
-        if ( ( phaseshift - oldphaseshift ) < 180 && ( phaseshift - oldphaseshift ) > -180 ) {
-            netfrequency = ( netfrequency + ( phaseshift - oldphaseshift ) * ( ( 1.0f / M_PI ) / 360 ) + atoi( config_get_MeasureVoltageFrequency() ) ) / 2;
+        if ( ( netfrequency_phaseshift - netfrequency_oldphaseshift ) < 180 && ( netfrequency_phaseshift - netfrequency_oldphaseshift ) > -180 ) {
+            netfrequency = ( netfrequency + ( netfrequency_phaseshift - netfrequency_oldphaseshift ) * ( ( 1.0f / M_PI ) / 360 ) + atoi( config_get_MeasureVoltageFrequency() ) ) / 2;
         }
     }
     else {
@@ -363,28 +358,6 @@ void measure_mes( void ) {
     }
   }
   Serial.printf("\r\n");
-}
-
-int measure_set_phaseshift( int corr ) {
-    int retval = -1;
-    
-    /**
-     * check correctio value is in range
-     */
-    if ( corr >= numbersOfSamples ) {
-        return( retval );
-    }
-    /**
-     * set phaseshift for all voltage channels
-     */
-    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
-        if ( channelconfig[ i ].type == VOLTAGE ) {
-            channelconfig[ i ].phaseshift = corr;
-        }
-    }
-    retval = 0;
-
-    return( retval );
 }
 
 int measure_set_samplerate( int corr ) {
