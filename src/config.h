@@ -127,13 +127,13 @@
   /*
    * firmewareversion string
    */
-  #define __FIRMWARE__            "2020061601"
+  #define __FIRMWARE__            "2021083001"
 
   /*
    * Config filename
    */
   #define CONFIGNAME              "/config.cfg"
-  #define JSON_CONFIGNAME              "/config.json"
+  #define JSON_CONFIGNAME         "/config.json"
 
   /*
    *  WLAN-Daten
