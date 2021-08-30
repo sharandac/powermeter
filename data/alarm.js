@@ -9,7 +9,7 @@ setInterval(function () { if ( connect == true ) getStatus();}, 1000);
 
 connection.onopen = function () {
 	connect = true; 	
-	console.log('STA');
+//	console.log('STA');
 	connection.send('STA');
 };
 
@@ -20,7 +20,7 @@ connection.onerror = function (error) {
 };
 
 connection.onmessage = function (e) {
-	console.log('Server: ', e.data);
+//	console.log('Server: ', e.data);
 	partsarry = e.data.split('\\');
 	if (partsarry[0] == 'OScopeProbe') {
 		GotOScope(e.data );
@@ -42,14 +42,14 @@ connection.onmessage = function (e) {
 }
 
 function refreshValue() {
-	console.log( "send: SAV" );
+//	console.log( "send: SAV" );
 	if ( connect ) connection.send( "SAV" );
-	console.log('send: STA');
+//	console.log('send: STA');
 	if ( connect ) connection.send('STA');
 }
 
 function getStatus() {
-	console.log('send: STS');
+//	console.log('send: STS');
 	if ( connect ) connection.send('STS');
 	counter = counter - 1;
 	savecounter = savecounter -1;
@@ -124,12 +124,12 @@ function refreshOpcodeStr() {
 }
 
 function SaveSetting( value ) {
-	console.log( "send: " + value  + "\\" + document.getElementById( value ).value );
+//	console.log( "send: " + value  + "\\" + document.getElementById( value ).value );
 	if ( connect ) connection.send( value + "\\" + document.getElementById( value ).value );
 }
 
 function OScopeProbe() {
-	console.log( "send: OSC" );
+//	console.log( "send: OSC" );
 	if ( connect ) connection.send( "OSC" );
 }
 
