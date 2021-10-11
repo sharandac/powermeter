@@ -52,7 +52,7 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 ```
 # How it works
 
-![signalpath](https://github.com/sharandac/powermeter/blob/master/images/signalpath.png)
+![signalpath](https://github.com/sharandac/powermeter/blob/master/images/signalpath.svg)
 
 # Hardware
 
