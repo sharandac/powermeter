@@ -28,11 +28,27 @@
  *
  */
 #ifndef _MQTTCLIENT_H
+    #define _MQTTCLIENT_H
 
-    void mqtt_client_publish( char * topic, char * payload );
+    /**
+     * @brief start the mqqt client background task
+     * 
+     */
     void mqtt_client_StartTask( void );
-    void mqtt_client_Task( void * pvParameters );
+    /**
+     * @brief publish a mqqt msg to a given topic
+     * 
+     * @param topic     topic
+     * @param payload   msg to send
+     */
+    void mqtt_client_publish( char * topic, char * payload );
+    /**
+     * @brief disable all mqtt connections
+     */
     void mqtt_client_disable( void );
+    /**
+     * @brief enable all mqtt connections
+     */
     void mqtt_client_enable( void );
 
 #endif // _MQTTCLIENT_H
