@@ -46,7 +46,7 @@ void connectWiFi() {
   if ( WiFi.status() != WL_CONNECTED ) {
     int wlan_timeout = WLAN_CONNECT_TIMEOUT;
 
-    Serial.printf("WiFi lost, restart ... ");
+    log_i("WiFi lost, restart ... ");
     /*
      * start a new connection and wait for it
      */
@@ -62,14 +62,11 @@ void connectWiFi() {
 
     if ( APMODE == true ) {
       WiFi.softAP( config_get_OTALocalApSSID(), config_get_OTALocalApPassword() );
-      IPAddress myIP = WiFi.softAPIP();
-      Serial.printf("failed\r\nstarting Wifi-AP with SSID \"%s\"\r\n", config_get_OTALocalApSSID() );
-      Serial.printf("AP IP address: ");
-      Serial.println(myIP);      
+      log_i("failed\r\nstarting Wifi-AP with SSID \"%s\"\r\n", config_get_OTALocalApSSID() );
+      log_i("AP IP address: %s", WiFi.softAPIP().toString().c_str() );
     }
     else {
-      Serial.printf("connected\r\nIP address: " );
-      Serial.println( WiFi.localIP() );
+      log_i("connected\r\nIP address: %s", WiFi.localIP().toString().c_str() );
     }
   }
 }
@@ -91,15 +88,13 @@ void setup()
   Serial.printf("scan for SSID \"%s\" ... ", config_get_WlanSSID() );  
   if ( ota_scan( config_get_WlanSSID() ) == OTA_WLAN_OK ) {
     WiFi.mode( WIFI_STA );
-    Serial.printf("found\r\nconnect to %s (%s)\r\n", config_get_WlanSSID(), config_get_WlanPassord() );
+    log_i("found\r\nconnect to %s (%s)\r\n", config_get_WlanSSID(), config_get_WlanPassord() );
     WiFi.begin( config_get_WlanSSID() , config_get_WlanPassord() );    
   }
   else {
-    Serial.printf("not found\r\nstarting Wifi-AP with SSID \"%s\"\r\n", config_get_OTALocalApSSID() );
+    log_i("not found\r\nstarting Wifi-AP with SSID \"%s\"\r\n", config_get_OTALocalApSSID() );
     WiFi.softAP( config_get_OTALocalApSSID(), config_get_OTALocalApPassword() );
-    IPAddress myIP = WiFi.softAPIP();
-    Serial.print("AP IP address: ");
-    Serial.println(myIP);
+    log_i("AP IP address: %s", WiFi.softAPIP().toString().c_str() );
     APMODE = true; 
   }
 
@@ -111,7 +106,7 @@ void setup()
   /*
    * Setup Tasks
    */
-  Serial.printf("Start Main Task on Core: %d\r\n", xPortGetCoreID() );
+  log_i("Start Main Task on Core: %d\r\n", xPortGetCoreID() );
   ntp_StartTask();
   ota_StartTask();
   mqtt_client_StartTask();
