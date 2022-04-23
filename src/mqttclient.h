@@ -47,7 +47,7 @@
      */
     void mqtt_client_disable( void );
     /**
-     * @brief enable all mqtt connections
+     * @brief enable all mqtt connections and reload all connection settings
      */
     void mqtt_client_enable( void );
 
