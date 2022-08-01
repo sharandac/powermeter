@@ -71,8 +71,8 @@ void mqtt_client_on_connect( bool sessionPresent ) {
      */
     snprintf( powermeter_cmnd_topic, sizeof( powermeter_cmnd_topic ), TERMOSTAT_CMND, config_get_MQTTTopic() );
     snprintf( powermeter_config_topic, sizeof( powermeter_config_topic ), TERMOSTAT_CONFIG, config_get_MQTTTopic() );
-    snprintf( powermeter_cmnd_topic, sizeof( powermeter_cmnd_topic ), TERMOSTAT_DATA, config_get_MQTTTopic() );
-    snprintf( powermeter_data_topic, sizeof( powermeter_data_topic ), TERMOSTAT_STAT_POWER, config_get_MQTTTopic() );
+    snprintf( powermeter_data_topic, sizeof( powermeter_data_topic ), TERMOSTAT_DATA, config_get_MQTTTopic() );
+    snprintf( powermeter_stat_power_topic, sizeof( powermeter_stat_power_topic ), TERMOSTAT_STAT_POWER, config_get_MQTTTopic() );
     snprintf( powermeter_stat_realtimepower_topic, sizeof( powermeter_stat_realtimepower_topic ), TERMOSTAT_STAT_REALTIMEPOWER, config_get_MQTTTopic() );
     /**
      * subscripe cmnd topic for remote cmnd
@@ -296,7 +296,7 @@ void mqtt_client_send_realtimepower( void ) {
  * @brief send a power json msg over mqtt
  */
 void mqtt_client_send_power( void ) {
-    char value[256] = "";
+    char value[1024] = "";
     char temp[128] = "";
     float powersum = 0;
 
