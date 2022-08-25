@@ -25,7 +25,6 @@
     #include "utils/basejsonconfig.h"
 
     #define POWERMETER_JSON_CONFIG_FILE        "/powermeter.json"
-    
     /**
      * @brief blectl config structure
      */

@@ -100,13 +100,13 @@ void measure_init( void ) {
 
     err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
     if ( err != ESP_OK ) { 
-        log_e("Failed installing driver: %d\r\n", err );
+        log_e("Failed installing driver: %d", err );
         while ( true );
     }
 
     err = i2s_set_adc_mode( ADC_UNIT_1, (adc1_channel_t)6 );
     if (err != ESP_OK ) {
-        log_e("Failed installing driver: %d\r\n", err );
+        log_e("Failed installing driver: %d", err );
         while ( true );
     }
 
@@ -122,7 +122,7 @@ void measure_init( void ) {
     SYSCON.saradc_sar1_patt_tab[1] = 0x3f4f0000;
     // make the adc conversation more accurate
     SYSCON.saradc_ctrl.sar_clk_div = 5;
-    log_i("Measurement: I2S driver ready\r\n");
+    log_i("Measurement: I2S driver ready");
 
     measure_set_samplerate( atoi( config_get_MeasureSamplerate() ) );
 }
@@ -361,7 +361,7 @@ int measure_set_samplerate( int corr ) {
     esp_err_t err;
     err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + corr );
     if ( err != ESP_OK ) {
-        log_e("Failed set samplerate: %d\r\n", err);
+        log_e("Failed set samplerate: %d", err);
         while ( true );
     }
     return( ESP_OK );
@@ -428,7 +428,7 @@ void measure_StartTask( void ) {
 void measure_Task( void * pvParameters ) {
     static uint64_t NextMillis = millis();
 
-    log_i("Start Measurement Task on Core: %d\r\n", xPortGetCoreID() );
+    log_i("Start Measurement Task on Core: %d", xPortGetCoreID() );
 
     measure_init();
     i2s_start(I2S_PORT);
@@ -456,7 +456,7 @@ void measure_set_channel_type( uint16_t channel, uint8_t value ){
         return;
         
     channelconfig[ channel ].type = value;
-    log_i("set channel %d type to %d", channel, channelconfig[ channel ].type );
+    log_d("set channel %d type to %d", channel, channelconfig[ channel ].type );
 }
 
 
@@ -472,7 +472,7 @@ void measure_set_channel_phaseshift( uint16_t channel, int16_t value ) {
         return;
 
     channelconfig[ channel ].phaseshift = value;
-    log_i("set channel %d phaseshift to %d", channel, channelconfig[ channel ].phaseshift );
+    log_d("set channel %d phaseshift to %d", channel, channelconfig[ channel ].phaseshift );
 }
 
 uint8_t * measure_get_channel_opcodeseq( uint16_t channel ) {
@@ -517,7 +517,7 @@ void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
         opcode++;
     }
 
-    log_i("set channel %d microcode to \"%s\"", channel, microcode );
+    log_d("set channel %d microcode to \"%s\"", channel, microcode );
 }
 
 void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
@@ -529,8 +529,7 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return;
 
-    log_i("set channel %d microcode to \"%s\"", channel, ptr );
-
+    log_d("set channel %d microcode to \"%s\"", channel, ptr );
     /**
      * check string for illigal format
      */

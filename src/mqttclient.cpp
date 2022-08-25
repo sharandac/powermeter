@@ -54,6 +54,7 @@ char powermeter_stat_realtimepower_topic[128] = "";
 static float measure_power[ VIRTUAL_CHANNELS ];
 static float measure_voltage[ VIRTUAL_CHANNELS ];
 static float measure_current[ VIRTUAL_CHANNELS ];
+static float measure_frequency;
 
 void mqtt_client_Task( void * pvParameters );
 void mqtt_client_send_realtimepower( void );
@@ -169,14 +170,13 @@ void mqtt_client_publish( char * topic, char * payload ) {
 }
 
 void mqtt_client_StartTask( void ) {
-
     xTaskCreatePinnedToCore(
-                                mqtt_client_Task,    /* Function to implement the task */
+                                mqtt_client_Task,   /* Function to implement the task */
                                 "mqttclient Task",  /* Name of the task */
                                 10000,              /* Stack size in words */
                                 NULL,               /* Task input parameter */
                                 1,                  /* Priority of the task */
-                                &_ASYNCMQTT_Task,         /* Task handle. */
+                                &_ASYNCMQTT_Task,   /* Task handle. */
                                 _MQTT_TASKCORE );   /* Core where the task should run */
 }
 
@@ -192,6 +192,7 @@ void mqtt_client_Task( void * pvParameters ) {
     memset( measure_power, 0, sizeof( measure_power ) );
     memset( measure_voltage, 0, sizeof( measure_voltage ) );
     memset( measure_current, 0, sizeof( measure_current ) );
+    measure_frequency = 0.0;
     /**
      * set call back functions
      */
@@ -201,9 +202,10 @@ void mqtt_client_Task( void * pvParameters ) {
     /**
      * enable mqtt connection
      */
-    mqtt_client_enable();
+    if ( WiFi.isConnected() )
+        mqtt_client_enable();
 
-    log_i( "Start MQTT-Client on Core: %d\r\n", xPortGetCoreID() );
+    log_i( "Start MQTT-Client on Core: %d", xPortGetCoreID() );
 
     vTaskDelay( 1000 );
 
@@ -229,6 +231,7 @@ void mqtt_client_Task( void * pvParameters ) {
                         measure_power[ channel ] += measure_get_power( channel );
                         measure_voltage[ channel ] += measure_get_Vrms( channel );
                         measure_current[ channel ] += measure_get_Irms( channel );
+                        measure_frequency += measure_get_max_freq();
                     }
                     mqtt_client_send_realtimepower();
                 }
@@ -245,6 +248,7 @@ void mqtt_client_Task( void * pvParameters ) {
                         measure_power[ channel ] = 0;
                         measure_voltage[ channel ] = 0;
                         measure_current[ channel ] = 0;
+                        measure_frequency = 0;
                     }
                 }
             }
@@ -314,7 +318,7 @@ void mqtt_client_send_power( void ) {
                                                                                                                                                 , measure_power[ channel ] / atof( config_get_MQTTInterval() ) / 1000
                                                                                                                                                 , measure_voltage[ channel ] / atof( config_get_MQTTInterval() )
                                                                                                                                                 , measure_current[ channel ] / atof( config_get_MQTTInterval() )
-                                                                                                                                                , measure_get_max_freq() );
+                                                                                                                                                , measure_frequency / atof( config_get_MQTTInterval() ) );
         strncat( value, temp, sizeof(value) );
     }
     

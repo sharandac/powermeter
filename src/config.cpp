@@ -4,8 +4,7 @@
  *  Mo Nov 27 12:01:00 2017
  *  Copyright  2017  Dirk Brosswick
  *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
+ ****************************************************************************/ 
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,27 +20,14 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
-
-/**
- *
- * \author Dirk Broßwick
- *
- */
 #include <WiFi.h>
-
 #include "powermeter_config.h"
-
 #include "config.h"
 #include "FS.h"
 #include "SPIFFS.h"
 
-
 powermeter_config_t cfgdata;
-// struct CFGdata cfgdata;
 
-/*
- * 
- */
 char * config_get_HostName( void ) { return( cfgdata.HostName ); }
 void config_set_HostName( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.HostName ) ) strcpy( cfgdata.HostName, value ); }
 
@@ -83,9 +69,7 @@ char * config_get_MeasureSamplerate( void ) { return( cfgdata.MeasureSamplerate 
 void config_set_MeasureSamplerate( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureSamplerate ) && atoi( value ) > -1000 && atoi( value ) <= 1000 ) strcpy( cfgdata.MeasureSamplerate , value ); }
 char * config_get_MeasureCurrentOffset( void ) { return( cfgdata.MeasureCurrentOffset ); }
 void config_set_MeasureCurrentOffset( char * value ) { if ( strlen( value ) <= sizeof( cfgdata.MeasureCurrentOffset ) && atoi( value ) > -1 && atoi( value ) <= 1 ) strcpy( cfgdata.MeasureCurrentOffset , value ); }
-/*
- * 
- */
+
 void config_setup( void ) {
   
     if ( !SPIFFS.begin() ) {        
@@ -93,10 +77,10 @@ void config_setup( void ) {
          * format SPIFFS if not aviable
          */
         SPIFFS.format();
-        log_i("formating SPIFFS\r\n");
+        log_i("formating SPIFFS");
     }
 
-    log_i("Read config from SPIFFS\r\n");
+    log_i("Read config from SPIFFS");
 
     if ( !cfgdata.load() ) {    
         config_read( sizeof( cfgdata ), &cfgdata, CONFIGNAME );
@@ -105,35 +89,29 @@ void config_setup( void ) {
     }
 }
 
-/*
- * 
- */
 int config_save( void ) {
     return( cfgdata.save() );
 }
 
-/*
- * 
- */
 int config_read ( int len, struct powermeter_config_t *buf, const char * name ) {
-  int retval = 0;
-  
-  File file = SPIFFS.open( name, "r" );
+    int retval = 0;
+    
+    File file = SPIFFS.open( name, "r" );
 
-  if (!file) {
-      log_i("Can't open '%s'!\r\n", name );
-  }
-  else {
-    int filesize = file.size();
-    if ( filesize > len ) {
-        log_i("Failed to read configfile. Wrong filesize!\r\n" );
+    if (!file) {
+        log_i("Can't open '%s'!", name );
     }
     else {
-        file.read( ( unsigned char *) buf, filesize );
-        retval = filesize;
+        int filesize = file.size();
+        if ( filesize > len ) {
+            log_i("Failed to read configfile. Wrong filesize!" );
+        }
+        else {
+            file.read( ( unsigned char *) buf, filesize );
+            retval = filesize;
+        }
+        file.close();
     }
-    file.close();
-  }
-  return( retval );
+    return( retval );
 }
 

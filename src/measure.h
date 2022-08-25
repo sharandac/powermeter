@@ -44,7 +44,6 @@
     #define I2S_PORT              I2S_NUM_0
 
     #define OPMASK 0xf0
-
     /**
      * @brief channel config structure
      * 
@@ -54,7 +53,6 @@
         int16_t phaseshift;                         /** @brief phaseshift */
         uint8_t operation[ MAX_MICROCODE_OPS ];     /** @brief opcode sequence */
     };
-
     /**
      * @brief channel type enum
      */
@@ -66,7 +64,6 @@
         POWER,                              /** @brief measured power */
         VIRTUALPOWER                        /** @brief calculated virtual power */
     };
-
     /**
      * @brief opcode enum
      */
@@ -86,7 +83,6 @@
         DIV_4096 = 0xc0,                    /** @brief divide value by 4096 */
         NEG = 0xd0                          /** @brief change sign of a value */
     };
-
     /**
      * @brief channel enum
      */
@@ -109,7 +105,6 @@
         CHANNEL_14,
         CHANNEL_15,
     };
-
     /**
      * @brief measurement init function
      */
