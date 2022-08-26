@@ -1,11 +1,10 @@
 /****************************************************************************
- *            AsyncWebserver.cpp
+ *            webserver.cpp
  *
  *  May 23 00:05:23 2019
  *  Copyright  2019  Dirk Brosswick
  *  Email: dirk.brosswick@googlemail.com
  ****************************************************************************/
- 
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,22 +20,13 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
-
-/**
- *
- * \author Dirk Broßwick
- *
- */
 #include <WiFi.h>
 #include <WiFiClient.h>
 #include <Update.h>
 #include <SPIFFS.h>
-
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
-
 #include <SPIFFSEditor.h>
-
 #include "mqttclient.h"
 #include "webserver.h"
 #include "ota.h"
@@ -303,151 +293,87 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
  * based on: https://github.com/lbernstone/asyncUpdate/blob/master/AsyncUpdate.ino
  */
 void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) {
-  mqtt_client_disable();
+    mqtt_client_disable();
 
-  if (!index){
+    if ( !index ) {
+        /*
+         * if filename includes spiffs, update the spiffs partition
+         */
+        int cmd = ( filename.indexOf("spiffs") > 0 ) ? U_SPIFFS : U_FLASH;
+        if (!Update.begin( UPDATE_SIZE_UNKNOWN, cmd ) )
+            Update.printError(Serial);
+    }
     /*
-     * if filename includes spiffs, update the spiffs partition
+     * Write Data an type message if fail
      */
-    int cmd = (filename.indexOf("spiffs") > 0) ? U_SPIFFS : U_FLASH;
-    if (!Update.begin(UPDATE_SIZE_UNKNOWN, cmd)) {
-      Update.printError(Serial);
-    }
-  }
+    if ( Update.write( data, len ) != len )
+        Update.printError( Serial );
+    /*
+     * After write Update restart
+     */
+    if (final) {
+        AsyncWebServerResponse *response = request->beginResponse( 302, "text/plain", "Please wait while the switch reboots" );
+        response->addHeader( "Refresh", "20" );  
+        response->addHeader( "Location", "/" );
+        request->send(response);
 
-  /*
-   * Write Data an type message if fail
-   */
-  if (Update.write(data, len) != len) {
-    Update.printError(Serial);
-  }
-
-  /*
-   * After write Update restart
-   */
-  if (final) {
-    AsyncWebServerResponse *response = request->beginResponse(302, "text/plain", "Please wait while the switch reboots");
-    response->addHeader("Refresh", "20");  
-    response->addHeader("Location", "/");
-    request->send(response);
-    if (!Update.end(true)){
-      Update.printError(Serial);
-    } else {
-      Serial.println("Update complete");
-      Serial.flush();
-      config_save();
-      ESP.restart();
+        if( !Update.end( true ) )
+            Update.printError(Serial);
+        else {
+            log_i( "Update complete" );
+            config_save();
+            ESP.restart();
+        }
     }
-  }
-  void mqtt_client_enable();
+    void mqtt_client_enable();
 }
 
-/*
- *
- */
 void asyncwebserver_setup(void){
+    asyncserver.on("/info", HTTP_GET, [](AsyncWebServerRequest * request) { request->send(200, "text/plain", "Firmwarestand: " __DATE__ " " __TIME__ "\r\nGCC-Version: " __VERSION__ "\r\nVersion: " __FIRMWARE__ "\r\n" ); } );
+    asyncserver.addHandler( new SPIFFSEditor( SPIFFS ) );
+    asyncserver.serveStatic( "/", SPIFFS, "/" ).setDefaultFile( "index.htm" );
+    asyncserver.onNotFound([](AsyncWebServerRequest *request) { request->send(404); } );
+    asyncserver.onFileUpload([](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final){
+        if( !index )
+            log_i( "UploadStart: %s", filename.c_str());
 
-  asyncserver.on("/info", HTTP_GET, [](AsyncWebServerRequest * request) {
-    request->send(200, "text/plain", "Firmwarestand: " __DATE__ " " __TIME__ "\r\nGCC-Version: " __VERSION__ "\r\nVersion: " __FIRMWARE__ "\r\n" );
-  });
+        log_i("%s", (const char*)data );
+        if( final )
+            log_i( "UploadEnd: %s (%u)", filename.c_str(), index + len );
+    });
+    asyncserver.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
+        if( !index )
+        log_i( "BodyStart: %u", total );
 
-  asyncserver.addHandler(new SPIFFSEditor(SPIFFS));
-  asyncserver.serveStatic("/", SPIFFS, "/").setDefaultFile("index.htm");
+        log_i( "%s", (const char*)data );
+        if( index + len == total )
+        log_i( "BodyEnd: %u\n", total);
+    });
+    asyncserver.on( "/default", HTTP_GET, []( AsyncWebServerRequest * request ) {
+        request->send(200, "text/plain", "Reset to default\r\n" );
+        SPIFFS.remove( "powermeter.json" );
+        SPIFFS.remove( "config.cfg" );
+        delay(3000);
+        ESP.restart();    
+    });
+    asyncserver.on("/reset", HTTP_GET, []( AsyncWebServerRequest * request ) {
+        request->send(200, "text/plain", "Reset\r\n" );
+        delay(3000);
+        ESP.restart();    
+    });
 
-  asyncserver.onNotFound([](AsyncWebServerRequest *request){
-    Serial.printf( "NOT_FOUND: ");
-    if(request->method() == HTTP_GET)
-      Serial.printf( "GET");
-    else if(request->method() == HTTP_POST)
-      Serial.printf( "POST");
-    else if(request->method() == HTTP_DELETE)
-      Serial.printf( "DELETE");
-    else if(request->method() == HTTP_PUT)
-      Serial.printf( "PUT");
-    else if(request->method() == HTTP_PATCH)
-      Serial.printf( "PATCH");
-    else if(request->method() == HTTP_HEAD)
-      Serial.printf( "HEAD");
-    else if(request->method() == HTTP_OPTIONS)
-      Serial.printf( "OPTIONS");
-    else
-      Serial.printf( "UNKNOWN");
-    Serial.printf( " http://%s%s\n", request->host().c_str(), request->url().c_str());
+    asyncserver.on("/update", HTTP_POST,
+        [](AsyncWebServerRequest *request) {},
+        [](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) { handleUpdate(request, filename, index, data, len, final); }
+    );
 
-    if(request->contentLength()){
-      Serial.printf( "_CONTENT_TYPE: %s\n", request->contentType().c_str());
-      Serial.printf( "_CONTENT_LENGTH: %u\n", request->contentLength());
-    }
-
-    int headers = request->headers();
-    int i;
-    for(i=0;i<headers;i++){
-      AsyncWebHeader* h = request->getHeader(i);
-      Serial.printf( "_HEADER[%s]: %s\n", h->name().c_str(), h->value().c_str());
-    }
-
-    int params = request->params();
-    for(i=0;i<params;i++){
-      AsyncWebParameter* p = request->getParam(i);
-      if(p->isFile()){
-        Serial.printf( "_FILE[%s]: %s, size: %u\n", p->name().c_str(), p->value().c_str(), p->size());
-      } else if(p->isPost()){
-        Serial.printf( "_POST[%s]: %s\n", p->name().c_str(), p->value().c_str());
-      } else {
-        Serial.printf( "_GET[%s]: %s\n", p->name().c_str(), p->value().c_str());
-      }
-    }
-    request->send(404);
-  });
-
-  asyncserver.onFileUpload([](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final){
-    if(!index)
-      Serial.printf( "UploadStart: %s\n", filename.c_str());
-    Serial.printf("%s", (const char*)data);
-    if(final)
-      Serial.printf( "UploadEnd: %s (%u)\n", filename.c_str(), index+len);
-  });
-
-  asyncserver.onRequestBody([](AsyncWebServerRequest *request, uint8_t *data, size_t len, size_t index, size_t total){
-    if(!index) {
-      Serial.printf( "BodyStart: %u\n", total);
-    }
-    Serial.printf( "%s", (const char*)data);
-    if(index + len == total) {
-      Serial.printf( "BodyEnd: %u\n", total);
-    }
-  });
-
-  asyncserver.on("/default", HTTP_GET, []( AsyncWebServerRequest * request ) {
-    request->send(200, "text/plain", "Reset to default\r\n" );
-    SPIFFS.remove( "powermeter.json" );
-    SPIFFS.remove( "config.cfg" );
-    delay(3000);
-    ESP.restart();    
-  });
-  
-  asyncserver.on("/reset", HTTP_GET, []( AsyncWebServerRequest * request ) {
-    request->send(200, "text/plain", "Reset\r\n" );
-    delay(3000);
-    ESP.restart();    
-  });
-
-  asyncserver.on("/update", HTTP_POST,
-    [](AsyncWebServerRequest *request) {},
-    [](AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) { handleUpdate(request, filename, index, data, len, final); }
-  );
-
-  ws.onEvent(onWsEvent);
-  asyncserver.addHandler(&ws);
-  asyncserver.begin();
+    ws.onEvent(onWsEvent);
+    asyncserver.addHandler(&ws);
+    asyncserver.begin();
 }
 
-/*
- * 
- */
 void asyncwebserver_StartTask ( void ) {
-
-  xTaskCreatePinnedToCore(
+    xTaskCreatePinnedToCore(
                             asyncwebserver_Task,    /* Function to implement the task */
                             "webserver Task",       /* Name of the task */
                             10000,                  /* Stack size in words */
@@ -457,17 +383,13 @@ void asyncwebserver_StartTask ( void ) {
                             _WEBSERVER_TASKCORE );  /* Core where the task should run */  
 }
 
-/*
- * 
- */
 void asyncwebserver_Task( void * pvParameters ) {
+    log_i( "Start Webserver on Core: %d", xPortGetCoreID() );
 
-  Serial.printf( "Start Webserver on Core: %d\r\n", xPortGetCoreID() );
+    asyncwebserver_setup();
 
-  asyncwebserver_setup();
-
-  while( true ) {
-    vTaskDelay( 10 );
-    ws.cleanupClients(); 
-  }
+    while( true ) {
+        vTaskDelay( 10 );
+        ws.cleanupClients(); 
+    }
 }
