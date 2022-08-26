@@ -147,11 +147,11 @@ void measure_mes( void ) {
     if ( atof( config_get_MeasureVoltage() ) >= 5 )
         noVoltage = 1;
 
-  /**
-   * get numbersOfSamples * VIRTUAL_ADC_CHANNELS each round
-   * one round is 40/33.3ms (depending on network freuency) or two network frecuency periods
-   * after 950 ms calculate each channel value like Vrms/Irms or network frequency/paseshift
-   */
+    /**
+     * get numbersOfSamples * VIRTUAL_ADC_CHANNELS each round
+     * one round is 40/33.3ms (depending on network freuency) or two network frecuency periods
+     * after 950 ms calculate each channel value like Vrms/Irms or network frequency/paseshift
+     */
     while( millis() < NextMillis ) {
 
         static double sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];         /** @brief runtime varibales for lowpass filter stuff */
@@ -323,9 +323,9 @@ void measure_mes( void ) {
 
     for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
         /*
-        / Calculation of the root of the mean of the voltage and measure squared (rms)
-        / Calibration coeficients applied. 
-        */
+         * Calculation of the root of the mean of the voltage and measure squared (rms)
+         * Calibration coeficients applied. 
+         */
         switch( channelconfig[ i ].type ) {
             case CURRENT:
                 *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) + atof( config_get_MeasureCurrentOffset() );
