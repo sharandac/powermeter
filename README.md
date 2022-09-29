@@ -56,13 +56,14 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 
 # Hardware
 
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/schematic.png)
-
-Please pay attention to the Burden resistor. Some current sensors have a built-in Burden resistor. In this example a SCT-013-000 without a built-in Burden resistor was used. Please check the documentation for the right Burden resistor value.
+![current sensor](https://github.com/sharandac/powermeter/blob/master/images/SCT013-000.png)
+![current sensor](https://github.com/sharandac/powermeter/blob/master/images/ZMPT101B.png)
+![current sensor](https://github.com/sharandac/powermeter/blob/master/images/ACS712.png)
+![current sensor](https://github.com/sharandac/powermeter/blob/master/images/voltage-div.png)
 
 # Channel setting
 
-At any time, 3 channels are read in simultaneously regardless of the settings. The individual power of each channel is calculated and the power of all channels together. If 3 channels are set, an additional virtual fourth channel is calculated with the sum of all currents. This enables us to measure the neutral conductor current indirectly. For more information about how three-phase current works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
+At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of microopcode, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
 
 # Interface
 

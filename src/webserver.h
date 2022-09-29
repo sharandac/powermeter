@@ -27,6 +27,5 @@
         #define WEBSERVERPORT 80
 
         void asyncwebserver_StartTask ( void );
-        void asyncwebserver_Task( void * pvParameters );
 
 #endif // _ASYNCWEBSERVER_H

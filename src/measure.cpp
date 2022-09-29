@@ -35,6 +35,7 @@
 #include <arduinoFFT.h>
 #include <math.h>
 
+#include "config/measure_config.h"
 #include "measure.h"
 #include "config.h"
 
@@ -43,6 +44,7 @@ extern "C" {
     #include "soc/syscon_struct.h"
 }
 
+measure_config_t measure_config;
 /*
  * map 8 real adc channels to adc virtual channels
  * -1 means not mapped
@@ -50,24 +52,38 @@ extern "C" {
  * by example: channel 5 map to virtual channel 0, 6 to 1 and 7 to 2
  */ 
 int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_3, CHANNEL_NOP, CHANNEL_NOP, CHANNEL_4, CHANNEL_5, CHANNEL_0, CHANNEL_1, CHANNEL_2 };
+/**
+ * 
+ */
+struct groupconfig groupconfig[ MAX_GROUPS ] = {
+    { "L1 group", true },
+    { "L2 group", false },
+    { "L3 group", false },
+    { "all power group", false },
+    { "unused", false },
+    { "unused", false }
+};
 /*
  * define virtual channel type and their mathematics
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] = { 
-    { CURRENT, 0, GET_ADC|CHANNEL_0, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_0, STORE_SQUARE_SUM },
-    { VOLTAGE, 0, GET_ADC|CHANNEL_3, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_1, STORE_SQUARE_SUM },
-    { CURRENT, 0, GET_ADC|CHANNEL_1, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_2, STORE_SQUARE_SUM },
-    { VOLTAGE, 0, GET_ADC|CHANNEL_4, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_3, STORE_SQUARE_SUM },
-    { CURRENT, 0, GET_ADC|CHANNEL_2, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_4, STORE_SQUARE_SUM },
-    { VOLTAGE, 0, GET_ADC|CHANNEL_5, NOP, NOP, NOP, NOP, FILTER, STORE_INTO_BUFFER|CHANNEL_5, STORE_SQUARE_SUM },
-    { VIRTUALCURRENT, 0, SET_ZERO, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, NOFILTER, STORE_INTO_BUFFER|CHANNEL_6, STORE_SQUARE_SUM, NOP }
+    { "L1 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_0, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L1 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_3, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L1 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, ABS, BRK, BRK, BRK, BRK },
+    { "L1 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_1, ABS, NEG, BRK },
+    { "L2 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_1, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L2 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_4, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L2 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, ABS, BRK, BRK, BRK, BRK },
+    { "L2 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_5, ABS, NEG, BRK },
+    { "L3 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_2, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L3 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_5, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L3 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, ABS, BRK, BRK, BRK, BRK },
+    { "L3 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_9, ABS, NEG, BRK },
+    { "all power"           , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 3, 0.0, SET_TO|0, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, BRK, BRK, BRK, BRK, BRK, BRK }
 };
 
 /* taske handle */
 TaskHandle_t _MEASURE_Task;
-
-float Irms[ VIRTUAL_CHANNELS ];
-float Vrms[ VIRTUAL_CHANNELS ];
 
 volatile int TX_buffer = -1;
 uint16_t buffer[ VIRTUAL_CHANNELS ][ numbersOfSamples ];
@@ -79,23 +95,29 @@ double HerzvImag[ numbersOfSamples * 4 ];
 double netfrequency_phaseshift, netfrequency_oldphaseshift;
 double netfrequency;
 
+static int measurement_valid = 3; /** @brief startcounter to prevent trash in first run */
+
+
 void measure_Task( void * pvParameters );
 /*
  * 
  */
 void measure_init( void ) {
+    measure_config.load();
+
     esp_err_t err;
 
     // config i2s to capture data from internal adc
     const i2s_config_t i2s_config = {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN ),
-        .sample_rate = ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + atoi( config_get_MeasureSamplerate()) ,
+        .sample_rate = ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr ,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
-        .channel_format = I2S_CHANNEL_FMT_ALL_LEFT,
-        .communication_format = i2s_comm_format_t(I2S_COMM_FORMAT_I2S),
+        .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
+        // .channel_format = I2S_CHANNEL_FMT_ALL_RIGHT,
+        .communication_format = i2s_comm_format_t( I2S_COMM_FORMAT_I2S ),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,     
         .dma_buf_count = VIRTUAL_ADC_CHANNELS * 2,                          
-        .dma_buf_len = numbersOfSamples * 2,
+        .dma_buf_len = numbersOfSamples,
     };
 
     err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
@@ -112,41 +134,35 @@ void measure_init( void ) {
 
     i2s_stop( I2S_PORT );
 
-    vTaskDelay( 5000 / portTICK_RATE_MS );
+    vTaskDelay( 100 );
     // 3 Items in pattern table
     SYSCON.saradc_ctrl.sar1_patt_len = VIRTUAL_ADC_CHANNELS - 1;
     // [7:4] Channel
     // [3:2] Bit Width; 3=12bit, 2=11bit, 1=10bit, 0=9bit
     // [1:0] Attenuation; 3=11dB, 2=6dB, 1=2.5dB, 0=0dB
-    SYSCON.saradc_sar1_patt_tab[0] = 0x0f7f5f6f;
-    SYSCON.saradc_sar1_patt_tab[1] = 0x3f4f0000;
+    SYSCON.saradc_sar1_patt_tab[0] = 0x0f3f4f5f;
+    SYSCON.saradc_sar1_patt_tab[1] = 0x6f7f0000;
     // make the adc conversation more accurate
     SYSCON.saradc_ctrl.sar_clk_div = 5;
     log_i("Measurement: I2S driver ready");
 
-    measure_set_samplerate( atoi( config_get_MeasureSamplerate() ) );
+    netfrequency = measure_config.network_frequency;
 }
 
 /*
  * get as much adc buffer as possible in one second and calculate some stuff
  */
 void measure_mes( void ) {
-
-    int round=0;                      /** @brief round counter */
-    int noVoltage = 0;                /** @brief set to 1 */
-    static int firstrun = 10;         /** @brief startcounter to prevent trash in first run */
-    double sum[ VIRTUAL_CHANNELS ];   /** @brief runtime variables for current, voltage or power calculation */
-    double I_RATIO = atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096; /** @brief I ratio value */
-
-    memset( sum, 0, sizeof( sum ) );
+    int round = 0;                    /** @brief round counter */
+    /**
+     * clear sum for each channel
+     */
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ )
+        channelconfig[ i ].sum = 0.0;
     /**
      * get the current timer and calculate the exit time for capture ADC-buffer
      */
-    uint64_t NextMillis = millis() + 950;
-
-    if ( atof( config_get_MeasureVoltage() ) >= 5 )
-        noVoltage = 1;
-
+    uint64_t NextMillis = millis() + 1000l;
     /**
      * get numbersOfSamples * VIRTUAL_ADC_CHANNELS each round
      * one round is 40/33.3ms (depending on network freuency) or two network frecuency periods
@@ -154,11 +170,15 @@ void measure_mes( void ) {
      */
     while( millis() < NextMillis ) {
 
-        static double sampleI[ VIRTUAL_CHANNELS ], lastSampleI[ VIRTUAL_CHANNELS ];         /** @brief runtime varibales for lowpass filter stuff */
-        static double filteredI[ VIRTUAL_CHANNELS ], lastFilteredI[ VIRTUAL_CHANNELS ];     /** @brief runtime varibales for lowpass filter stuff */
-        uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];                                          /** @brief channel pointer list */
-        uint16_t adc_tempsamples[ numbersOfSamples ];                                       /** @brief unsort sampelbuffer from ADC */
-        uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];                   /** @brief channel sorted samplebuffer */
+        static double adc_sample[ VIRTUAL_CHANNELS ], last_adc_sample[ VIRTUAL_CHANNELS ];                  /** @brief runtime varibales for lowpass filter stuff */
+        static double temp_adc_sample[ VIRTUAL_CHANNELS ];
+        static double ac_filtered[ VIRTUAL_CHANNELS ], last_ac_filtered[ VIRTUAL_CHANNELS ];                /** @brief runtime varibales for lowpass filter stuff */
+        static double dc_filtered[ VIRTUAL_CHANNELS ][ 64 ];                                                /** @brief runtime varibales for lowpass filter stuff */
+        uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];                                                          /** @brief channel pointer list */
+        uint16_t adc_tempsamples[ numbersOfSamples ];                                                       /** @brief unsort sampelbuffer from ADC */
+        uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];                                   /** @brief channel sorted samplebuffer */
+        int phaseshift_0_degree;
+        int phaseshift_90_degree;
         /**
          * create a channel pointer list for later and faster use
          */
@@ -172,18 +192,25 @@ void measure_mes( void ) {
             /**
              * get an ADC buffer 
              */
-            size_t num_bytes_read=0;
+            size_t num_bytes_read = 0;
             esp_err_t err;
             err = i2s_read( I2S_PORT,
                             (char *)adc_tempsamples,      /* pointer to the adc_tempsample */
-                            sizeof( adc_tempsamples ),    /* the doc says bytes, but its elements */
+                            sizeof( adc_tempsamples ),    /* the doc says elements, but its bytes */
                             &num_bytes_read,              /* pointer to an size_t variable to store number of bytes read */
-                            portMAX_DELAY );              /* no timeout */
+                            100 );      /* no timeout */
             /**
              * handle error
              */
             if ( err != ESP_OK ) {
                 log_e("Error while reading DMA Buffer: %d", err );
+                while( true );
+            }/**
+             * check blocksize
+             */
+            num_bytes_read /= 2;
+            if ( num_bytes_read != numbersOfSamples ) {
+                log_e("block size != numberOfSamples, num_bytes_read = %d", num_bytes_read );
                 while( true );
             }
             /**
@@ -197,9 +224,9 @@ void measure_mes( void ) {
              * [15..12]     channel
              * [11..0]      12-bit sample
              */
-            for( int i = 0 ; i < numbersOfSamples ; i++ ) {
+            for( int i = 0 ; i < num_bytes_read ; i++ ) {
                 /**
-                 * get the right channel number from die sample and store it
+                 * get the right channel number from the sample and store it
                  */
                 int8_t chan = ( adc_tempsamples[ i ] >> 12 ) & 0xf;
                 /**
@@ -217,58 +244,147 @@ void measure_mes( void ) {
         for ( int n = 0; n < numbersOfSamples; n++ ) {
             for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
                 /**
-                 * store the last sample for filtering
+                 * abort if group not active or channel not used
                  */
-                lastSampleI[ i ]=sampleI[ i ];
+                if( !groupconfig[ channelconfig[ i ].group_id ].active || channelconfig[ i ].type == CHANNEL_NOT_USED ) {
+                    buffer[ i ][ n ] = 2048;
+                    channelconfig[ i ].sum = 0.0;
+                    adc_sample[ i ] = 0.0; 
+                    continue;               
+                }
                 /**
                  * get right sample or compute it
                  */
-                for( int operation = 0 ; operation < sizeof( channelconfig[ 0 ].operation ) ; operation++ ) {
+                for( int operation = 0 ; operation < MAX_MICROCODE_OPS ; operation++ ) {
+                    /**
+                     * precalc the phaseshift from 360 degree to number of samples
+                     * and prevent a channel clipping issue
+                     */
+                    phaseshift_0_degree = ( ( numbersOfSamples / 2 ) / 360.0 ) * ( ( channelconfig[ i ].phaseshift ) %360 );
+                    phaseshift_0_degree = ( n + phaseshift_0_degree ) % numbersOfSamples;
+                    if( phaseshift_0_degree == numbersOfSamples - 1 )
+                        phaseshift_0_degree = 0;                    
+                    phaseshift_90_degree = ( ( numbersOfSamples / 2 ) / 360.0 ) * ( ( channelconfig[ i ].phaseshift + 90 ) %360 );
+                    phaseshift_90_degree = ( n + phaseshift_90_degree ) % numbersOfSamples;
+                    if( phaseshift_90_degree == numbersOfSamples - 1 )
+                        phaseshift_90_degree = 0;  
                     /**
                      * mask the channel out and store it in a separate variable for later use
+                     * and check if op_channel valid
                      */
                     int op_channel = channelconfig[ i ].operation[ operation ] & ~OPMASK;
+                    if( op_channel >= VIRTUAL_CHANNELS )
+                        continue;
                     /**
                      * oparate the current channel operateion
                      */
                     switch( channelconfig[i].operation[ operation ] & OPMASK ) {
-                        case NOP:                   break;
-                        case ADD:                   sampleI[ i ] += filteredI[ op_channel ];
+                        case ADD:                   adc_sample[ i ] += adc_sample[ op_channel ];
                                                     break;
-                        case SUB:                   sampleI[ i ] -= filteredI[ op_channel ];
+                        case SUB:                   adc_sample[ i ] -= adc_sample[ op_channel ];
                                                     break;
-                        case MUL:                   sampleI[ i ] = sampleI[ i ] * filteredI[ op_channel ];
+                        case MUL:                   adc_sample[ i ] = adc_sample[ i ] * adc_sample[ op_channel ];
                                                     break;
-                        case DIV:                   sampleI[ i ] = sampleI[ i ] * filteredI[ op_channel ];
+                        case MUL_RATIO:             adc_sample[ i ] *= channelconfig[ op_channel ].ratio;
                                                     break;
-                        case SET_ZERO:              sampleI[ i ] = 0;
+                        case MUL_SIGN:              if( adc_sample[ op_channel ] > 0.0 )
+                                                        adc_sample[ i ] *= 1.0;
+                                                    else if( adc_sample[ op_channel ] < 0.0 )
+                                                        adc_sample[ i ] *= -1.0;
+
                                                     break;
-                        case GET_ADC:               sampleI[ i ] = adc_samples[ op_channel ][ ( numbersOfSamples/2 + n + channelconfig[ i ].phaseshift ) % numbersOfSamples ];
+                        case MUL_REACTIVE:          temp_adc_sample[ i ] = buffer[ op_channel ][ phaseshift_90_degree ] - 2048.0;
+
+                                                    if( adc_sample[ op_channel ] > 0.0 )
+                                                        temp_adc_sample[ i ] =  temp_adc_sample[ i ] * 1.0;
+                                                    else if( adc_sample[ op_channel ] < 0.0 )
+                                                        temp_adc_sample[ i ] =  temp_adc_sample[ i ] * -1.0;                                                
+
+                                                    if( temp_adc_sample[ i ] > 0.0 )
+                                                        channelconfig[ i ].sign = 1.0;
+                                                    else if( temp_adc_sample[ i ] < 0.0 )
+                                                        channelconfig[ i ].sign = -1.0;
+
+                                                    adc_sample[ i ] *= channelconfig[ i ].sign;
+
                                                     break;
-                        case FILTER:                lastFilteredI[ i ] = filteredI[ i ];
-                                                    filteredI[ i ] = ( 0.9989 - ( 0.01 * op_channel ) ) * ( lastFilteredI[ i ] + sampleI[ i ]- lastSampleI[ i ] );
+                        case ABS:                   adc_sample[ i ] = fabs( adc_sample[ i ] );
                                                     break;
-                        case NOFILTER:              lastFilteredI[ i ] = filteredI[ i ];
-                                                    filteredI[ i ] = sampleI[ i ];
+                        case NEG:                   adc_sample[ i ] = adc_sample[ i ] * -1.0;
                                                     break;
-                        case STORE_INTO_BUFFER:     if ( channelconfig[i].type == VOLTAGE && noVoltage == 1 ) {
-                                                        buffer[ op_channel ][ n ] = 2048;
+                        case PASS_NEGATIVE:         if( adc_sample[ i ] > 0.0 )
+                                                        adc_sample[ i ] = 0.0;
+                                                    break;
+                        case PASS_POSITIVE:         if( adc_sample[ i ] < 0.0 )
+                                                        adc_sample[ i ] = 0.0;
+                                                    break;
+                        case GET_ADC:               adc_sample[ i ] = adc_samples[ op_channel ][ phaseshift_0_degree ] + channelconfig[ i ].offset;
+                                                    break;
+                        case SET_TO:                adc_sample[ i ] = op_channel;
+                                                    break;
+                        case FILTER:                switch( channelconfig[ i ].type ) {
+                                                        case AC_CURRENT:
+                                                        case AC_VOLTAGE:
+                                                        case AC_POWER:
+                                                        case AC_REACTIVE_POWER:
+                                                            /**
+                                                             * normal filtering
+                                                             */
+                                                            ac_filtered[ i ] = ( 0.9989 - ( 0.01 * op_channel ) ) * ( last_ac_filtered[ i ] + adc_sample[ i ] - last_adc_sample[ i ] );
+                                                            last_ac_filtered[ i ] = ac_filtered[ i ];
+                                                            last_adc_sample[ i ] = adc_sample[ i ];
+                                                            adc_sample[ i ] = ac_filtered[ i ];
+                                                            break;
+                                                        case DC_CURRENT:
+                                                        case DC_VOLTAGE:
+                                                            if( op_channel ) {
+                                                                int mul = 1;
+                                                                if( op_channel <= 6 )
+                                                                    mul = 1 << op_channel;
+                                                                else
+                                                                    mul = 1 << 6;
+                                                                    
+                                                                dc_filtered[ i ][ n % mul ] = adc_sample[ i ];
+                                                                
+                                                                adc_sample[ i ] = 0.0;
+                                                                for( int a = 0; a < mul ; a++ ) 
+                                                                    adc_sample[ i ] += dc_filtered[ i ][ a ];
+                                                                adc_sample[ i ] /= mul;
+                                                            }
+                                                            else {
+                                                                adc_sample[ i ] = adc_sample[ i ];
+                                                            }
+                                                            break;
+                                                        default:
+                                                            adc_sample[ i ] = adc_sample[ i ];
+                                                            break;
+
                                                     }
-                                                    else {
-                                                        buffer[ op_channel ][ n ] = filteredI[ i ] + 2048;
-                                                    }
                                                     break;
-                        case STORE_SQUARE_SUM:      sum[ i ] += filteredI[ i ] * filteredI[ i ];
+                        default:                    operation = MAX_MICROCODE_OPS;
                                                     break;
-                        case STORE_SUM:             sum[ i ] += filteredI[ i ];
-                                                    break;
-                        case DIV_4096:              sampleI[ i ] = filteredI[ i ] / 4096;
-                                                    break;
-                        case NEG:                   sampleI[ i ] = filteredI[ i ] * -1.0;
-                                                    break;
-                        default:                    log_e("channel operation not allowed!");
-                                                    while( 1 );
                     }
+                }
+                /**
+                 * Store sum and data if channelgroup is active
+                 */
+                if ( channelconfig[ i ].type == AC_VOLTAGE && measure_get_channel_ratio( i ) > 5 )
+                    buffer[ i ][ n ] = 2048;
+                else
+                    buffer[ i ][ n ] = ( adc_sample[ i ] + 2048 ) < 0.0 ? 0 : adc_sample[ i ] + 2048 ;
+                
+                switch( channelconfig[ i ].type ) {
+                    case AC_CURRENT:
+                    case AC_VOLTAGE:
+                        channelconfig[ i ].sum += fabs( adc_sample[ i ] );
+                        break;
+                    case DC_CURRENT:
+                    case DC_VOLTAGE:
+                    case DC_POWER:
+                    case AC_POWER:
+                    case AC_REACTIVE_POWER:
+                        channelconfig[ i ].sum += adc_sample[ i ];
+                        break;
                 }
             }
         }
@@ -293,78 +409,107 @@ void measure_mes( void ) {
          */
         round++;
     }
-
     /**
      * if netfrequency monitoring channel monitors voltage
      * else set netfrequency to 50 or 60hz
      */
-    if ( channelconfig[ 1 ].type == VOLTAGE && noVoltage == 0 ) {
+    if ( channelconfig[ 1 ].type == AC_VOLTAGE && measure_get_channel_ratio( 1 ) <= 5.0 ) {
         /**
          * calculate the phaseshift between last phaseshift
          */
-        arduinoFFT FFT = arduinoFFT( HerzvReal, HerzvImag, numbersOfSamples * 4, ( numbersOfSamples ) * atoi( config_get_MeasureVoltageFrequency() ) );
+        arduinoFFT FFT = arduinoFFT( HerzvReal, HerzvImag, numbersOfSamples * 4, ( numbersOfSamples ) * measure_get_network_frequency() );
         FFT.Windowing( FFT_WIN_TYP_HAMMING, FFT_REVERSE);
         FFT.Compute( FFT_REVERSE );
         netfrequency_oldphaseshift = netfrequency_phaseshift;
-        netfrequency_phaseshift = atan2( HerzvReal[24], HerzvImag[24] ) * ( 180.0 / M_PI ) + 180;
+        netfrequency_phaseshift = atan2( HerzvReal[ 8 ], HerzvImag[ 8 ] ) * ( 180.0 / M_PI ) + 180;
         /**
          * prevent chaotic phaseshift values higher then 180 degrees
          */
         if ( ( netfrequency_phaseshift - netfrequency_oldphaseshift ) < 180 && ( netfrequency_phaseshift - netfrequency_oldphaseshift ) > -180 ) {
-            netfrequency = ( netfrequency + ( netfrequency_phaseshift - netfrequency_oldphaseshift ) * ( ( 1.0f / M_PI ) / 360 ) + atoi( config_get_MeasureVoltageFrequency() ) ) / 2;
+            static float netfrequency_filter[ 16 ];
+            static int index = 0;
+            static bool netfrequency_firstrun = true;
+
+            if( netfrequency_firstrun ) {
+                for( int i = 0 ; i < 16 ; i++ )
+                    netfrequency_filter[ i ] = measure_get_network_frequency();
+                netfrequency_firstrun = false;
+            }
+
+            netfrequency_filter[ index ] = ( netfrequency_phaseshift - netfrequency_oldphaseshift ) * ( ( 1.0f / M_PI ) / 90 ) + measure_get_network_frequency();
+            
+            netfrequency = 0.0;
+            for( int i = 0 ; i < 16 ; i++ )
+                netfrequency += netfrequency_filter[ i ];
+            netfrequency /= 16.0;
+
+            if( index < 16 )
+                index++;
+            else
+                index = 0;
         }
     }
     else {
-        netfrequency = atoi( config_get_MeasureVoltageFrequency() );
+        netfrequency = measure_get_network_frequency();
     }
-
-    float *Irms_channel=&Irms[0];
-    float *Vrms_channel=&Vrms[0];
 
     for ( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
         /*
-         * Calculation of the root of the mean of the voltage and measure squared (rms)
          * Calibration coeficients applied. 
          */
         switch( channelconfig[ i ].type ) {
-            case CURRENT:
-                *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) ) + atof( config_get_MeasureCurrentOffset() );
-                if ( firstrun > 0 )
-                    *Irms_channel = 0;
-                Irms_channel++;
-                break;
-            case VIRTUALCURRENT:
-                *Irms_channel = ( I_RATIO * sqrt( sum[ i ] / ( numbersOfSamples * round ) ) );
-                if ( firstrun > 0 )
-                    *Irms_channel = 0;
-                Irms_channel++;
-                break;
-            case VOLTAGE:
-                if ( atof( config_get_MeasureVoltage() ) < 5 )
-                    *Vrms_channel = atof( config_get_MeasureVoltage() ) * sqrt( sum[ i ] / ( numbersOfSamples * round ) );
-                else 
-                    *Vrms_channel = atof( config_get_MeasureVoltage() );
-
-                if ( firstrun > 0 )
-                    *Vrms_channel = 0;
-                
-                Vrms_channel++;
+            case AC_VOLTAGE:
+            case DC_VOLTAGE:
+                if ( channelconfig[ i ].ratio > 5 ) {
+                    channelconfig[ i ].rms = channelconfig[ i ].ratio;                
+                    break;
+                }
+            case AC_CURRENT:
+            case DC_CURRENT:
+            case AC_POWER:
+            case DC_POWER:
+            case AC_REACTIVE_POWER:
+                channelconfig[ i ].rms = channelconfig[ i ].ratio * ( channelconfig[ i ].sum / ( numbersOfSamples * round ) );
                 break;
         }
 
-        if ( firstrun > 0 )
-            firstrun--;
+        if ( measurement_valid > 0 )
+            channelconfig[ i ].rms = 0.0;
+
+        if ( measurement_valid > 0 )
+            measurement_valid--;
     }
 }
 
-int measure_set_samplerate( int corr ) {
+int measure_get_samplerate_corr( void ) {
+    return( measure_config.samplerate_corr );
+}
+
+void measure_set_samplerate_corr( int samplerate_corr ) {
+    measure_config.samplerate_corr = samplerate_corr;
+
     esp_err_t err;
-    err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 ) + corr );
+    err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr );
     if ( err != ESP_OK ) {
         log_e("Failed set samplerate: %d", err);
         while ( true );
     }
-    return( ESP_OK );
+}
+
+int measure_get_network_frequency( void ) {
+    return( measure_config.network_frequency );
+}
+
+void measure_set_network_frequency( int network_frequency ) {
+    if( network_frequency >= 50 && network_frequency <= 60 ) {
+        measure_config.network_frequency = network_frequency;
+        esp_err_t err;
+        err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr );
+        if ( err != ESP_OK ) {
+            log_e("Failed set samplerate: %d", err);
+            while ( true );
+        }
+    }
 }
 
 uint16_t * measure_get_buffer( void ) {
@@ -376,7 +521,7 @@ uint16_t * measure_get_buffer( void ) {
 uint16_t * measure_get_fft( void ) {
   double vReal[ numbersOfFFTSamples * 2 ];
   double vImag[ numbersOfFFTSamples * 2 ];
-  arduinoFFT FFT = arduinoFFT( vReal, vImag, numbersOfFFTSamples * 2, samplingFrequency * atoi( config_get_MeasureVoltageFrequency() ) / 4 );
+  arduinoFFT FFT = arduinoFFT( vReal, vImag, numbersOfFFTSamples * 2, samplingFrequency * measure_get_network_frequency() / 4 );
 
     for ( int channel = 0 ; channel < VIRTUAL_CHANNELS ; channel++ ) {
         for ( int i = 0 ; i < numbersOfFFTSamples * 2 ; i++ ) {
@@ -392,26 +537,6 @@ uint16_t * measure_get_fft( void ) {
             buffer_fft[channel][i] = vReal[i];
     }
     return( &buffer_fft[0][0] );
-}
-
-double measure_get_max_freq( void ) {
-    return( netfrequency );
-}
-
-float measure_get_Irms( int line ) {
-    return( Irms[ line ] );
-}
-
-float measure_get_Vrms( int line ) {
-    return( Vrms[ line ] );
-}
-
-float measure_get_power( int line ) {
-    return( Irms[ line ] * Vrms[ line ] );
-}
-
-float measure_get_Iratio( void ) {
-    return( atof( config_get_MeasureCoilTurns() ) / atof( config_get_MeasureBurdenResistor() ) * 3.3 / 4096 );
 }
 
 void measure_StartTask( void ) {
@@ -444,40 +569,276 @@ void measure_Task( void * pvParameters ) {
     }
 }
 
-uint8_t measure_get_channel_type( uint16_t channel ){
+double measure_get_max_freq( void ) {
+    return( netfrequency );
+}
+
+float measure_get_channel_rms( int channel ) {
+    return( channelconfig[ channel ].rms * measure_get_channel_report_exp_mul( channel ) );
+}
+
+char *measure_get_channel_name( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+
+    if( channel >= CHANNEL_END )
+        return( 0 );
+        
+    return( channelconfig[ channel ].name );    
+}
+
+void measure_set_channel_name( uint16_t channel, char *name ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
+        return;
+
+    strlcpy( channelconfig[ channel ].name, name, sizeof( channelconfig[ channel ].name ) );
+}
+
+int measure_get_channel_type( uint16_t channel ){
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+
+    if( channel >= CHANNEL_END )
         return( 0 );
         
     return( channelconfig[ channel ].type );
 }
 
-void measure_set_channel_type( uint16_t channel, uint8_t value ){
+void measure_set_channel_type( uint16_t channel, int type ){
     if ( channel >= VIRTUAL_CHANNELS )
         return;
+
+    if( type >= CHANNEL_TYPE_END )
+        return;
         
-    channelconfig[ channel ].type = value;
+    channelconfig[ channel ].type = type;
     log_d("set channel %d type to %d", channel, channelconfig[ channel ].type );
 }
 
-
-int16_t measure_get_channel_phaseshift( uint16_t channel ) {
+double measure_get_channel_offset( uint16_t channel ){
     if ( channel >= VIRTUAL_CHANNELS )
-        return( 0 );
+        return( 0.0 );
 
-    return( channelconfig[ channel ].phaseshift );
+    if( channel >= CHANNEL_END )
+        return( 0.0 );
+        
+    return( channelconfig[ channel ].offset );
 }
 
-void measure_set_channel_phaseshift( uint16_t channel, int16_t value ) {
+void measure_set_channel_offset( uint16_t channel, double channel_offset ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return;
 
-    channelconfig[ channel ].phaseshift = value;
-    log_d("set channel %d phaseshift to %d", channel, channelconfig[ channel ].phaseshift );
+    if( channel >= CHANNEL_END )
+        return;
+
+    channelconfig[ channel ].offset = channel_offset;
 }
+
+double measure_get_channel_ratio( uint16_t channel ){
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0.0 );
+
+    if( channel >= CHANNEL_END )
+        return( 0.0 );
+        
+    return( channelconfig[ channel ].ratio );
+}
+
+void measure_set_channel_ratio( uint16_t channel, double channel_ratio ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
+        return;
+
+    channelconfig[ channel ].ratio = channel_ratio;
+}
+
+int measure_get_channel_phaseshift( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+
+    if( channel >= CHANNEL_END )
+        return( 0 );
+
+    return( channelconfig[ channel ].phaseshift % 360 );
+}
+
+void measure_set_channel_phaseshift( uint16_t channel, int value ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
+        return;
+
+    channelconfig[ channel ].phaseshift = ( value % 360 );
+}
+
+const char *measure_get_group_name( uint16_t group ) {
+    if ( group >= MAX_GROUPS )
+        return( "" );
+
+    return( (const char*) groupconfig[ group ].name );
+}
+
+void measure_set_group_name( uint16_t group, const char *name ) {
+    if ( group >= MAX_GROUPS )
+        return;
+
+    strlcpy( groupconfig[ group ].name, name, sizeof( groupconfig[ group ].name ) );
+}
+
+bool measure_get_group_active( uint16_t group ) {
+    if ( group >= MAX_GROUPS )
+        return( false );
+        
+    return( groupconfig[ group ].active );
+}
+
+void measure_set_group_active( uint16_t group, bool active ) {
+    if ( group >= MAX_GROUPS )
+        return;
+
+    groupconfig[ group ].active = active;
+}
+
+int measure_get_channel_group_id( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 0 );
+
+    if( channel >= CHANNEL_END )
+        return( 0 );
+
+    return( channelconfig[ channel ].group_id );
+}
+
+void measure_set_channel_group_id( uint16_t channel, int group_id ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
+        return;
+
+    channelconfig[ channel ].group_id = group_id;
+}
+
+int measure_get_channel_group_id_entrys( int group_id ) {
+    int groupd_id_entrys = 0;
+    
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ )
+        if( channelconfig[ i ].group_id == group_id && channelconfig[ i ].type != CHANNEL_NOT_USED )
+            groupd_id_entrys++;
+
+    return( groupd_id_entrys );
+}
+
+int measure_get_channel_group_id_entrys_with_type( int group_id, int type ) {
+    int groupd_id_entrys = 0;
+    
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ )
+        if( channelconfig[ i ].group_id == group_id && channelconfig[ i ].type == type )
+            groupd_id_entrys++;
+
+    return( groupd_id_entrys );
+}
+
+int measure_get_channel_with_group_id_and_type( int group_id, int type ) {
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ )
+        if( channelconfig[ i ].group_id == group_id && channelconfig[ i ].type == type )
+            return( i );
+
+    return( -1 );
+}
+
+int measure_get_channel_report_exp( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( false );
+
+    if( channel >= CHANNEL_END )
+        return( false );
+        
+    return( channelconfig[ channel ].report_exp );
+}
+
+float measure_get_channel_report_exp_mul( uint16_t channel ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return( 1.0 );
+
+    if( channel >= CHANNEL_END )
+        return( 1.0 );
+
+    return( 1.0 / pow( 10, channelconfig[ channel ].report_exp ) );
+}
+
+void measure_set_channel_report_exp( uint16_t channel, int report_exp ) {
+    if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
+        return;
+
+    channelconfig[ channel ].report_exp = report_exp;
+}
+
+const char *measure_get_channel_report_unit( uint16_t channel ) {
+    switch( channelconfig[ channel ].type ) {
+        case AC_CURRENT:
+        case DC_CURRENT:
+            if( channelconfig[ channel ].report_exp == -3 )
+                    return( "mA" );
+            else if( channelconfig[ channel ].report_exp == 0 )
+                    return( "A" );
+            else if( channelconfig[ channel ].report_exp == 3 )
+                    return( "kA" );
+            return( "-" );
+        case AC_VOLTAGE:
+        case DC_VOLTAGE:
+            if( channelconfig[ channel ].report_exp == -3 )
+                    return( "mV" );
+            else if( channelconfig[ channel ].report_exp == 0 )
+                    return( "V" );
+            else if( channelconfig[ channel ].report_exp == 3 )
+                    return( "kV" );
+            return( "-" );
+        case AC_POWER:
+        case DC_POWER:
+            if( channelconfig[ channel ].report_exp == -3 )
+                    return( "mVA" );
+            else if( channelconfig[ channel ].report_exp == 0 )
+                    return( "VA" );
+            else if( channelconfig[ channel ].report_exp == 3 )
+                    return( "kVA" );
+            return( "-" );
+        case AC_REACTIVE_POWER:
+            if( channelconfig[ channel ].report_exp == -3 )
+                    return( "mVAr" );
+            else if( channelconfig[ channel ].report_exp == 0 )
+                    return( "VAr" );
+            else if( channelconfig[ channel ].report_exp == 3 )
+                    return( "kVAr" );
+            return( "-" );
+        default:
+            return( "-" );
+    }
+}
+
+bool measure_get_measurement_valid( void ) {
+    if( measurement_valid == 0 )
+        return( true );
+    return( false );
+}
+
 
 uint8_t * measure_get_channel_opcodeseq( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( NULL );
+
+    if( channel >= CHANNEL_END )
+        return( 0 );
 
     return( channelconfig[ channel ].operation );
 }
@@ -501,12 +862,19 @@ char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *
     return( dest );
 }
 
+void measure_save_settings( void ) {
+    measure_config.save();
+}
+
 void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
     char microcode[ VIRTUAL_CHANNELS * 3 ] = "";
     char microcode_tmp[ 3 ] = "";
     uint8_t *opcode = value;
 
     if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
         return;
 
     memcpy( channelconfig[ channel ].operation, value, MAX_MICROCODE_OPS );
@@ -527,6 +895,9 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
     int opcode_pos = 0;
 
     if ( channel >= VIRTUAL_CHANNELS )
+        return;
+
+    if( channel >= CHANNEL_END )
         return;
 
     log_d("set channel %d microcode to \"%s\"", channel, ptr );

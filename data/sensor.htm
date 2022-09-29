@@ -1,0 +1,65 @@
+<html>
+<head>
+   <meta charset='utf-8'>
+   <meta http-equiv="X-UA-Compatible" content="IE=edge">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<table>
+  <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td>calculation</td>
+  </tr>
+  <tr>
+    <td>SCT013-000</td>
+    <td><img src="SCT013-000.jpg" alt="SCT013-000.jpg"></td>
+    <td><img src="SCT013-000.png" alt="SCT013-000.png"></td>
+    <td>( ( turns / burden ) * 3.3V ) / 4096 = ratio<br>( ( 2000 / 62 ) * 3.3V ) / 4096 = 0.025989163</td>
+  </tr>
+  <tr>
+    <td>ZMPT101B</td>
+    <td><img src="ZMPT101B.jpg" alt="ZMPT101B.jpg"></td>
+    <td><img src="ZMPT101B.png" alt="ZMPT101B.png"></td>
+    <td>Unfortunately, it is not possible to give a precise figure here. First, the potentiometer should be adjusted so that the sine voltage to be measured is no longer consumed. It is important to use a high-impedance voltage divider, otherwise the sine voltage will be consumed even at low values (example: <a href="bad_sin.png" target="_blank" rel="noopener noreferrer">bad sine</a> and <a href="good_sin.png" target="_blank" rel="noopener noreferrer">good sine</a>). The ratio 0.33 has proven to be a good starting point. This value should then be adjusted until the measured voltage matches the input voltage.</td>
+  </tr>
+  <tr>
+    <td>ACS712</td>
+    <td><img src="ACS712.jpg" alt="ACS712.jpg"></td>
+    <td><img src="ACS712.png" alt="ACS712.png"></td>
+    <td><a href="https://cdn-reichelt.de/documents/datenblatt/A200/ACS712.pdf" target="_blank" rel="noopener noreferrer">Datasheet</a><br><br>( 1A / ( V per Ampere ) x ( 5V / 4096 ) = ratio<br>5A variant: ( 1A / 0.185V ) x ( 5V / 4096 ) = 0.006598395<br>20A variant: ( 1A / 0.100V ) x ( 5V / 4096 ) = 0.012207031<br>30A variant: ( 1A / 0.066V ) x ( 5V / 4096 ) = 0.018495502</td>
+  </tr>
+  <tr>
+    <td>voltage divider</td>
+    <td></td>
+    <td><img src="voltage-div.png" alt="voltage-div.png"></td>
+    <td>With a simple voltage divider, you can also measure voltages greater than VCC (3.3V). If you want to measure voltage up to 36V, you can use an 11:1 (10k:1K) divider as in the example.<br><br>
+    3.3V / ( R7 / ( R7 + R8 ) ) = voltage range<br>
+    example:<br>
+    3.3V / ( 1k / ( 1k + 10k ) ) = 36.6V<br>
+    3.3V / ( 2k / ( 2k + 10k ) ) = 19.8V<br>
+    3.3V / ( 2k / ( 2k + 1k ) ) = 4.95V<br>
+    and the ratio:<br>
+    3.3V / ( R7 / ( R7 + R8 ) ) / 4096 = ratio<br>
+    3.3V / ( 1k / ( 1k + 10k ) ) / 4096 = 0.008862305 (36V)<br>
+    3.3V / ( 2k / ( 2k + 10k ) ) / 4096 = 0,004833984 (19.8V)<br>
+    3.3V / ( 2k / ( 2k + 1k ) ) / 4096 = 0,001208496 (4.95V)<br>
+    </td>
+  </tr>
+  <tr>
+    <td>direct voltage</td>
+    <td></td>
+    <td></td>
+    <td>Without a voltage divider, you can also measure voltages up to VCC (3.3V).<br><br>
+    3.3V / 4096 = 0.000805664<br>
+    </td>
+  </tr>
+</table>
+<br>
+<center>&copy; 2022 / Dirk Bro&szlig;wick / Email: dirk.brosswick@googlemail.com</center>
+<br>
+<br>
+</body>
+</html>

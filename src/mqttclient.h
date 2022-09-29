@@ -5,7 +5,6 @@
  *  Copyright  2019  Dirk Brosswick
  *  Email: dirk.brosswick@googlemail.com
  ****************************************************************************/
- 
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -21,18 +20,11 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
-
-/**
- *
- * \author Dirk Broßwick
- *
- */
 #ifndef _MQTTCLIENT_H
     #define _MQTTCLIENT_H
 
     /**
      * @brief start the mqqt client background task
-     * 
      */
     void mqtt_client_StartTask( void );
     /**
@@ -51,4 +43,19 @@
      */
     void mqtt_client_enable( void );
 
+    const char *mqtt_client_get_server( void );
+    void mqtt_client_set_server( const char *server );
+    const char *mqtt_client_get_username( void );
+    void mqtt_client_set_username( const char *username );
+    const char *mqtt_client_get_password( void );
+    void mqtt_client_set_password( const char *password );
+    const char *mqtt_client_get_topic( void );
+    void mqtt_client_set_topic( const char *topic );
+    int mqtt_client_get_port( void );
+    void mqtt_client_set_port( int port );
+    int mqtt_client_get_interval( void );
+    void mqtt_client_set_interval( int interval );
+    bool mqtt_client_get_realtimestats( void );
+    void mqtt_client_set_realtimestats( bool realtimestats );
+    void mqtt_save_settings( void );
 #endif // _MQTTCLIENT_H

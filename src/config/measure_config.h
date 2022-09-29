@@ -1,10 +1,9 @@
 /****************************************************************************
- *            ota.cpp
- *
- *  Sa April 27 12:17:32 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
+ *   Tu May 22 21:23:51 2020
+ *   Copyright  2020  Dirk Brosswick
+ *   Email: dirk.brosswick@googlemail.com
  ****************************************************************************/
+ 
 /*
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -19,26 +18,31 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */ 
-#ifndef _OTA_H
+ */
+#ifndef _MEASURE_CONFIG_H
+    #define _MEASURE_CONFIG_H
 
-    #define _OTA_H
-    /*
-     * Returnwerte für OTA-Wlan scan
-     */
-    #define OTA_WLAN_OK           0
-    #define OTA_WLAN_FAILED       1
+    #include "utils/basejsonconfig.h"
     
+    #define     MEASURE_JSON_CONFIG_FILE     "/measure.json"    /** @brief defines json config file name */
     /**
-     * @brief start ota background task
+     * @brief 
      */
-    void ota_StartTask( void );
+
     /**
-     * @brief scan wifi networks and print it out
-     * 
-     * @param SSID      a given network SSID scan for
-     * @return int      OTA_WLAN_OK or OTA_WLAN_FAILED if SSID network name found
+     * @brief ioport config structure
      */
-    int ota_scan( char * SSID );
-  
-#endif // _OTA_H
+    class measure_config_t : public BaseJsonConfig {
+        public:
+            measure_config_t();
+            int network_frequency = 50;
+            int samplerate_corr = 0;
+            
+        protected:
+            ////////////// Available for overloading: //////////////
+            virtual bool onLoad(JsonDocument& document);
+            virtual bool onSave(JsonDocument& document);
+            virtual bool onDefault( void );
+            virtual size_t getJsonBufferSize() { return 8192; }
+    };
+#endif // _MEASURE_CONFIG_H

@@ -4,21 +4,23 @@
    <meta http-equiv="X-UA-Compatible" content="IE=edge">
    <meta name="viewport" content="width=device-width, initial-scale=1">
    <link rel="stylesheet" href="styles.css">
-<script src="jquery-latest.min.js" type="text/javascript"></script>
+<script src="jquery-lastest.min.js" type="text/javascript"></script>
 <script src="alarm.js" type="text/javascript"></script>
 <script src="script.js"></script>
 </head>
 <body>
 <div id='cssmenu'>
 <ul>
-   <li><a href='index.htm'>Main</a></li>
-   <li><a href='measure.htm'>Measurement</a></li>
-   <li><a href='microcode.htm'>Microcode editor</a></li>
-   <li><a href='live.htm'>Live view</a></li>
-   <li><a href='mqtt.htm'>MQTT settings</a></li>
-   <li><a href='wlan.htm'>WLAN settings</a></li>
-   <li><a href='update.htm'>Web update</a></li>
-   <li><a href='info.htm'>Info</a></li>
+    <li><a href='index.htm'>Main</a></li>
+    <li><a href='channel.htm'>channel settings</a></li>
+    <li><a href='group.htm'>group settings</a></li>
+    <li><a href='display.htm'>Display settings</a></li>
+    <li><a href='ioport.htm'>IO Port settings</a></li>
+    <li><a href='live.htm'>Live view</a></li>
+    <li><a href='mqtt.htm'>MQTT settings</a></li>
+    <li><a href='wlan.htm'>WLAN settings</a></li>
+    <li><a href='update.htm'>Web update</a></li>
+    <li><a href='info.htm'>Info</a></li>
 </ul>
 </div>
 <h1>live view</h1>
@@ -26,7 +28,7 @@
    <table width="50%" border="0">
       <tr>
         <td>
-          <input id="OSCMultIn" type="range" value="1" max="20" min="0.5" step="0.1" orient="vertical">
+          <input id="OSCMultIn" type="range" value="1" max="20" min="0.1" step="0.1" orient="vertical">
         </td>
         <td width="60%">
           <canvas id=OScopeCanvas width="800" height="400"></canvas>
@@ -35,23 +37,71 @@
           <canvas id=FFTCanvas width="200" height="400"></canvas>
         </td>
       </tr>
-        <td></td>
         <td>
-            samplerate <input type=button onclick="SampleratePlus(); " id=SampleratePlusButton value="+">
+        </td>
+        <td>
+          <input type=button onclick="ToggleOScopePause(); OScopeProbe();" id=OScopeProbeButton value="|| / >">
+          zoom: <output id="OSCMultOut"></output><br>
+          <table width="100%" border="0">
+            <tr>
+              <td>
+                <input type="checkbox" id="channel0" checked><label id="channel_0_name" for="channel0">I1</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel4" checked><label id="channel_4_name" for="channel4">I2</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel8" checked><label id="channel_8_name" for="channel8">I3</label><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="channel1" checked><label id="channel_1_name" for="channel1">U1</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel5" checked><label id="channel_5_name" for="channel5">U2</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel9" checked><label id="channel_9_name" for="channel9">U3</label><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="channel2" checked><label id="channel_2_name" for="channel2">P1</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel6" checked><label id="channel_6_name" for="channel6">P2</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel10" checked><label id="channel_10_name" for="channel10">P3</label><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="channel3" checked><label id="channel_3_name" for="channel3">-</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel7" checked><label id="channel_7_name" for="channel7">-</label>
+              </td>
+              <td>
+                <input type="checkbox" id="channel11" checked><label id="channel_11_name" for="channel11">-</label><br>
+              </td>
+            </tr>
+            <tr>
+              <td>
+                <input type="checkbox" id="channel12" checked><label id="channel_12_name" for="channel12">In</label>
+              </td>
+            <tr>
+          </table>
+        </td>
+        <td>
+            samplerate:<br><input type=button onclick="SampleratePlus(); " id=SampleratePlusButton value="+">
             <input type=button onclick="SamplerateMinus(); " id=SamplerateMinusButton value="-">
-<!--
-            phaseshift <input type=button onclick="PhaseshiftPlus(); " id=SampleratePlusButton value="+">
-            <input type=button onclick="PhaseshiftMinus(); " id=SamplerateMinusButton value="-">
--->
-            <input type=button onclick="ToggleOScopePause(); OScopeProbe();" id=OScopeProbeButton value="|| / >">
-            zoom: <output id="OSCMultOut"></output><br>
-            <input type="checkbox" id="channel0" checked><label for="channel0">I1</label>
-            <input type="checkbox" id="channel1" checked><label for="channel1">U1</label><br>
-            <input type="checkbox" id="channel2" checked><label for="channel2">I2</label>
-            <input type="checkbox" id="channel3" checked><label for="channel3">U2</label><br>
-            <input type="checkbox" id="channel4" checked><label for="channel4">I3</label>
-            <input type="checkbox" id="channel5" checked><label for="channel5">U3</label><br>
-            <input type="checkbox" id="channelv" checked><label for="channelv">In</label>
+            <input type=button onclick="SaveSettings(); " id=SaveButton value="save"><br>
+            phaseshift: <select id="channel" name="channel" onchange='SendSetting("channel");'><option value="0">Channel 0</option><option value="1">Channel 1</option><option value="2">Channel 2</option><option value="3">Channel 3</option><option value="4">Channel 4</option><option value="5">Channel 5</option><option value="6">Channel 6</option><option value="7">Channel 7</option><option value="8">Channel 8</option><option value="9">Channel 9</option><option value="10">Channel 10</option><option value="11">Channel 11</option><option value="12">Channel 12</option></select>
+            <input type=button onclick="PhaseshiftMinus(); " id=PlusButton value="<">
+            <input type=button onclick="PhaseshiftPlus(); " id=MinusButton value=">">
+            <input type=button onclick="SaveSettings(); " id=SaveButton value="save">
         </td>
       <tr>
       </tr>
