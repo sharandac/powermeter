@@ -52,14 +52,14 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 ```
 # How it works
 
-![signalpath](https://github.com/sharandac/powermeter/blob/master/images/signalpath.png)
+![signalpath](images/signalpath.png)
 
 # Hardware
 
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/SCT013-000.png)
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/ZMPT101B.png)
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/ACS712.png)
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/voltage-div.png)
+![current sensor](images/SCT013-000.png)
+![current sensor](images/ZMPT101B.png)
+![current sensor](images/ACS712.png)
+![current sensor](images/voltage-div.png)
 
 # Channel setting
 
@@ -68,11 +68,11 @@ At any time, all 6 adc channel are read in simultaneously regardless of the sett
 # Interface
 
 ## live view
-![live view](https://github.com/sharandac/powermeter/blob/master/images/preview.gif)
+![live view](images/preview.gif)
 ## MQTT settings
-![mqtt](https://github.com/sharandac/powermeter/blob/master/images/mqtt-setting.png)
+![mqtt](images/mqtt-setting.png)
 ## measurement settings
-![measurement](https://github.com/sharandac/powermeter/blob/master/images/measurement-setting.png)
+![measurement](images/measurement-setting.png)
 
 # Contributors
 
