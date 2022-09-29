@@ -56,10 +56,16 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 
 # Hardware
 
+SCT013-000 curretn sensor (~100A)
 ![current sensor](images/SCT013-000.png)
+ZMPT101B voltage sensor (~250V)
 ![current sensor](images/ZMPT101B.png)
+ACS712 current sensor 5A, 20A and 30A
 ![current sensor](images/ACS712.png)
+simple voltage divider
 ![current sensor](images/voltage-div.png)
+
+For ratio calculation see inline documentation via webinterface.
 
 # Channel setting
 
