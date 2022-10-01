@@ -77,7 +77,7 @@ For ratio calculation see inline documentation via webinterface.
 ## live view
 ![live view](images/preview.gif)
 ## round trip
-![round trip](images/live-iew.gif)
+![round trip](images/live-view.gif)
 
 # Contributors
 
