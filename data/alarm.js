@@ -215,6 +215,7 @@ function check_opcode_and_options( id, option ) {
             document.getElementById( option ).options[ i ].text = document.getElementById( "channel" ).options[ i ].text;
     }
     else if( document.getElementById( id ) ) {
+        document.getElementById( option ).value = 0;
         for( var i = 0 ; i < 13 ; i++ )
             document.getElementById( option ).options[ i ].text = "-";
     }
@@ -347,6 +348,12 @@ function refreshOpcode( value ) {
         else
             break;
     }
+
+    if( document.getElementById( "realtime_edit" ) ) {
+        if( document.getElementById( "realtime_edit" ).checked )
+            SendSetting( value );
+    }
+    return;
 }
 
 /**
@@ -389,6 +396,12 @@ function refreshOpcodeStr( value ) {
      */
     document.getElementById( value ).value = opcode_str;
     console.log( opcode_str );
+
+    if( document.getElementById( "realtime_edit" ) ) {
+        if( document.getElementById( "realtime_edit" ).checked )
+            SendSetting( value );
+    }
+
 }
 
 function OScopeProbe() {

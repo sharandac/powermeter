@@ -77,6 +77,7 @@
         GET_ADC = 0x50,                     /** @brief get value from adc channel */
         SET_TO = 0x60,                      /** @brief set value to zero */
         FILTER = 0x70,                      /** @brief filter value */
+        NOP = 0x40,
         OPCODE_END
     };
     /**
@@ -158,13 +159,13 @@
      * 
      * @return int 
      */
-    int measure_get_network_frequency( void );
+    float measure_get_network_frequency( void );
     /**
      * @brief set voltage frequency between 50 and 60Hz
      * 
      * @param voltage_frequency 
      */
-    void measure_set_network_frequency( int voltage_frequency );
+    void measure_set_network_frequency( float voltage_frequency );
     /**
      * @brief get the current sample buffer with a size of  VIRTUAL_CHANNELS * numbersOfSamples
      * 

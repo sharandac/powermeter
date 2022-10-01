@@ -33,8 +33,17 @@ void wificlient_init( void ) {
     wificlient_config.load();
 
     WiFi.mode( WIFI_STA );
-    esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT20 );
-    esp_wifi_set_ps( WIFI_PS_NONE );
+
+    if(  wificlient_config.low_bandwidth )
+        esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT20 );
+    else
+        esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT40 );
+
+    if( wificlient_config.low_power )
+        esp_wifi_set_ps( WIFI_PS_MODEM );
+    else
+        esp_wifi_set_ps( WIFI_PS_NONE );
+
     WiFi.setHostname( wificlient_config.hostname );
 }
 /**
@@ -124,6 +133,22 @@ int wificlient_get_timeout( void ) {
 
 void wificlient_set_timeout( int timeout ) {
     wificlient_config.timeout = timeout;
+}
+
+bool wificlient_get_low_bandwidth( void ) {
+    return( wificlient_config.low_bandwidth );
+}
+
+void wificlient_set_low_bandwidth( bool low_bandwidth ) {
+    wificlient_config.low_bandwidth = low_bandwidth;
+}
+
+bool wificlient_get_low_power( void ) {
+    return( wificlient_config.low_power );
+}
+
+void wificlient_set_low_power( bool low_power ) {
+    wificlient_config.low_power = low_power;
 }
 
 void wificlient_save_settings( void ) {

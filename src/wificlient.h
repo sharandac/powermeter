@@ -41,5 +41,9 @@
     void wificlient_set_enable_softap( bool enable_softap );
     int wificlient_get_timeout( void );
     void wificlient_set_timeout( int timeout );
+    bool wificlient_get_low_bandwidth( void );
+    void wificlient_set_low_bandwidth( bool low_bandwidth );
+    bool wificlient_get_low_power( void );
+    void wificlient_set_low_power( bool low_power );
     void wificlient_save_settings( void );
 #endif // _IOPORT_H

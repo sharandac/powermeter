@@ -9,7 +9,7 @@
 
 # powermeter
 
-A simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
+A not so simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
 
 # Install
 
@@ -54,6 +54,8 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 
 ![signalpath](images/signalpath.png)
 
+At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of editable microopcodes, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
+
 # Hardware
 
 SCT013-000 current sensor (~100A)
@@ -69,10 +71,6 @@ simple voltage divider
 ![current sensor](images/voltage-div.png)
 
 For ratio calculation see inline documentation via webinterface.
-
-# Channel setting
-
-At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of microopcode, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
 
 # Interface
 

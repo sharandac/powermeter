@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <svg
-   width="310mm"
-   height="125mm"
-   viewBox="0 0 310 125"
+   width="210mm"
+   height="100mm"
+   viewBox="0 0 210 100"
    version="1.1"
    id="svg8"
    inkscape:version="1.1.2 (0a00cf5339, 2022-02-04)"
@@ -297,21 +297,6 @@
     <marker
        inkscape:isstock="true"
        style="overflow:visible"
-       id="marker2504-29"
-       refX="0"
-       refY="0"
-       orient="auto"
-       inkscape:stockid="Arrow1Lend"
-       inkscape:collect="always">
-      <path
-         transform="matrix(-0.8,0,0,-0.8,-10,0)"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
-         d="M 0,0 5,-5 -12.5,0 5,5 Z"
-         id="path2502-1" />
-    </marker>
-    <marker
-       inkscape:isstock="true"
-       style="overflow:visible"
        id="marker2504-0"
        refX="0"
        refY="0"
@@ -420,21 +405,6 @@
        orient="auto"
        refY="0"
        refX="0"
-       id="Arrow1Lend-80-9-6"
-       style="overflow:visible"
-       inkscape:isstock="true"
-       inkscape:collect="always">
-      <path
-         id="path830-81-8-3"
-         d="M 0,0 5,-5 -12.5,0 5,5 Z"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Lend"
-       orient="auto"
-       refY="0"
-       refX="0"
        id="Arrow1Lend-4-0-3-5"
        style="overflow:visible"
        inkscape:isstock="true">
@@ -502,21 +472,6 @@
       <path
          inkscape:connector-curvature="0"
          id="path830-8-2-3-4-9"
-         d="M 0,0 5,-5 -12.5,0 5,5 Z"
-         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
-         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
-    </marker>
-    <marker
-       inkscape:stockid="Arrow1Lend"
-       orient="auto"
-       refY="0"
-       refX="0"
-       id="Arrow1Lend-80-9-6-3"
-       style="overflow:visible"
-       inkscape:isstock="true"
-       inkscape:collect="always">
-      <path
-         id="path830-81-8-3-5"
          d="M 0,0 5,-5 -12.5,0 5,5 Z"
          style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
          transform="matrix(-0.8,0,0,-0.8,-10,0)" />
@@ -597,6 +552,68 @@
          style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
          transform="matrix(-0.8,0,0,-0.8,-10,0)" />
     </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-2-5-8-9-0"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path830-8-9-2-0-9-7"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-8-7-2-4-0-3"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         inkscape:connector-curvature="0"
+         id="path830-62-5-2-1-7-1"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-5-2-5-8-9-06"
+       style="overflow:visible"
+       inkscape:isstock="true">
+      <path
+         inkscape:connector-curvature="0"
+         id="path830-8-9-2-0-9-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
+    <marker
+       inkscape:stockid="Arrow1Lend"
+       orient="auto"
+       refY="0"
+       refX="0"
+       id="Arrow1Lend-8-7-2-4-0-7"
+       style="overflow:visible"
+       inkscape:isstock="true"
+       inkscape:collect="always">
+      <path
+         inkscape:connector-curvature="0"
+         id="path830-62-5-2-1-7-4"
+         d="M 0,0 5,-5 -12.5,0 5,5 Z"
+         style="fill:#000000;fill-opacity:1;fill-rule:evenodd;stroke:#000000;stroke-width:1pt;stroke-opacity:1"
+         transform="matrix(-0.8,0,0,-0.8,-10,0)" />
+    </marker>
   </defs>
   <sodipodi:namedview
      id="base"
@@ -605,9 +622,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.7"
-     inkscape:cx="537.85714"
-     inkscape:cy="-25"
+     inkscape:zoom="1.4"
+     inkscape:cx="337.5"
+     inkscape:cy="201.78571"
      inkscape:document-units="mm"
      inkscape:current-layer="layer1"
      showgrid="true"
@@ -638,7 +655,7 @@
      inkscape:label="Ebene 1"
      inkscape:groupmode="layer"
      id="layer1"
-     transform="translate(0,-172)">
+     transform="translate(0,-197)">
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.71654px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389764"
@@ -649,51 +666,7 @@
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
     <g
-       id="g3417"
-       transform="translate(120,190)"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png">
-      <rect
-         ry="1.3333341"
-         y="7"
-         x="80"
-         height="20"
-         width="20"
-         id="rect817-2-0"
-         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path2494-9"
-         d="M 69.999999,17 H 79"
-         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2504-2)" />
-    </g>
-    <g
-       id="g3326"
-       transform="translate(120,191)"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png">
-      <path
-         sodipodi:nodetypes="cssc"
-         inkscape:connector-curvature="0"
-         id="path3289"
-         d="m 85,13.999931 c 0,0 0.953738,-1.927761 2.524887,-1.952753 C 90,12.007805 90,15.341139 92.7166,15.412009 94.167903,15.44987 95,13.674472 95,13.674472"
-         style="fill:none;stroke:#000000;stroke-width:0.293981px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <path
-         sodipodi:nodetypes="cssc"
-         inkscape:connector-curvature="0"
-         id="path3289-8"
-         d="m 84.999999,19.325459 c 0,0 0.953738,-1.927761 2.524887,-1.952753 2.475113,-0.03937 2.475113,3.293961 5.191713,3.364831 C 94.167902,20.775397 95,19 95,19"
-         style="fill:none;stroke:#000000;stroke-width:0.293981px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path3321"
-         d="m 88.999998,15 2.000001,-2 v 0"
-         style="fill:none;stroke:#000000;stroke-width:0.264583px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1" />
-    </g>
-    <g
-       transform="rotate(90,40.000006,187)"
+       transform="rotate(90,6.4293072,165.81767)"
        id="g3417-4"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -715,24 +688,24 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.88519px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264899"
-       x="209.66507"
-       y="236.13597"
+       x="154.91223"
+       y="248.52419"
        id="text821-9"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="209.66507"
-         y="236.13597"
+         x="154.91223"
+         y="248.52419"
          style="text-align:center;text-anchor:middle;stroke-width:0.264899"
          id="tspan2464-1">probe</tspan><tspan
          sodipodi:role="line"
-         x="209.66507"
-         y="241.14787"
+         x="154.91223"
+         y="253.53609"
          style="text-align:center;text-anchor:middle;stroke-width:0.264899"
          id="tspan3464">&amp; FFT</tspan></text>
     <g
-       transform="rotate(90,25.000006,202)"
+       transform="rotate(90,-8.5706938,180.81767)"
        id="g3417-4-9"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -754,95 +727,46 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.51892px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.239927"
-       x="209.87563"
-       y="266.09174"
+       x="155.12279"
+       y="278.47995"
        id="text821-9-8"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="209.87563"
-         y="266.09174"
+         x="155.12279"
+         y="278.47995"
          style="text-align:center;text-anchor:middle;stroke-width:0.239927"
          id="tspan3464-5">live</tspan><tspan
          sodipodi:role="line"
-         x="209.87563"
-         y="270.63113"
+         x="155.12279"
+         y="283.01935"
          style="text-align:center;text-anchor:middle;stroke-width:0.239927"
          id="tspan3564">view</tspan></text>
-    <g
-       transform="translate(150,190)"
-       id="g3417-40"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png">
-      <rect
-         ry="1.3333341"
-         y="7"
-         x="80"
-         height="20"
-         width="20"
-         id="rect817-2-0-04"
-         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path2494-9-6"
-         d="M 69.999999,17 H 79"
-         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2504-2-6)" />
-    </g>
+    <rect
+       ry="1.3333341"
+       y="209.38835"
+       x="174.18864"
+       height="20"
+       width="20"
+       id="rect817-2-0-04"
+       style="vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:12.6807px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.864592"
-       x="235.29349"
-       y="210.33391"
+       x="179.48215"
+       y="222.72226"
        id="text3649"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan3647"
-         x="235.29349"
-         y="210.33391"
+         x="179.48215"
+         y="222.72226"
          style="stroke-width:0.864592">∑</tspan></text>
     <g
-       transform="translate(180,190)"
-       id="g3417-40-7"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png">
-      <rect
-         ry="1.3333341"
-         y="7"
-         x="80"
-         height="20"
-         width="20"
-         id="rect817-2-0-04-5"
-         style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1" />
-      <path
-         inkscape:connector-curvature="0"
-         id="path2494-9-6-6"
-         d="M 69.999999,17 H 79"
-         style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2504-2-6-2)" />
-    </g>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:10.0101px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.682504"
-       x="283.93594"
-       y="194.00285"
-       id="text3740"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       transform="scale(0.92037691,1.0865114)"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan3738"
-         x="283.93594"
-         y="194.00285"
-         style="stroke-width:0.682504"> U<tspan
-   style="font-size:65%;baseline-shift:super"
-   id="tspan1082">.</tspan>I</tspan></text>
-    <g
-       transform="rotate(90,69.999996,217)"
+       transform="rotate(90,20.929307,180.31767)"
        id="g3417-4-2"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -864,51 +788,26 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.38683px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.23092"
-       x="269.88303"
-       y="266.28613"
+       x="184.13002"
+       y="278.6745"
        id="text3740-9"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan3738-9"
-         x="269.88303"
-         y="266.28613"
+         x="184.13002"
+         y="278.6745"
          style="text-align:center;text-anchor:middle;stroke-width:0.23092">MQTT</tspan><tspan
          sodipodi:role="line"
-         x="269.88303"
-         y="270.65515"
+         x="184.13002"
+         y="283.04352"
          style="text-align:center;text-anchor:middle;stroke-width:0.23092"
          id="tspan3853">websocket</tspan></text>
     <rect
-       style="opacity:0.216;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.5;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.95;stroke-dasharray:0.5, 1;stroke-dashoffset:0;stroke-opacity:1"
-       id="rect3855"
-       width="150.01305"
-       height="47.424824"
-       x="134.99348"
-       y="176.99348"
-       ry="1.5808283"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:3.88056px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="164.96381"
-       y="183.07481"
-       id="text3859"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan3857"
-         x="164.96381"
-         y="183.07481"
-         style="stroke-width:0.264583">calculated every 40/33ms** for each channel</tspan></text>
-    <rect
        ry="1.3333341"
-       y="196.99998"
-       x="140"
+       y="209.38835"
+       x="116.24696"
        height="20"
        width="20"
        id="rect817-2-0-6"
@@ -916,24 +815,24 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.94894px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.269246"
-       x="150.00235"
-       y="206.03008"
+       x="126.24931"
+       y="218.41844"
        id="text3740-9-3"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="150.00235"
-         y="206.03008"
+         x="126.24931"
+         y="218.41844"
          style="text-align:center;text-anchor:middle;stroke-width:0.269246"
          id="tspan3853-1">40/33ms</tspan><tspan
          sodipodi:role="line"
-         x="150.00235"
-         y="211.12421"
+         x="126.24931"
+         y="223.51257"
          style="text-align:center;text-anchor:middle;stroke-width:0.269246"
          id="tspan3985">buffer</tspan></text>
     <g
-       transform="rotate(90,54.999996,232)"
+       transform="rotate(90,5.9293072,195.31767)"
        id="g3417-4-2-9"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -955,8 +854,8 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.17701px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.216614"
-       x="265.31354"
-       y="235.67058"
+       x="181.04008"
+       y="248.27641"
        id="text4100"
        transform="scale(1.0175568,0.98274613)"
        inkscape:export-xdpi="151.23219"
@@ -964,22 +863,22 @@
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan4098"
-         x="265.31354"
-         y="235.67058"
+         x="181.04008"
+         y="248.27641"
          style="text-align:center;text-anchor:middle;stroke-width:0.216614">average</tspan><tspan
          sodipodi:role="line"
-         x="265.31354"
-         y="239.76892"
+         x="181.04008"
+         y="252.37476"
          style="text-align:center;text-anchor:middle;stroke-width:0.216614"
          id="tspan4102">values</tspan><tspan
          sodipodi:role="line"
-         x="265.31354"
-         y="243.86726"
+         x="181.04008"
+         y="256.47308"
          style="text-align:center;text-anchor:middle;stroke-width:0.216614"
          id="tspan4134">per second</tspan><tspan
          sodipodi:role="line"
-         x="265.31354"
-         y="247.96561"
+         x="181.04008"
+         y="260.57144"
          style="text-align:center;text-anchor:middle;stroke-width:0.216614"
          id="tspan3252">and interval</tspan></text>
     <text
@@ -992,27 +891,17 @@
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         id="tspan3857-2"
          x="79.790771"
          y="276.03058"
-         style="stroke-width:0.264583">* optional voltage measurement</tspan><tspan
-         sodipodi:role="line"
-         x="79.790771"
-         y="281.0365"
          style="stroke-width:0.264583"
-         id="tspan1249">** depending on the AC voltage frequency</tspan><tspan
-         sodipodi:role="line"
-         x="79.790771"
-         y="286.04242"
-         style="stroke-width:0.264583"
-         id="tspan28805">*** virtual channel for channel mixing e.g. neutral</tspan></text>
+         id="tspan28805" /></text>
     <rect
        style="opacity:1;vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect817-2-7"
        width="20"
        height="20"
-       x="170"
-       y="196.99998"
+       x="145.24698"
+       y="209.38835"
        ry="1.3333341"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -1020,56 +909,24 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.71653px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389763"
-       x="180.07437"
-       y="208.92679"
+       x="155.32135"
+       y="221.31514"
        id="text821-8-5"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="180.07437"
-         y="208.92679"
+         x="155.32135"
+         y="221.31514"
          style="text-align:center;text-anchor:middle;stroke-width:0.389763"
          id="tspan3132-5">DSP</tspan></text>
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2504-29)"
-       d="m 160,206.99999 h 9"
-       id="path2494-2"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:3.88056px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
-       x="168.11159"
-       y="192.62025"
-       id="text3859-0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan3857-9"
-         x="168.11159"
-         y="192.62025"
-         style="stroke-width:0.264583">calculated in microcode ops</tspan></text>
-    <rect
-       style="opacity:0.201788;fill:none;stroke:#000000;stroke-width:0.612372;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:3.95;stroke-dasharray:0.612372, 1.22474;stroke-dashoffset:2.44949;stop-color:#000000"
-       id="rect2101"
-       width="90"
-       height="35"
-       x="165"
-       y="187"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"
-       inkscape:export-xdpi="151"
-       inkscape:export-ydpi="151" />
     <rect
        style="vector-effect:none;fill:none;fill-opacity:1;stroke:#000000;stroke-width:0.4;stroke-linecap:round;stroke-linejoin:miter;stroke-miterlimit:3.9;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
        id="rect817-25"
        width="20"
        height="20"
-       x="51.504631"
-       y="196.8522"
+       x="27.7516"
+       y="209.24057"
        ry="1.3333341"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -1077,15 +934,15 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.71654px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389764"
-       x="61.5028"
-       y="209.12584"
+       x="37.749771"
+       y="221.51421"
        id="text821-89"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="61.5028"
-         y="209.12584"
+         x="37.749771"
+         y="221.51421"
          style="text-align:center;text-anchor:middle;stroke-width:0.389764"
          id="tspan2464-0">ADC</tspan></text>
     <rect
@@ -1093,8 +950,8 @@
        id="rect817-2-76"
        width="20"
        height="20"
-       x="81.654434"
-       y="196.92239"
+       x="57.901405"
+       y="209.31076"
        ry="1.3333341"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -1102,25 +959,25 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:5.71654px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.389764"
-       x="91.719421"
-       y="205.38745"
+       x="67.966385"
+       y="217.77582"
        id="text821-8-0"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="91.719421"
-         y="205.38745"
+         x="67.966385"
+         y="217.77582"
          style="text-align:center;text-anchor:middle;stroke-width:0.389764"
          id="tspan2464-7-9">I2S</tspan><tspan
          sodipodi:role="line"
-         x="91.719421"
-         y="212.76178"
+         x="67.966385"
+         y="225.15015"
          style="text-align:center;text-anchor:middle;stroke-width:0.389764"
          id="tspan3132-7">DMA</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.3;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#marker2504-0)"
-       d="m 71.654434,206.9224 h 9"
+       d="m 47.901404,219.31076 h 9"
        id="path2494-5"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
@@ -1128,8 +985,8 @@
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
     <rect
        ry="1.3333341"
-       y="197"
-       x="111"
+       y="209.38838"
+       x="87.246964"
        height="20"
        width="20"
        id="rect817-2-0-6-9"
@@ -1137,20 +994,25 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:3.94894px;line-height:1.29;font-family:sans-serif;text-align:center;letter-spacing:0px;word-spacing:0px;text-anchor:middle;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.269246"
-       x="121.00235"
-       y="206.03011"
+       x="97.249313"
+       y="215.77267"
        id="text3740-9-3-7"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
-         x="121.00235"
-         y="206.03011"
+         x="97.249313"
+         y="215.77267"
          style="text-align:center;text-anchor:middle;stroke-width:0.269246"
-         id="tspan3985-8">channel</tspan><tspan
+         id="tspan3985-8">ADC</tspan><tspan
          sodipodi:role="line"
-         x="121.00235"
-         y="211.12424"
+         x="97.249313"
+         y="220.86681"
+         style="text-align:center;text-anchor:middle;stroke-width:0.269246"
+         id="tspan10479">channel</tspan><tspan
+         sodipodi:role="line"
+         x="97.249313"
+         y="225.96094"
          style="text-align:center;text-anchor:middle;stroke-width:0.269246"
          id="tspan4301">mapping</tspan></text>
     <path
@@ -1158,64 +1020,64 @@
        inkscape:export-xdpi="151.23219"
        inkscape:connector-curvature="0"
        id="path825-9"
-       d="m 46.050474,204.69978 h 5.08463 v 0 0"
+       d="m 22.297444,217.08814 h 5.08463 v 0 0"
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-80)" />
     <path
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        inkscape:connector-curvature="0"
        id="path825-2-7"
-       d="m 46.050474,201.87499 h 5.08463 v 0 0"
+       d="m 22.297444,214.26335 h 5.08463 v 0 0"
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-0)" />
     <path
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        inkscape:connector-curvature="0"
        id="path825-6-4"
-       d="m 46.050474,199.0502 h 5.08463 v 0 0"
+       d="m 22.297444,211.43856 h 5.08463 v 0 0"
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-2)" />
     <text
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        id="text4138-91"
-       y="199.96487"
-       x="33.70459"
+       y="212.35324"
+       x="9.95156"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
        xml:space="preserve"><tspan
          style="stroke-width:0.149479"
-         y="199.96487"
-         x="33.70459"
+         y="212.35324"
+         x="9.95156"
          id="tspan4136-70"
          sodipodi:role="line">ADC1-CH5</tspan></text>
     <text
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        id="text4138-0-6"
-       y="202.77582"
-       x="33.713837"
+       y="215.16418"
+       x="9.9608068"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
        xml:space="preserve"><tspan
          style="stroke-width:0.149479"
-         y="202.77582"
-         x="33.713837"
+         y="215.16418"
+         x="9.9608068"
          id="tspan4136-7-0"
          sodipodi:role="line">ADC1-CH6</tspan></text>
     <text
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        id="text4138-5-8"
-       y="205.51233"
-       x="33.708794"
+       y="217.9007"
+       x="9.9557638"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
        xml:space="preserve"><tspan
          style="stroke-width:0.149479"
-         y="205.51233"
-         x="33.708794"
+         y="217.9007"
+         x="9.9557638"
          id="tspan4136-8-5"
          sodipodi:role="line">ADC1-CH7</tspan></text>
     <path
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-8-7)"
-       d="m 46.050474,214.87499 h 5.08463 v 0 0"
+       d="m 22.297444,227.26335 h 5.08463 v 0 0"
        id="path825-0-3"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
@@ -1223,7 +1085,7 @@
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-8-6)"
-       d="m 46.050474,212.05019 h 5.08463 v 0 0"
+       d="m 22.297444,224.43855 h 5.08463 v 0 0"
        id="path825-2-6-9"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
@@ -1231,7 +1093,7 @@
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.169488;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-7-6)"
-       d="m 46.050474,209.22539 h 5.08463 v 0 0"
+       d="m 22.297444,221.61375 h 5.08463 v 0 0"
        id="path825-6-2-4"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
@@ -1241,88 +1103,28 @@
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        inkscape:connector-curvature="0"
-       id="path825-9-6-3"
-       d="m 101.63263,204.78903 h 8.7178 v 0 0"
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-80-9-6)" />
-    <path
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       inkscape:connector-curvature="0"
-       id="path825-2-7-3-4"
-       d="m 101.63263,202.00228 h 8.7178 v 0 0"
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-0-3-5)" />
-    <path
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       inkscape:connector-curvature="0"
        id="path825-6-4-6-1"
-       d="m 101.63263,199.21554 h 8.7178 v 0 0"
+       d="m 77.8796,211.6039 h 8.7178 v 0 0"
        style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-2-5-8)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-8-7-2-4)"
-       d="m 101.63263,214.82719 h 8.7178 v 0 0"
+       d="m 77.8796,227.21555 h 8.7178 v 0 0"
        id="path825-0-3-3-5"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
     <path
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-8-6-7-1)"
-       d="m 101.63263,212.04043 h 8.7178 v 0 0"
-       id="path825-2-6-9-3-0"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-7-6-3-5)"
-       d="m 101.63263,209.25368 h 8.7178 v 0 0"
-       id="path825-6-2-4-4-8"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <path
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       inkscape:connector-curvature="0"
-       id="path825-9-6-3-1"
-       d="m 131.03488,204.97998 h 8.7178 v 0 0"
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-80-9-6-3)" />
-    <path
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       inkscape:connector-curvature="0"
-       id="path825-2-7-3-4-5"
-       d="m 131.03488,202.19324 h 8.7178 v 0 0"
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-0-3-5-6)" />
-    <path
        inkscape:export-ydpi="151.23219"
        inkscape:export-xdpi="151.23219"
        inkscape:connector-curvature="0"
        id="path825-6-4-6-1-0"
-       d="m 131.03488,199.4065 h 8.7178 v 0 0"
+       d="m 107.28185,211.79486 h 8.7178 v 0 0"
        style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-2-5-8-9)" />
     <path
        style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-8-7-2-4-0)"
-       d="m 131.03488,215.01815 h 8.7178 v 0 0"
+       d="m 107.28185,227.40651 h 8.7178 v 0 0"
        id="path825-0-3-3-5-6"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-4-8-6-7-1-6)"
-       d="m 131.03488,212.23139 h 8.7178 v 0 0"
-       id="path825-2-6-9-3-0-5"
-       inkscape:connector-curvature="0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
-    <path
-       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-7-6-3-5-7)"
-       d="m 131.03488,209.44464 h 8.7178 v 0 0"
-       id="path825-6-2-4-4-8-0"
        inkscape:connector-curvature="0"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
@@ -1330,225 +1132,273 @@
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="33.09037"
-       y="210.04561"
+       x="9.8665075"
+       y="222.43398"
        id="text4138-9-1"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan4136-9-5"
-         x="33.09037"
-         y="210.04561"
-         style="stroke-width:0.149479">ADC1-CH0*</tspan></text>
+         x="9.8665075"
+         y="222.43398"
+         style="stroke-width:0.149479">ADC1-CH0</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="33.099617"
-       y="212.85652"
+       x="9.8757544"
+       y="225.24489"
        id="text4138-0-0-4"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan4136-7-8-1"
-         x="33.099617"
-         y="212.85652"
-         style="stroke-width:0.149479">ADC1-CH3*</tspan></text>
+         x="9.8757544"
+         y="225.24489"
+         style="stroke-width:0.149479">ADC1-CH3</tspan></text>
     <text
        xml:space="preserve"
        style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="33.141823"
-       y="215.59303"
+       x="9.9179602"
+       y="227.9814"
        id="text4138-5-1-5"
        inkscape:export-xdpi="151.23219"
        inkscape:export-ydpi="151.23219"
        inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
          sodipodi:role="line"
          id="tspan4136-8-3-5"
-         x="33.141823"
-         y="215.59303"
-         style="stroke-width:0.149479">ADC1-CH4*</tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-91-2"
-       y="228.63237"
-       x="100.64806"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="228.63237"
-         x="100.64806"
-         id="tspan4136-70-4"
-         sodipodi:role="line">ADC1-CH5 </tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-0-6-7"
-       y="231.4433"
-       x="100.65731"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="231.4433"
-         x="100.65731"
-         id="tspan4136-7-0-6"
-         sodipodi:role="line">ADC1-CH6</tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-5-8-5"
-       y="234.17981"
-       x="100.65226"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="234.17981"
-         x="100.65226"
-         id="tspan4136-8-5-7"
-         sodipodi:role="line">ADC1-CH7</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="100.03384"
-       y="238.71309"
-       id="text4138-9-1-1"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-9-5-3"
-         x="100.03384"
-         y="238.71309"
-         style="stroke-width:0.149479">ADC1-CH0*</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="100.04308"
-       y="241.52402"
-       id="text4138-0-0-4-3"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-7-8-1-3"
-         x="100.04308"
-         y="241.52402"
-         style="stroke-width:0.149479">ADC1-CH3*</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="100.08529"
-       y="244.2605"
-       id="text4138-5-1-5-8"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-8-3-5-5"
-         x="100.08529"
-         y="244.2605"
-         style="stroke-width:0.149479">ADC1-CH4*</tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-91-2-7"
-       y="228.55161"
-       x="132.36699"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="228.55161"
-         x="132.36699"
-         id="tspan4136-70-4-4"
-         sodipodi:role="line">CH0</tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-0-6-7-0"
-       y="231.36252"
-       x="132.37625"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="231.36252"
-         x="132.37625"
-         id="tspan4136-7-0-6-3"
-         sodipodi:role="line">CH2</tspan></text>
-    <text
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-xdpi="151.23219"
-       id="text4138-5-8-5-2"
-       y="234.09903"
-       x="132.3712"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       xml:space="preserve"><tspan
-         style="stroke-width:0.149479"
-         y="234.09903"
-         x="132.3712"
-         id="tspan4136-8-5-7-8"
-         sodipodi:role="line">CH4</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="131.75276"
-       y="238.63231"
-       id="text4138-9-1-1-0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-9-5-3-3"
-         x="131.75276"
-         y="238.63231"
-         style="stroke-width:0.149479">CH1*</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="131.76201"
-       y="241.44324"
-       id="text4138-0-0-4-3-7"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-7-8-1-3-0"
-         x="131.76201"
-         y="241.44324"
-         style="stroke-width:0.149479">CH3*</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="131.80421"
-       y="244.17972"
-       id="text4138-5-1-5-8-0"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-8-3-5-5-3"
-         x="131.80421"
-         y="244.17972"
-         style="stroke-width:0.149479">CH5*</tspan></text>
-    <text
-       xml:space="preserve"
-       style="font-style:normal;font-weight:normal;font-size:2.19236px;line-height:1.29;font-family:sans-serif;letter-spacing:0px;word-spacing:0px;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.149479"
-       x="131.88684"
-       y="248.3642"
-       id="text4138-5-1-5-8-0-7"
-       inkscape:export-xdpi="151.23219"
-       inkscape:export-ydpi="151.23219"
-       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png"><tspan
-         sodipodi:role="line"
-         id="tspan4136-8-3-5-5-3-2"
-         x="131.88684"
-         y="248.3642"
-         style="stroke-width:0.149479">CH6***</tspan></text>
+         x="9.9179602"
+         y="227.9814"
+         style="stroke-width:0.149479">ADC1-CH4</tspan></text>
     <text
        xml:space="preserve"
        transform="scale(0.26458333)"
        id="text22599"
        style="font-weight:500;font-size:48px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;white-space:pre;shape-inside:url(#rect22601)" />
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:12.7px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
+       x="75"
+       y="187"
+       id="text14925"><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.264583"
+         x="75"
+         y="187"
+         id="tspan14927" /></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:5.1961px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.108252"
+       x="28.887392"
+       y="593.54004"
+       id="text18537"
+       transform="scale(2.7668311,0.3614243)"><tspan
+         sodipodi:role="line"
+         id="tspan18535"
+         style="stroke-width:0.108252"
+         x="28.887392"
+         y="593.54004">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="28.887392"
+         y="600.41187"
+         id="tspan19155">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="28.887392"
+         y="607.11481"
+         id="tspan19157" /><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="28.887392"
+         y="613.98663"
+         id="tspan19159">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="28.887392"
+         y="620.8584"
+         id="tspan19161">.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:5.1961px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.108252"
+       x="39.411922"
+       y="593.65692"
+       id="text18537-5"
+       transform="scale(2.7668311,0.3614243)"><tspan
+         sodipodi:role="line"
+         id="tspan18535-3"
+         style="stroke-width:0.108252"
+         x="39.411922"
+         y="593.65692">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="39.411922"
+         y="600.52875"
+         id="tspan19155-4">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="39.411922"
+         y="607.23169"
+         id="tspan19157-9" /><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="39.411922"
+         y="614.10352"
+         id="tspan19159-0">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="39.411922"
+         y="620.97528"
+         id="tspan19161-2">.</tspan></text>
+    <path
+       inkscape:export-ydpi="151.23219"
+       inkscape:export-xdpi="151.23219"
+       inkscape:connector-curvature="0"
+       id="path825-6-4-6-1-0-1"
+       d="m 136,211.7767 h 8.7178 v 0 0"
+       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-2-5-8-9-0)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-8-7-2-4-0-3)"
+       d="m 136,227.38835 h 8.7178 v 0 0"
+       id="path825-0-3-3-5-6-9"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="151.23219"
+       inkscape:export-ydpi="151.23219"
+       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:5.1961px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.108252"
+       x="49.791363"
+       y="593.60663"
+       id="text18537-5-0"
+       transform="scale(2.7668311,0.3614243)"><tspan
+         sodipodi:role="line"
+         id="tspan18535-3-5"
+         style="stroke-width:0.108252"
+         x="49.791363"
+         y="593.60663">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="49.791363"
+         y="600.47845"
+         id="tspan19155-4-6">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="49.791363"
+         y="607.1814"
+         id="tspan19157-9-7" /><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="49.791363"
+         y="614.05322"
+         id="tspan19159-0-7">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="49.791363"
+         y="620.92499"
+         id="tspan19161-2-4">.</tspan></text>
+    <path
+       inkscape:export-ydpi="151.23219"
+       inkscape:export-xdpi="151.23219"
+       inkscape:connector-curvature="0"
+       id="path825-6-4-6-1-0-8"
+       d="m 165,211.38835 h 8.7178 v 0 0"
+       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-5-2-5-8-9-06)" />
+    <path
+       style="fill:none;stroke:#000000;stroke-width:0.220429;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;marker-end:url(#Arrow1Lend-8-7-2-4-0-7)"
+       d="m 165,227 h 8.7178 v 0 0"
+       id="path825-0-3-3-5-6-5"
+       inkscape:connector-curvature="0"
+       inkscape:export-xdpi="151.23219"
+       inkscape:export-ydpi="151.23219"
+       inkscape:export-filename="/home/sharan/Documents/PlatformIO/Projects/powermeter/images/signalpath.png" />
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:5.1961px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.108252"
+       x="60.272667"
+       y="592.53217"
+       id="text18537-5-8"
+       transform="scale(2.7668311,0.3614243)"><tspan
+         sodipodi:role="line"
+         id="tspan18535-3-2"
+         style="stroke-width:0.108252"
+         x="60.272667"
+         y="592.53217">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="60.272667"
+         y="599.40399"
+         id="tspan19155-4-60">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="60.272667"
+         y="606.10693"
+         id="tspan19157-9-6" /><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="60.272667"
+         y="612.97876"
+         id="tspan19159-0-6">.</tspan><tspan
+         sodipodi:role="line"
+         style="stroke-width:0.108252"
+         x="60.272667"
+         y="619.85052"
+         id="tspan19161-2-46">.</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:3.51575px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.0732446"
+       x="81.036171"
+       y="220.60509"
+       id="text29614"><tspan
+         sodipodi:role="line"
+         id="tspan29612"
+         style="stroke-width:0.0732446"
+         x="81.036171"
+         y="220.60509">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:3.51575px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.0732446"
+       x="110.1461"
+       y="220.62889"
+       id="text29614-9"><tspan
+         sodipodi:role="line"
+         id="tspan29612-4"
+         style="stroke-width:0.0732446"
+         x="110.1461"
+         y="220.62889">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:3.51575px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.0732446"
+       x="138.88223"
+       y="220.52133"
+       id="text29614-5"><tspan
+         sodipodi:role="line"
+         id="tspan29612-1"
+         style="stroke-width:0.0732446"
+         x="138.88223"
+         y="220.52133">6</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:3.51575px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.0732446"
+       x="166.76668"
+       y="220.38203"
+       id="text29614-0"><tspan
+         sodipodi:role="line"
+         id="tspan29612-3"
+         style="stroke-width:0.0732446"
+         x="166.76668"
+         y="220.38203">13</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-weight:500;font-size:12.7px;line-height:1.29;font-family:KacstArt;-inkscape-font-specification:'KacstArt, Medium';letter-spacing:0px;word-spacing:0px;writing-mode:lr-tb;stroke-width:0.264583"
+       x="77"
+       y="260"
+       id="text37132"><tspan
+         sodipodi:role="line"
+         id="tspan37130"
+         style="stroke-width:0.264583"
+         x="77"
+         y="260" /></text>
   </g>
 </svg>

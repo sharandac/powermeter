@@ -35,7 +35,7 @@
     class measure_config_t : public BaseJsonConfig {
         public:
             measure_config_t();
-            int network_frequency = 50;
+            float network_frequency = 50;
             int samplerate_corr = 0;
             
         protected:

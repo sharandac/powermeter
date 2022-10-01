@@ -165,6 +165,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             client->printf("channel_report_exp\\%d", measure_get_channel_report_exp( selectedchannel ) );
             client->printf("channel_phaseshift\\%d", measure_get_channel_phaseshift( selectedchannel ) );
             client->printf("channel_opcodeseq_str\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
+            client->printf("old_channel_opcodeseq_str\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
             client->printf("channel_offset\\%f", measure_get_channel_offset( selectedchannel ) );
             client->printf("channel_ratio\\%f", measure_get_channel_ratio( selectedchannel ) );
             client->printf("channel_name\\%s", measure_get_channel_name( selectedchannel ) );
@@ -185,6 +186,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             client->printf("checkbox\\enable_softap\\%s", wificlient_get_enable_softap() ? "true" : "false " );
             client->printf("softap_ssid\\%s", wificlient_get_softap_ssid() );
             client->printf("softap_password\\%s", "********" );
+            client->printf("checkbox\\low_power\\%s", wificlient_get_low_power() ? "true" : "false ");
+            client->printf("checkbox\\low_bandwidth\\%s", wificlient_get_low_bandwidth() ? "true" : "false ");
         }
         else if ( !strcmp("get_mqtt_settings", cmd ) ) {
             client->printf("mqtt_server\\%s", mqtt_client_get_server() );
@@ -196,7 +199,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             client->printf("checkbox\\mqtt_realtimestats\\%s", mqtt_client_get_realtimestats()? "true" : "false" );
         }
         else if ( !strcmp("get_measurement_settings", cmd ) ) {
-            client->printf("network_frequency\\%d", measure_get_network_frequency() );
+            client->printf("network_frequency\\%f", measure_get_network_frequency() );
             client->printf("samplerate_corr\\%d", measure_get_samplerate_corr() );
         }
         else if ( !strcmp("get_hostname_settings", cmd ) ) {
@@ -439,6 +442,14 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             wificlient_set_enable_softap( atoi( value ) ? true : false );
         }
         /* MQTT Server */
+        else if ( !strcmp("low_power", cmd ) ) {
+            wificlient_set_low_power( atoi( value ) ? true : false );
+        }
+        /* MQTT Server */
+        else if ( !strcmp("low_bandwidth", cmd ) ) {
+            wificlient_set_low_bandwidth( atoi( value ) ? true : false );
+        }
+        /* MQTT Server */
         else if ( !strcmp("mqtt_server", cmd ) ) {
             mqtt_client_set_server( value );
         }
@@ -473,7 +484,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         }
         /* store smaple-rate */
         else if ( !strcmp("network_frequency", cmd ) ) {
-            measure_set_network_frequency( atoi( value ) );
+            measure_set_network_frequency( atof( value ) );
         }
         /* sample-rate +1Hz */
         else if ( !strcmp("FQ+", cmd ) ) {

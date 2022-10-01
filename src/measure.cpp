@@ -110,13 +110,12 @@ void measure_init( void ) {
     // config i2s to capture data from internal adc
     const i2s_config_t i2s_config = {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN ),
-        .sample_rate = ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr ,
+        .sample_rate = ( ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr ),
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
-        // .channel_format = I2S_CHANNEL_FMT_ALL_RIGHT,
         .communication_format = i2s_comm_format_t( I2S_COMM_FORMAT_I2S ),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,     
-        .dma_buf_count = VIRTUAL_ADC_CHANNELS * 2,                          
+        .dma_buf_count = VIRTUAL_ADC_CHANNELS * 4,                          
         .dma_buf_len = numbersOfSamples,
     };
 
@@ -170,10 +169,10 @@ void measure_mes( void ) {
      */
     while( millis() < NextMillis ) {
 
-        static double adc_sample[ VIRTUAL_CHANNELS ], last_adc_sample[ VIRTUAL_CHANNELS ];                  /** @brief runtime varibales for lowpass filter stuff */
-        static double temp_adc_sample[ VIRTUAL_CHANNELS ];
-        static double ac_filtered[ VIRTUAL_CHANNELS ], last_ac_filtered[ VIRTUAL_CHANNELS ];                /** @brief runtime varibales for lowpass filter stuff */
-        static double dc_filtered[ VIRTUAL_CHANNELS ][ 64 ];                                                /** @brief runtime varibales for lowpass filter stuff */
+        static float adc_sample[ VIRTUAL_CHANNELS ], last_adc_sample[ VIRTUAL_CHANNELS ];                  /** @brief runtime varibales for lowpass filter stuff */
+        static float temp_adc_sample[ VIRTUAL_CHANNELS ];
+        static float ac_filtered[ VIRTUAL_CHANNELS ], last_ac_filtered[ VIRTUAL_CHANNELS ];                /** @brief runtime varibales for lowpass filter stuff */
+        static float dc_filtered[ VIRTUAL_CHANNELS ][ 64 ];                                                /** @brief runtime varibales for lowpass filter stuff */
         uint16_t *channel[ VIRTUAL_ADC_CHANNELS ];                                                          /** @brief channel pointer list */
         uint16_t adc_tempsamples[ numbersOfSamples ];                                                       /** @brief unsort sampelbuffer from ADC */
         uint16_t adc_samples[ VIRTUAL_ADC_CHANNELS ][ numbersOfSamples ];                                   /** @brief channel sorted samplebuffer */
@@ -318,7 +317,10 @@ void measure_mes( void ) {
                         case PASS_POSITIVE:         if( adc_sample[ i ] < 0.0 )
                                                         adc_sample[ i ] = 0.0;
                                                     break;
-                        case GET_ADC:               adc_sample[ i ] = adc_samples[ op_channel ][ phaseshift_0_degree ] + channelconfig[ i ].offset;
+                        case GET_ADC:               if( op_channel >= 0 && op_channel < VIRTUAL_ADC_CHANNELS )
+                                                        adc_sample[ i ] = adc_samples[ op_channel ][ phaseshift_0_degree ] + channelconfig[ i ].offset;
+                                                    else
+                                                        continue;
                                                     break;
                         case SET_TO:                adc_sample[ i ] = op_channel;
                                                     break;
@@ -361,6 +363,7 @@ void measure_mes( void ) {
 
                                                     }
                                                     break;
+                        case NOP:                   break;
                         default:                    operation = MAX_MICROCODE_OPS;
                                                     break;
                     }
@@ -496,12 +499,12 @@ void measure_set_samplerate_corr( int samplerate_corr ) {
     }
 }
 
-int measure_get_network_frequency( void ) {
+float measure_get_network_frequency( void ) {
     return( measure_config.network_frequency );
 }
 
-void measure_set_network_frequency( int network_frequency ) {
-    if( network_frequency >= 50 && network_frequency <= 60 ) {
+void measure_set_network_frequency( float network_frequency ) {
+    if( network_frequency >= 16.0 && network_frequency <= 120.0 ) {
         measure_config.network_frequency = network_frequency;
         esp_err_t err;
         err = i2s_set_sample_rates( I2S_PORT, ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr );
@@ -807,11 +810,11 @@ const char *measure_get_channel_report_unit( uint16_t channel ) {
         case AC_POWER:
         case DC_POWER:
             if( channelconfig[ channel ].report_exp == -3 )
-                    return( "mVA" );
+                    return( "mW" );
             else if( channelconfig[ channel ].report_exp == 0 )
-                    return( "VA" );
+                    return( "W" );
             else if( channelconfig[ channel ].report_exp == 3 )
-                    return( "kVA" );
+                    return( "kW" );
             return( "-" );
         case AC_REACTIVE_POWER:
             if( channelconfig[ channel ].report_exp == -3 )
@@ -846,6 +849,7 @@ uint8_t * measure_get_channel_opcodeseq( uint16_t channel ) {
 char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *dest ) {
     char microcode_tmp[ 3 ] = "";
     uint8_t *opcode = channelconfig[ channel ].operation;
+    *dest = '\0';
 
     if ( channel >= VIRTUAL_CHANNELS )
         return( NULL );

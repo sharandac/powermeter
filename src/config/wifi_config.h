@@ -42,6 +42,8 @@
             char softap_ssid[ WIFICLIENT_MAX_TEXT_SIZE ] = "powermeter";
             char softap_password[ WIFICLIENT_MAX_TEXT_SIZE ] = "powermeter";
             int timeout = 15;
+            bool low_bandwidth = false;
+            bool low_power = false;
             
         protected:
             ////////////// Available for overloading: //////////////

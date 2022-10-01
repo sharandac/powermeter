@@ -35,6 +35,8 @@ bool wificlient_config_t::onSave(JsonDocument& doc) {
     doc["softap_ssid"] = softap_ssid;
     doc["softap_password"] = softap_password;
     doc["timeout"] = timeout;
+    doc["low_bandwidth"] = low_bandwidth;
+    doc["low_power"] = low_power;
 
     return true;
 }
@@ -55,6 +57,8 @@ bool wificlient_config_t::onLoad(JsonDocument& doc) {
     strlcpy( softap_ssid, doc["softap_ssid"] | tmp_hostname, sizeof( softap_ssid ) );
     strlcpy( softap_password, doc["softap_password"] | "powermeter", sizeof( softap_password ) );
     timeout = doc["timeout"] | 15;
+    low_bandwidth = doc["low_bandwidth"] | false;
+    low_power = doc["low_power"] | false;
     
     return true;
 }

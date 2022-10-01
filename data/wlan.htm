@@ -38,6 +38,12 @@
     </div>
   </div>
   <div class="vbox">
+    <input type="checkbox" id="low_power" checked><label for="low_power"> enable low power radio</label>
+  </div class="vbox">
+  <div class="vbox">
+    <input type="checkbox" id="low_bandwidth" checked><label for="low_bandwidth"> enable low bandwidth radio</label>
+  </div class="vbox">
+  <div class="vbox">
     <input type="checkbox" id="enable_softap" checked><label for="enable_softap"> enable softAP fallback</label>
   </div class="vbox">
   <div class="vbox">
@@ -55,7 +61,7 @@
 </div>
 <br>
 <br>
-<button type='button' onclick='SendSetting("ssid");SendSetting("password");SendCheckboxSetting("enable_softap");SendSetting("softap_ssid");SendSetting("softap_password");SaveSettings();get_wlan_settings();' class='button'>save</button><br><br>
+<button type='button' onclick='SendSetting("ssid");SendSetting("password");SendCheckboxSetting("enable_softap");SendCheckboxSetting("low_power");SendCheckboxSetting("low_bandwidth");SendSetting("softap_ssid");SendSetting("softap_password");SaveSettings();get_wlan_settings();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>
