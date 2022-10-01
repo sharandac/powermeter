@@ -76,10 +76,8 @@ For ratio calculation see inline documentation via webinterface.
 
 ## live view
 ![live view](images/preview.gif)
-## MQTT settings
-![mqtt](images/mqtt-setting.png)
-## measurement settings
-![measurement](images/measurement-setting.png)
+## round trip
+![round trip](images/live-iew.gif)
 
 # Contributors
 
