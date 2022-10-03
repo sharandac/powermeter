@@ -37,19 +37,21 @@
  * @brief arduino setup function
  */
 void setup( void ) {
-    if ( !SPIFFS.begin() )       
-        SPIFFS.format();
     /*
      * doing setup Serial an config
      */
     Serial.begin(115200);
+    log_i("Start Main Task on Core: %d", xPortGetCoreID() );
+    if ( !SPIFFS.begin() ) {
+        log_i("format SPIFFS ..." );
+        SPIFFS.format();
+    }
     ioport_init();
     display_init();
     wificlient_init();
     /*
      * Setup Tasks
      */
-    log_i("Start Main Task on Core: %d", xPortGetCoreID() );
     ntp_StartTask();
     mqtt_client_StartTask();
     asyncwebserver_StartTask();
@@ -60,8 +62,6 @@ void setup( void ) {
  * @brief arduino main loop
  */
 void loop() {
-    wificlient_loop();
     display_loop();
     ioport_loop();
-    delay(10);
 }

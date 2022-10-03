@@ -25,8 +25,6 @@
     #define _WIFICLIENT_H
     
     void wificlient_init( void );
-    void wificlient_loop( void );
-
     const char *wificlient_get_hostname( void );
     void wificlient_set_hostname( const char * hostname );
     const char *wificlient_get_ssid( void );

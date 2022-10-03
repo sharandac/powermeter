@@ -661,7 +661,6 @@ void asyncwebserver_setup(void){
                     "<b>Heap free min: </b>" + ESP.getMinFreeHeap() + "<br>" +
                     "<b>Psram size: </b>" + ESP.getPsramSize() + "<br>" +
                     "<b>Psram free: </b>" + ESP.getFreePsram() + "<br>" +
-
                     "<br><b><u>System</u></b><br>" +
                     "<b>Uptime: </b>" + millis() / 1000 + "<br>" +
                     "</body></html>";
