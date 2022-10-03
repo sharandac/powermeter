@@ -1,11 +1,12 @@
-/****************************************************************************
- *            mqtt_client.h
- *
- *  Sa April 27 12:01:00 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
-/*
+/**
+ * @file mqttclient.h
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -42,20 +43,84 @@
      * @brief enable all mqtt connections and reload all connection settings
      */
     void mqtt_client_enable( void );
-
+    /**
+     * @brief get mqtt server address
+     * 
+     * @return  server address as char array
+     */
     const char *mqtt_client_get_server( void );
+    /**
+     * @brief set mqtt server
+     * 
+     * @param   server  serveraddress as char array
+     */
     void mqtt_client_set_server( const char *server );
+    /**
+     * @brief get mqtt username
+     * 
+     * @return  username as char array
+     */
     const char *mqtt_client_get_username( void );
+    /**
+     * @brief set mqtt username
+     * 
+     * @param   username    username as char array
+     */
     void mqtt_client_set_username( const char *username );
+    /**
+     * @brief get mqtt password
+     * 
+     * @return  password as char array
+     */
     const char *mqtt_client_get_password( void );
+    /**
+     * @brief set mqtt password
+     * 
+     * @param   password    password as char array
+     */
     void mqtt_client_set_password( const char *password );
+    /**
+     * @brief get mqtt topic prefix
+     * 
+     * @return  mqtt topix prefix as char array
+     */
     const char *mqtt_client_get_topic( void );
+    /**
+     * @brief set mqtt topix prefix
+     * 
+     * @param topic topix as char array
+     */
     void mqtt_client_set_topic( const char *topic );
+    /**
+     * @brief get mqtt server port
+     * 
+     * @return  serverport
+     */
     int mqtt_client_get_port( void );
+    /**
+     * @brief set server port
+     * 
+     * @param   port    mqtt server port
+     */
     void mqtt_client_set_port( int port );
+    /**
+     * @brief get mqtt msg interval
+     *
+     * @return  mqtt msg interval in sec
+     */
     int mqtt_client_get_interval( void );
+    /**
+     * @brief set mqtt msg interval
+     * 
+     * @param   interval    mqtt msg interval in sec
+     */
     void mqtt_client_set_interval( int interval );
     bool mqtt_client_get_realtimestats( void );
     void mqtt_client_set_realtimestats( bool realtimestats );
+    /**
+     * @brief store mqtt settings as .json
+     * 
+     * @note all settings has a direct effect but was not stored, only here the a new json is written
+     */
     void mqtt_save_settings( void );
 #endif // _MQTTCLIENT_H

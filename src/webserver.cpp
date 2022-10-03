@@ -1,11 +1,12 @@
-/****************************************************************************
- *            webserver.cpp
- *
- *  May 23 00:05:23 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
-/*
+/**
+ * @file webserver.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -27,6 +28,11 @@
 #include <AsyncTCP.h>
 #include <ESPAsyncWebServer.h>
 #include <SPIFFSEditor.h>
+
+#include "config/ioport_config.h"
+#include "config/display_config.h"
+#include "config/mqtt_config.h"
+#include "config/wifi_config.h"
 #include "config.h"
 #include "mqttclient.h"
 #include "webserver.h"
@@ -34,10 +40,6 @@
 #include "display.h"
 #include "ioport.h"
 #include "wificlient.h"
-#include "config/ioport_config.h"
-#include "config/display_config.h"
-#include "config/mqtt_config.h"
-#include "config/wifi_config.h"
 
 AsyncWebServer asyncserver( WEBSERVERPORT );
 AsyncWebSocket ws("/ws");
@@ -559,17 +561,17 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         else if ( !strcmp("ioport_start_state", cmd ) )
             ioport_set_start_state( selectedchannel, atoi( value ) );
         else if ( !strcmp("ioport_active", cmd ) )
-            ioport_set_active( selectedchannel, atoi( value ) );
+            ioport_set_active( selectedchannel, (ioport_active_t)atoi( value ) );
         else if ( !strcmp("ioport_gpio_pin_num", cmd ) )
             ioport_set_gpio_pin_num( selectedchannel, atoi( value ) );
         else if ( !strcmp("ioport_gpio_pin_num", cmd ) )
             ioport_set_gpio_pin_num( selectedchannel, atoi( value ) );
         else if ( !strcmp("ioport_invert", cmd ) )
-            ioport_set_invert( selectedchannel, atoi( value ) );
+            ioport_set_invert( selectedchannel, (ioport_output_t)atoi( value ) );
         else if ( !strcmp("ioport_value_channel", cmd ) )
             ioport_set_value_channel( selectedchannel, atoi( value ) );
         else if ( !strcmp("ioport_trigger", cmd ) )
-            ioport_set_trigger( selectedchannel, atoi( value ) );
+            ioport_set_trigger( selectedchannel, (ioport_trigger_t)atoi( value ) );
         else if ( !strcmp("ioport_trigger_value", cmd ) )
             ioport_set_value( selectedchannel, atof( value ) );
 

@@ -1,10 +1,12 @@
-/****************************************************************************
- *   Tu May 22 21:23:51 2020
- *   Copyright  2020  Dirk Brosswick
- *   Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
-/*
+/**
+ * @file measure_config.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -18,7 +20,7 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+ */ 
 #include "measure_config.h"
 #include "measure.h"
 
@@ -63,13 +65,13 @@ bool measure_config_t::onLoad(JsonDocument& doc) {
 
     for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
         measure_set_channel_name( i, (char*) doc["channel"][ i ]["name"].as<String>().c_str() );
-        measure_set_channel_type( i, doc["channel"][ i ]["type"].as<int>() );
-        measure_set_channel_report_exp( i, doc["channel"][ i ]["report_exp"].as<int>() );
-        measure_set_channel_offset( i, doc["channel"][ i ]["offset"].as<double>() );
-        measure_set_channel_ratio( i, doc["channel"][ i ]["ratio"].as<double>() );
-        measure_set_channel_phaseshift( i, doc["channel"][ i ]["phaseshift"].as<int>() );
-        measure_set_channel_group_id( i, doc["channel"][ i ]["group_id"].as<int>() );
-        const char *opcodeseq_str = doc["channel"][ i ]["mircocode"].as<String>().c_str();
+        measure_set_channel_type( i, doc["channel"][ i ]["type"] | AC_CURRENT );
+        measure_set_channel_report_exp( i, doc["channel"][ i ]["report_exp"] | 0 );
+        measure_set_channel_offset( i, doc["channel"][ i ]["offset"] | 0.0 );
+        measure_set_channel_ratio( i, doc["channel"][ i ]["ratio"] | 1.0);
+        measure_set_channel_phaseshift( i, doc["channel"][ i ]["phaseshift"] | 0 );
+        measure_set_channel_group_id( i, doc["channel"][ i ]["group_id"] | 0 );
+        const char *opcodeseq_str = doc["channel"][ i ]["mircocode"].as<String>().c_str() ;
         measure_set_channel_opcodeseq_str( i, opcodeseq_str );        
     }
 

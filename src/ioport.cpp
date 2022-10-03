@@ -1,12 +1,12 @@
-/****************************************************************************
- *            measure.cpp
- *
- *  Sa April 27 10:17:37 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
-/*
+/**
+ * @file ioport.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -22,17 +22,19 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
 #include <Arduino.h>
-#include "config/ioport_config.h"
 #include "ioport.h"
 #include "measure.h"
 
 ioport_config_t ioport_config;
 
 void ioport_init( void ) {
+    /**
+     * load config from json
+     */
     ioport_config.load();
-
-    pinMode( GPIO_NUM_27, INPUT_PULLUP );
-
+    /**
+     * crawl all ioports and setup pin config
+     */
     for( int channel = 0 ; channel < IOPORT_MAX ; channel++ ) {
         if( ioport_config.ioport[ channel ].active ) {
             pinMode( ioport_config.ioport[ channel ].gpio_pin_num, OUTPUT );
@@ -44,11 +46,15 @@ void ioport_init( void ) {
 
 void ioport_loop( void ) {
     static uint64_t NextIOPortMillis = 0;
-
+    /**
+     * on first run, init NextIOPortMillis
+     */
     if( NextIOPortMillis == 0 ) {
         NextIOPortMillis = millis();
     }
-
+    /**
+     * check next NextIOPortMillis
+     */
     if( NextIOPortMillis <= millis() ) {
         NextIOPortMillis = millis() + 100l;  
         /**
@@ -76,22 +82,16 @@ void ioport_loop( void ) {
                  */
                 switch ( ioport_config.ioport[ ioport ].trigger ) {
                     case IOPORT_TRIGGER_EQUAL:
-
                         if( value == ioport_config.ioport[ ioport ].value )
                             trigger = true;
-
                         break;
                     case IOPORT_TRIGGER_LOWER:
-                    
                         if( value < ioport_config.ioport[ ioport ].value )
                             trigger = true;
-
                         break;
                     case IOPORT_TRIGGER_HIGHER:
-                    
                         if( value > ioport_config.ioport[ ioport ].value )
                             trigger = true;
-
                         break;
                     default:
                         continue;
@@ -129,10 +129,10 @@ void ioport_set_start_state( uint16_t channel, uint16_t start_state ) {
     ioport_config.ioport[ channel ].start_state = start_state;
 }
 
-bool ioport_get_active( uint16_t channel ) {
+ioport_active_t ioport_get_active( uint16_t channel ) {
     return( ioport_config.ioport[ channel ].active );
 }
-void ioport_set_active( uint16_t channel, uint16_t active ) {
+void ioport_set_active( uint16_t channel, ioport_active_t active ) {
     ioport_config.ioport[ channel ].active = active;
 }
 
@@ -150,10 +150,10 @@ void ioport_set_gpio_pin_num( uint16_t channel, uint16_t gpio_pin_num ) {
     ioport_config.ioport[ channel ].gpio_pin_num = gpio_pin_num;
 }
 
-uint16_t ioport_get_invert( uint16_t channel ) {
+ioport_output_t ioport_get_invert( uint16_t channel ) {
     return( ioport_config.ioport[ channel ].invert );
 }
-void ioport_set_invert( uint16_t channel, uint16_t invert ) {
+void ioport_set_invert( uint16_t channel, ioport_output_t invert ) {
     ioport_config.ioport[ channel ].invert = invert;
 }
 
@@ -164,10 +164,10 @@ void ioport_set_value_channel( uint16_t channel, uint16_t value_channel ) {
     ioport_config.ioport[ channel ].value_channel = value_channel;
 }
 
-uint16_t ioport_get_trigger( uint16_t channel ) {
+ioport_trigger_t ioport_get_trigger( uint16_t channel ) {
     return( ioport_config.ioport[ channel ].trigger );
 }
-void ioport_set_trigger( uint16_t channel, uint16_t trigger ) {
+void ioport_set_trigger( uint16_t channel, ioport_trigger_t trigger ) {
     ioport_config.ioport[ channel ].trigger = trigger;
 }
 

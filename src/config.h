@@ -1,11 +1,12 @@
-/****************************************************************************
-              config.h
-
-    Tu May 29 21:23:51 2017
-    Copyright  2017  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
-/*
+/**
+ * @file config.h
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -46,9 +47,5 @@
      * firmewareversion string
      */
     #define __FIRMWARE__            "2022092901"
-    /*
-     *  WLAN-Daten
-     */
-    #define WLAN_CONNECT_TIMEOUT    15      /* zeit zum verbinden in Sekunden */
 
 #endif // _CONFIG_H

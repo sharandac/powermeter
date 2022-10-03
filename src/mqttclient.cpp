@@ -1,43 +1,38 @@
-/****************************************************************************
-              mqtt_client.cpp
-
-    Sa April 27 12:01:00 2019
-    Copyright  2019  Dirk Brosswick
-    Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
-
-/*
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 2 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, write to the Free Software
-    Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-*/
 
 /**
-
-   \author Dirk Broßwick
-
-*/
+ * @file mqttclient.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
+ *  This program is free software; you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation; either version 2 of the License, or
+ *  (at your option) any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program; if not, write to the Free Software
+ *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ */ 
 #include <WiFi.h>
 #include <AsyncMqttClient.h>
 #include <ArduinoJson.h>
 
-#include "measure.h"
-#include "ioport.h"
 #include "config/ioport_config.h"
 #include "config/mqtt_config.h"
+#include "config.h"
+#include "measure.h"
+#include "ioport.h"
 #include "mqttclient.h"
 #include "wificlient.h"
-#include "config.h"
 
 mqtt_config_t mqtt_config;
 TaskHandle_t _ASYNCMQTT_Task;
@@ -45,18 +40,17 @@ AsyncMqttClient mqttClient;
 bool disable_MQTT = false;
 char reset_state[64] = "";
 
-#define TERMOSTAT_CMND                  "cmnd/%s/powermeter"            /** @brief powermeter cmnd topic name build string */
-#define TERMOSTAT_CONFIG                "stat/%s/config"                /** @brief powermeter cmnd topic name build string */
-#define TERMOSTAT_DATA                  "stat/%s/data"                  /** @brief powermeter cmnd topic name build string */
-#define TERMOSTAT_STAT_POWER            "stat/%s/power"                 /** @brief powermeter cmnd topic name build string */
-#define TERMOSTAT_STAT_REALTIMEPOWER    "stat/%s/realtimepower"         /** @brief powermeter cmnd topic name build string */
+#define MQTT_CMND                  "cmnd/%s/powermeter"            /** @brief powermeter cmnd topic name build string */
+#define MQTT_CONFIG                "stat/%s/config"                /** @brief powermeter cmnd topic name build string */
+#define MQTT_DATA                  "stat/%s/data"                  /** @brief powermeter cmnd topic name build string */
+#define MQTT_STAT_POWER            "stat/%s/power"                 /** @brief powermeter cmnd topic name build string */
+#define MQTT_STAT_REALTIMEPOWER    "stat/%s/realtimepower"         /** @brief powermeter cmnd topic name build string */
 
 char powermeter_cmnd_topic[128] = "";                                   /** @brief powermeter cmnd topic name buffer */
 char powermeter_config_topic[128] = "";                                 /** @brief powermeter config topic name buffer */
 char powermeter_data_topic[128] = "";                                   /** @brief powermeter data topic name buffer */
 char powermeter_stat_power_topic[128] = "";                             /** @brief powermeter stat power topic name buffer */
 char powermeter_stat_realtimepower_topic[128] = "";                     /** @brief powermeter stat realtime topic name buffer */
-
 
 static float measure_rms[ VIRTUAL_CHANNELS ];                           /** @brief measure power buffer */
 static float measure_frequency;                                         /** @brief current network frequency */
@@ -75,11 +69,11 @@ void mqtt_client_on_connect( bool sessionPresent ) {
     /**
      * setup all mqtt topic
      */
-    snprintf( powermeter_cmnd_topic, sizeof( powermeter_cmnd_topic ), TERMOSTAT_CMND, mqtt_config.topic );
-    snprintf( powermeter_config_topic, sizeof( powermeter_config_topic ), TERMOSTAT_CONFIG, mqtt_config.topic );
-    snprintf( powermeter_data_topic, sizeof( powermeter_data_topic ), TERMOSTAT_DATA, mqtt_config.topic );
-    snprintf( powermeter_stat_power_topic, sizeof( powermeter_stat_power_topic ), TERMOSTAT_STAT_POWER, mqtt_config.topic );
-    snprintf( powermeter_stat_realtimepower_topic, sizeof( powermeter_stat_realtimepower_topic ), TERMOSTAT_STAT_REALTIMEPOWER, mqtt_config.topic );
+    snprintf( powermeter_cmnd_topic, sizeof( powermeter_cmnd_topic ), MQTT_CMND, mqtt_config.topic );
+    snprintf( powermeter_config_topic, sizeof( powermeter_config_topic ), MQTT_CONFIG, mqtt_config.topic );
+    snprintf( powermeter_data_topic, sizeof( powermeter_data_topic ), MQTT_DATA, mqtt_config.topic );
+    snprintf( powermeter_stat_power_topic, sizeof( powermeter_stat_power_topic ), MQTT_STAT_POWER, mqtt_config.topic );
+    snprintf( powermeter_stat_realtimepower_topic, sizeof( powermeter_stat_realtimepower_topic ), MQTT_STAT_REALTIMEPOWER, mqtt_config.topic );
     /**
      * subscripe cmnd topic for remote cmnd
      */

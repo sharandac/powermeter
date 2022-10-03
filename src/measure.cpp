@@ -1,12 +1,12 @@
-/****************************************************************************
- *            measure.cpp
- *
- *  Sa April 27 10:17:37 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
-/*
+/**
+ * @file measure.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -21,17 +21,8 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
-
-/**
- *
- * \author Dirk Broßwick
- *
- */
 #include <FreeRTOS.h>
-#include <driver/periph_ctrl.h>
-#include <driver/timer.h>
 #include <driver/i2s.h>
-#include <driver/ledc.h>
 #include <arduinoFFT.h>
 #include <math.h>
 
@@ -56,10 +47,10 @@ int8_t channelmapping[ MAX_ADC_CHANNELS ] = { CHANNEL_3, CHANNEL_NOP, CHANNEL_NO
  * 
  */
 struct groupconfig groupconfig[ MAX_GROUPS ] = {
-    { "L1 group", true },
-    { "L2 group", false },
-    { "L3 group", false },
-    { "all power group", false },
+    { "L1", true },
+    { "L2", false },
+    { "L3", false },
+    { "all power", false },
     { "unused", false },
     { "unused", false }
 };
@@ -68,15 +59,15 @@ struct groupconfig groupconfig[ MAX_GROUPS ] = {
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] = { 
     { "L1 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_0, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L1 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_3, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L1 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_3, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L1 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, ABS, BRK, BRK, BRK, BRK },
     { "L1 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_1, ABS, NEG, BRK },
     { "L2 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_1, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L2 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_4, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L2 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_4, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L2 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, ABS, BRK, BRK, BRK, BRK },
     { "L2 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_5, ABS, NEG, BRK },
     { "L3 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_2, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L3 voltage"          , AC_VOLTAGE        , 150, 0.324000   , 0.0, 0.0, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_5, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L3 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_5, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L3 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, ABS, BRK, BRK, BRK, BRK },
     { "L3 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_9, ABS, NEG, BRK },
     { "all power"           , AC_POWER          , 0  , 1.0        , 0.0, 0.0, 0.0, 3, 3, 0.0, SET_TO|0, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, BRK, BRK, BRK, BRK, BRK, BRK }
@@ -97,20 +88,52 @@ double netfrequency;
 
 static int measurement_valid = 3; /** @brief startcounter to prevent trash in first run */
 
+void measure_Task( void * pvParameters ) {
+    static uint64_t NextMillis = millis();
 
-void measure_Task( void * pvParameters );
+    log_i("Start Measurement Task on Core: %d", xPortGetCoreID() );
+
+    measure_init();
+    i2s_start(I2S_PORT);
+
+    while( true ) {
+
+        vTaskDelay( 1 );
+    
+        if ( millis() - NextMillis > DELAY ) {
+            NextMillis += DELAY;
+            measure_mes();
+        }
+    }
+}
+/**
+ * 
+ */
+void measure_StartTask( void ) {
+    xTaskCreatePinnedToCore(
+                    measure_Task,               /* Function to implement the task */
+                    "measure measurement Task", /* Name of the task */
+                    10000,                      /* Stack size in words */
+                    NULL,                       /* Task input parameter */
+                    2,                          /* Priority of the task */
+                    &_MEASURE_Task,             /* Task handle. */
+                    _MEASURE_TASKCORE );        /* Core where the task should run */  
+}
 /*
  * 
  */
 void measure_init( void ) {
+    /**
+     * load config from json 
+     */
     measure_config.load();
-
-    esp_err_t err;
-
-    // config i2s to capture data from internal adc
+    int sample_rate = ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr;
+    /**
+     * config i2s to capture data from internal adc
+     */
     const i2s_config_t i2s_config = {
         .mode = i2s_mode_t(I2S_MODE_MASTER | I2S_MODE_RX | I2S_MODE_ADC_BUILT_IN ),
-        .sample_rate = ( ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr ),
+        .sample_rate = sample_rate,
         .bits_per_sample = I2S_BITS_PER_SAMPLE_16BIT,
         .channel_format = I2S_CHANNEL_FMT_ONLY_RIGHT,
         .communication_format = i2s_comm_format_t( I2S_COMM_FORMAT_I2S ),
@@ -118,13 +141,17 @@ void measure_init( void ) {
         .dma_buf_count = VIRTUAL_ADC_CHANNELS * 4,                          
         .dma_buf_len = numbersOfSamples,
     };
-
-    err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
+    /**
+     * set i2s config
+     */
+    esp_err_t err = i2s_driver_install(I2S_PORT, &i2s_config, 0, NULL);
     if ( err != ESP_OK ) { 
         log_e("Failed installing driver: %d", err );
         while ( true );
     }
-
+    /**
+     * set adc mode
+     */
     err = i2s_set_adc_mode( ADC_UNIT_1, (adc1_channel_t)6 );
     if (err != ESP_OK ) {
         log_e("Failed installing driver: %d", err );
@@ -134,15 +161,19 @@ void measure_init( void ) {
     i2s_stop( I2S_PORT );
 
     vTaskDelay( 100 );
-    // 3 Items in pattern table
+    /**
+     * 6 Items in pattern table
+     */
     SYSCON.saradc_ctrl.sar1_patt_len = VIRTUAL_ADC_CHANNELS - 1;
-    // [7:4] Channel
-    // [3:2] Bit Width; 3=12bit, 2=11bit, 1=10bit, 0=9bit
-    // [1:0] Attenuation; 3=11dB, 2=6dB, 1=2.5dB, 0=0dB
+    /**
+     * [7:4] Channel
+     * [3:2] Bit Width; 3=12bit, 2=11bit, 1=10bit, 0=9bit
+     * [1:0] Attenuation; 3=11dB, 2=6dB, 1=2.5dB, 0=0dB
+     */
     SYSCON.saradc_sar1_patt_tab[0] = 0x0f3f4f5f;
     SYSCON.saradc_sar1_patt_tab[1] = 0x6f7f0000;
-    // make the adc conversation more accurate
     SYSCON.saradc_ctrl.sar_clk_div = 5;
+
     log_i("Measurement: I2S driver ready");
 
     netfrequency = measure_config.network_frequency;
@@ -540,36 +571,6 @@ uint16_t * measure_get_fft( void ) {
             buffer_fft[channel][i] = vReal[i];
     }
     return( &buffer_fft[0][0] );
-}
-
-void measure_StartTask( void ) {
-    xTaskCreatePinnedToCore(
-                    measure_Task,               /* Function to implement the task */
-                    "measure measurement Task", /* Name of the task */
-                    10000,                      /* Stack size in words */
-                    NULL,                       /* Task input parameter */
-                    2,                          /* Priority of the task */
-                    &_MEASURE_Task,             /* Task handle. */
-                    _MEASURE_TASKCORE );        /* Core where the task should run */  
-}
-
-void measure_Task( void * pvParameters ) {
-    static uint64_t NextMillis = millis();
-
-    log_i("Start Measurement Task on Core: %d", xPortGetCoreID() );
-
-    measure_init();
-    i2s_start(I2S_PORT);
-
-    while( true ) {
-
-        vTaskDelay( 1 );
-    
-        if ( millis() - NextMillis > DELAY ) {
-            NextMillis += DELAY;
-            measure_mes();
-        }
-    }
 }
 
 double measure_get_max_freq( void ) {

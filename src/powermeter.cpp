@@ -1,11 +1,12 @@
-  /****************************************************************************
- *            powermeter.cpp
- *
- *  Sa April 27 09:23:14 2019
- *  Copyright  2019  Dirk Brosswick 
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/ 
-/*
+/**
+ * @file powermeter.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -21,24 +22,23 @@
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
 #include <Arduino.h>
-#include "FS.h"
-#include "SPIFFS.h"
+#include <FS.h>
+#include <SPIFFS.h>
 
-#include "measure.h"
-#include "ioport.h"
 #include "config.h"
-#include "webserver.h"
-#include "mqttclient.h"
-#include "wificlient.h"
-#include "ntp.h"
 #include "display.h"
-
+#include "ioport.h"
+#include "measure.h"
+#include "mqttclient.h"
+#include "ntp.h"
+#include "webserver.h"
+#include "wificlient.h"
 /**
  * @brief arduino setup function
  */
 void setup( void ) {
     /*
-     * doing setup Serial an config
+     * hardware stuff and file system
      */
     Serial.begin(115200);
     log_i("Start Main Task on Core: %d", xPortGetCoreID() );
@@ -52,10 +52,10 @@ void setup( void ) {
     /*
      * Setup Tasks
      */
-    ntp_StartTask();
+    measure_StartTask();
     mqtt_client_StartTask();
     asyncwebserver_StartTask();
-    measure_StartTask();
+    ntp_StartTask();
 }
 
 /**

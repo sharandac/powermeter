@@ -1,10 +1,12 @@
-/****************************************************************************
- *   Tu May 22 21:23:51 2020
- *   Copyright  2020  Dirk Brosswick
- *   Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
-/*
+/**
+ * @file ioport_config.h
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -18,27 +20,27 @@
  *  You should have received a copy of the GNU General Public License
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- */
+ */ 
 #ifndef _IOPORT_CONFIG_H
     #define _IOPORT_CONFIG_H
 
     #include "utils/basejsonconfig.h"
 
-    enum {
+    typedef enum {
         IOPORT_TRIGGER_EQUAL = 0,
         IOPORT_TRIGGER_LOWER,
         IOPORT_TRIGGER_HIGHER
-    };
+    } ioport_trigger_t;
 
-    enum {
+    typedef enum {
         IOPORT_INACTIVE = 0,
         IOPORT_ACTIVE,
-    };
+    } ioport_active_t;
 
-    enum {
+    typedef enum {
         IOPORT_NORMAL = 0,
         IOPORT_INVERTED,
-    };
+    } ioport_output_t;
     
     #define     IOPORT_JSON_CONFIG_FILE     "/ioport.json" /** @brief defines json config file name */
     #define     IOPORT_MAX                  3
@@ -48,13 +50,13 @@
      */
     typedef struct {
         char name[ IOPORT_MAX_INFO_TEXT_SIZE ] = "";
-        bool active;
+        ioport_active_t active;
         bool state;
         bool start_state;
         uint16_t gpio_pin_num;
-        uint16_t invert;
+        ioport_output_t invert;
         uint16_t value_channel;
-        uint16_t trigger;
+        ioport_trigger_t trigger;
         float value;
     } ioport_t;
     /**

@@ -50,7 +50,7 @@ bool BaseJsonConfig::load() {
                 log_e("json config deserializeJson() failed: %s, file: %s", error.c_str(), fileName );
             }
             else {
-                log_i("json config deserializeJson() success: %s, file: %s", error.c_str(), fileName );
+                log_d("json config deserializeJson() success: %s, file: %s", error.c_str(), fileName );
                 result = onLoad(doc);
             }
             doc.clear();
@@ -97,7 +97,7 @@ bool BaseJsonConfig::load( uint32_t size ) {
                 log_e("json config deserializeJson() failed: %s, file: %s", error.c_str(), fileName );
             }
             else {
-                log_i("json config deserializeJson() success: %s, file: %s", error.c_str(), fileName );
+                log_d("json config deserializeJson() success: %s, file: %s", error.c_str(), fileName );
                 result = onLoad(doc);
             }
             doc.clear();
@@ -141,7 +141,7 @@ bool BaseJsonConfig::save( uint32_t size ) {
             result = false;
         }
         else {
-            log_i("json config serializeJson() success: %s", fileName );
+            log_d("json config serializeJson() success: %s", fileName );
         }
         
         doc.clear();
@@ -178,7 +178,7 @@ bool BaseJsonConfig::save() {
             result = false;
         }
         else {
-            log_i("json config serializeJson() success: %s", fileName );            
+            log_d("json config serializeJson() success: %s", fileName );            
         }
         
         doc.clear();

@@ -1,12 +1,12 @@
-/****************************************************************************
- *            measure.h
- *
- *  Sa April 27 10:17:37 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/
- 
-/*
+/**
+ * @file measure.h
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -21,14 +21,7 @@
  *  along with this program; if not, write to the Free Software
  *  Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */ 
-
-/**
- *
- * \author Dirk Broßwick
- *
- */
 #ifndef _MEASURE_H
-
     #define _MEASURE_H
 
     #define MAX_ADC_CHANNELS        8
@@ -330,10 +323,40 @@
      * @return int          number of channel with group id and type or -1
      */
     int measure_get_channel_with_group_id_and_type( uint16_t group_id, int type );
+    /**
+     * @brief get the reported exponent of the channel
+     * 
+     * @param channel       channel number
+     * @return int          -3, 0 or 3 -> milli, normal or kilo
+     */
     int measure_get_channel_report_exp( uint16_t channel );
+    /**
+     * @brief get the reported exponent als multiplicator
+     * 
+     * @param channel       channel number
+     * @return float        0.001, 1 or 1000
+     */
     float measure_get_channel_report_exp_mul( uint16_t channel );
+    /**
+     * @brief set the reported exponent for a givven channel
+     * 
+     * @param channel       channel number
+     * @param report_in     -3,0 or 3
+     */
     void measure_set_channel_report_exp( uint16_t channel, int report_in );
+    /**
+     * @brief get the reported unit for a given channel
+     * 
+     * @param channel       channel number
+     * @return const char* 
+     */
     const char *measure_get_channel_report_unit( uint16_t channel );
+    /**
+     * @brief get the measurement valid state
+     * 
+     * @return true         measurment are valid
+     * @return false 
+     */
     bool measure_get_measurement_valid( void );
     /**
      * @brief get the opcode dequence for a given channel
