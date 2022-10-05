@@ -24,15 +24,15 @@
 #ifndef _MEASURE_H
     #define _MEASURE_H
 
-    #define MAX_ADC_CHANNELS        8
-    #define VIRTUAL_ADC_CHANNELS    6
-    #define VIRTUAL_CHANNELS        13
+    #define MAX_ADC_CHANNELS        8               /** @brief maximum channels from adc */
+    #define VIRTUAL_ADC_CHANNELS    6               /** @brief maximum virtual adc channels after mapping */
+    #define VIRTUAL_CHANNELS        13              /** @brief maximum virtual channels */
 
-    #define MAX_GROUPS              6
-    #define MAX_MICROCODE_OPS       10
+    #define MAX_GROUPS              6               /** @brief max groups */
+    #define MAX_MICROCODE_OPS       10              /** @brief max channel opcodes size */
 
-    #define numbersOfSamples        256
-    #define numbersOfFFTSamples     32
+    #define numbersOfSamples        256             /** @brief number of samples per time domain */
+    #define numbersOfFFTSamples     32              /** @brief number of sampled for fft per time domain */
     #define samplingFrequency       numbersOfSamples*VIRTUAL_ADC_CHANNELS
     #define DELAY                   1000
     #define I2S_PORT                I2S_NUM_0
@@ -43,12 +43,12 @@
      */
     enum {
         AC_CURRENT = 0,                     /** @brief measured AC current */
-        AC_VOLTAGE,                         /** @brief measured AV voltage */
-        DC_CURRENT,                         /** @brief measured AC current */
-        DC_VOLTAGE,                         /** @brief measured AV voltage */
-        AC_POWER,                           /** @brief measured power */
-        AC_REACTIVE_POWER,                  /** @brief measured power */
-        DC_POWER,                           /** @brief measured power */
+        AC_VOLTAGE,                         /** @brief measured AC voltage */
+        DC_CURRENT,                         /** @brief measured DC current */
+        DC_VOLTAGE,                         /** @brief measured DC voltage */
+        AC_POWER,                           /** @brief measured AC power */
+        AC_REACTIVE_POWER,                  /** @brief measured AC reactive power */
+        DC_POWER,                           /** @brief measured DC power */
         CHANNEL_NOT_USED,                   /** @brief set channel to zero */
         CHANNEL_TYPE_END
     };
@@ -65,8 +65,8 @@
         MUL_REACTIVE = 0xb0,                /** @brief multiply with reactive sign from channel */
         ABS = 0xa0,                         /** @brief abs */
         NEG = 0xd0,                         /** @brief change sign of a value */
-        PASS_NEGATIVE = 0xe0,                /** @brief only pass negative values, otherwise set to zero */
-        PASS_POSITIVE = 0xf0,                /** @brief only pass negative values, otherwise set to zero */
+        PASS_NEGATIVE = 0xe0,               /** @brief only pass negative values, otherwise set to zero */
+        PASS_POSITIVE = 0xf0,               /** @brief only pass negative values, otherwise set to zero */
         GET_ADC = 0x50,                     /** @brief get value from adc channel */
         SET_TO = 0x60,                      /** @brief set value to zero */
         FILTER = 0x70,                      /** @brief filter value */
@@ -113,6 +113,7 @@
         float       ratio;                              /** @brief channel ratio */
         float       offset;                             /** @brief channel offset */
         float       rms;                                /** @brief channel rms */
+        bool        square_rms;                         /** @brief channel rms calculated with square rms flag */
         float       sum;                                /** @brief channel sum */
         int         report_exp;                         /** @brief channel report exponent */
         int         group_id;                           /** @brief channel group ID for output groups */
@@ -188,6 +189,19 @@
      * @return float 
      */
     float measure_get_channel_rms( int channel );
+    /**
+     * @brief get calculate rms with square rms method
+     * 
+     * @return true 
+     * @return false 
+     */
+    bool measure_get_channel_square_rms( int channel );
+    /**
+     * @brief set calculate square rms
+     * 
+     * @param square_rms    true means enabled, false means disabled
+     */
+    void measure_set_channel_square_rms( int channel, bool square_rms );
     /**
      * @brief get the name of a given channel
      * 
@@ -358,6 +372,12 @@
      * @return false 
      */
     bool measure_get_measurement_valid( void );
+    /**
+     * @brief set the measurement invalid for a given time in sec
+     * 
+     * @param sec 
+     */
+    void measure_set_measurement_invalid( int sec );
     /**
      * @brief get the opcode dequence for a given channel
      * 

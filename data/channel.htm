@@ -77,6 +77,9 @@
     </div>
   </div>
   <div class="vbox">
+    <input type="checkbox" id="channel_square_rms" name="channel_square_rms" onchange='if( document.getElementById( "realtime_edit" ).checked ) SendCheckboxSetting( "channel_square_rms" );' unchecked><label for="square_rms"> use square rms for AC calculation</label>
+  </div class="vbox">
+  <div class="vbox">
     </label>ratio</label><br>
     <div class="box">
       <input type='text' size='32' id='channel_ratio' onchange='if( document.getElementById( "realtime_edit" ).checked ) SendSetting( "channel_ratio" );'></input>
@@ -214,7 +217,7 @@
 </div>
 <br>
 <br>
-<button type='button' onclick='SendSetting("network_frequency");SendSetting("samplerate_corr");SendSetting("channel_opcodeseq_str");SendSetting("channel_type");SendSetting("channel_phaseshift");SendSetting("channel_report_exp");SendSetting("channel_offset");SendSetting("channel_name");SendSetting("channel_ratio");SendSetting("channel_group_id");SaveSettings();get_channel_config();get_measurement_settings();' class='button'>save</button><br><br>
+<button type='button' onclick='SendSetting("network_frequency");SendSetting("samplerate_corr");SendCheckboxSetting("channel_square_rms");SendSetting("channel_opcodeseq_str");SendSetting("channel_type");SendSetting("channel_phaseshift");SendSetting("channel_report_exp");SendSetting("channel_offset");SendSetting("channel_name");SendSetting("channel_ratio");SendSetting("channel_group_id");SaveSettings();get_channel_config();get_measurement_settings();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>

@@ -39,6 +39,7 @@
             measure_config_t();
             float network_frequency = 50;
             int samplerate_corr = 0;
+            bool square_rms = false;
             
         protected:
             ////////////// Available for overloading: //////////////

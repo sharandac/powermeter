@@ -45,65 +45,65 @@ AsyncWebServer asyncserver( WEBSERVERPORT );
 AsyncWebSocket ws("/ws");
 TaskHandle_t _WEBSERVER_Task;
 
-    static const char* serverIndex =
-        "<!DOCTYPE html>\n <html><head>\n <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
-        "\n <script src='/jquery.min.js'></script>"
+static const char* serverIndex =
+    "<!DOCTYPE html>\n <html><head>\n <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
+    "\n <script src='/jquery.min.js'></script>"
 
-        "\n <style>"
-        "\n #progressbarfull {"
-        "\n background-color: #20201F;"
-        "\n border-radius: 20px;"
-        "\n width: 320px;"
-        "\n padding: 4px;"
-        "\n}"
-        "\n #progressbar {"
-        "\n background-color: #20CC00;"
-        "\n width: 3%;"
-        "\n height: 16px;"
-        "\n border-radius: 10px;"
-        "\n}"
-        "\n</style>"
-        "\n </head><body>"
-        "<h2>Update by Browser</h2>"
-        "\n <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
-        "\n <input type='file' name='update'>"
-        "\n <br><br><input type='submit' value='Update'>"
-        "\n </form>"
-        "\n <div id='prg'>Progress: 0%</div>"
-        "\n <div id=\"progressbarfull\"><div id=\"progressbar\"></div></div>"
-        "\n <script>"
-        "\n $('form').submit(function(e){"
-        "\n e.preventDefault();"
-        "\n var form = $('#upload_form')[0];"
-        "\n var data = new FormData(form);"
-        "\n $.ajax({"
-        "\n url: '/update',"
-        "\n type: 'POST',"
-        "\n data: data,"
-        "\n contentType: false,"
-        "\n processData:false,"
-        "\n xhr: function() {"
-        "\n var xhr = new window.XMLHttpRequest();"
-        "\n xhr.upload.addEventListener('progress', function(evt) {"
-        "\n if (evt.lengthComputable) {"
-        "\n var per = evt.loaded / evt.total;"
-        "\n document.getElementById(\"prg\").innerHTML = 'Progress: ' + Math.round(per*100) + '%';"
-        "\n document.getElementById(\"progressbar\").style.width=Math.round(per*100)+ '%';"
-        "}"
-        "}, false);"
-        "return xhr;"
-        "},"
-        "\n success:function(d, s) {"
-        "\n document.getElementById(\"prg\").innerHTML = 'Progress: success';"
-        "\n console.log('success!')"
-        "},"
-        "\n error: function (a, b, c) {"
-        "\n document.getElementById(\"prg\").innerHTML = 'Progress: error';"
-        "}"
-        "});"
-        "});"
-        "\n </script>"
-        "\n </body></html>";
+    "\n <style>"
+    "\n #progressbarfull {"
+    "\n background-color: #20201F;"
+    "\n border-radius: 20px;"
+    "\n width: 320px;"
+    "\n padding: 4px;"
+    "\n}"
+    "\n #progressbar {"
+    "\n background-color: #20CC00;"
+    "\n width: 3%;"
+    "\n height: 16px;"
+    "\n border-radius: 10px;"
+    "\n}"
+    "\n</style>"
+    "\n </head><body>"
+    "<h2>Update by Browser</h2>"
+    "\n <form method='POST' action='#' enctype='multipart/form-data' id='upload_form'>"
+    "\n <input type='file' name='update'>"
+    "\n <br><br><input type='submit' value='Update'>"
+    "\n </form>"
+    "\n <div id='prg'>Progress: 0%</div>"
+    "\n <div id=\"progressbarfull\"><div id=\"progressbar\"></div></div>"
+    "\n <script>"
+    "\n $('form').submit(function(e){"
+    "\n e.preventDefault();"
+    "\n var form = $('#upload_form')[0];"
+    "\n var data = new FormData(form);"
+    "\n $.ajax({"
+    "\n url: '/update',"
+    "\n type: 'POST',"
+    "\n data: data,"
+    "\n contentType: false,"
+    "\n processData:false,"
+    "\n xhr: function() {"
+    "\n var xhr = new window.XMLHttpRequest();"
+    "\n xhr.upload.addEventListener('progress', function(evt) {"
+    "\n if (evt.lengthComputable) {"
+    "\n var per = evt.loaded / evt.total;"
+    "\n document.getElementById(\"prg\").innerHTML = 'Progress: ' + Math.round(per*100) + '%';"
+    "\n document.getElementById(\"progressbar\").style.width=Math.round(per*100)+ '%';"
+    "}"
+    "}, false);"
+    "return xhr;"
+    "},"
+    "\n success:function(d, s) {"
+    "\n document.getElementById(\"prg\").innerHTML = 'Progress: success';"
+    "\n console.log('success!')"
+    "},"
+    "\n error: function (a, b, c) {"
+    "\n document.getElementById(\"prg\").innerHTML = 'Progress: error';"
+    "}"
+    "});"
+    "});"
+    "\n </script>"
+    "\n </body></html>";
 
 void asyncwebserver_Task( void * pvParameters );
 /*
@@ -164,6 +164,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
                 selectedchannel = 0;
             client->printf("channel\\%d", selectedchannel );
             client->printf("channel_type\\%01x", measure_get_channel_type( selectedchannel ) );
+            client->printf("checkbox\\channel_sqaure_rms\\%s", measure_get_channel_square_rms( selectedchannel ) ? "true" : "false" );
             client->printf("channel_report_exp\\%d", measure_get_channel_report_exp( selectedchannel ) );
             client->printf("channel_phaseshift\\%d", measure_get_channel_phaseshift( selectedchannel ) );
             client->printf("channel_opcodeseq_str\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
@@ -511,6 +512,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             measure_set_channel_report_exp( selectedchannel , atoi( value ) );
         else if ( !strcmp("channel_phaseshift", cmd ) )
             measure_set_channel_phaseshift( selectedchannel , atoi( value ) );
+        else if ( !strcmp("channel_square_rms", cmd ) )
+            measure_set_channel_square_rms( selectedchannel, atoi( value ) ? true : false );
         else if ( !strcmp("channel_opcodeseq_str", cmd ) )
             measure_set_channel_opcodeseq_str( selectedchannel ,value );
         else if ( !strcmp("channel_offset", cmd ) )

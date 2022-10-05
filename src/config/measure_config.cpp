@@ -30,6 +30,7 @@ bool measure_config_t::onSave(JsonDocument& doc) {
 
     doc["samplerate_corr"] = samplerate_corr;
     doc["network_frequency"] = network_frequency;
+    doc["square_rms"] = square_rms;
 
     for( int i = 0 ; i < MAX_GROUPS ; i++ ) {
         doc["group"][ i ]["name"] = measure_get_group_name( i );
@@ -55,6 +56,7 @@ bool measure_config_t::onLoad(JsonDocument& doc) {
 
     samplerate_corr = doc["samplerate_corr"] | 0;
     network_frequency = doc["network_frequency"] | 50;
+    square_rms = doc["square_rms"] | false;
 
     for( int i = 0 ; i < MAX_GROUPS ; i++ ) {
         if( !doc["group"][ i ]["name"] )

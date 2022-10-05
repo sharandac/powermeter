@@ -1,4 +1,3 @@
-
 /**
  * @file mqttclient.cpp
  * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
