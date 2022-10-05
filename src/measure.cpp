@@ -436,12 +436,17 @@ void measure_mes( void ) {
             TX_buffer = -1;
         }
         /**
-         * copy channel 1 into probebuffer for get network frequency
+         * copy channel 1 into fftp buffer to get network frequency
          */
         if ( round < 4 ) {
-            for( int sample = 0 ; sample < numbersOfSamples ; sample++ ) {
-                HerzvReal[ ( round * numbersOfSamples ) + sample ] = buffer[ 1 ][ sample ];
-                HerzvImag[ ( round * numbersOfSamples ) + sample ] = 0;
+            for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+                if( channelconfig[ i ].type == AC_VOLTAGE ) {
+                    for( int sample = 0 ; sample < numbersOfSamples ; sample++ ) {
+                        HerzvReal[ ( round * numbersOfSamples ) + sample ] = buffer[ i ][ sample ];
+                        HerzvImag[ ( round * numbersOfSamples ) + sample ] = 0;
+                    }
+                    break;
+                }
             }
         }
         /**
@@ -461,7 +466,7 @@ void measure_mes( void ) {
         FFT.Windowing( FFT_WIN_TYP_HAMMING, FFT_REVERSE);
         FFT.Compute( FFT_REVERSE );
         netfrequency_oldphaseshift = netfrequency_phaseshift;
-        netfrequency_phaseshift = atan2( HerzvReal[ 8 ], HerzvImag[ 8 ] ) * ( 180.0 / M_PI ) + 180;
+        netfrequency_phaseshift = atan2( HerzvReal[ 8 ], HerzvImag[ 8 ] ) * ( 180.0 / PI ) + 180;
         /**
          * prevent chaotic phaseshift values higher then 180 degrees
          */
@@ -476,7 +481,7 @@ void measure_mes( void ) {
                 netfrequency_firstrun = false;
             }
 
-            netfrequency_filter[ index ] = ( netfrequency_phaseshift - netfrequency_oldphaseshift ) * ( ( 1.0f / M_PI ) / 90 ) + measure_get_network_frequency();
+            netfrequency_filter[ index ] = ( netfrequency_phaseshift - netfrequency_oldphaseshift ) * ( ( 1.0f / PI ) / 90 ) + measure_get_network_frequency();
             
             netfrequency = 0.0;
             for( int i = 0 ; i < 16 ; i++ )
@@ -595,17 +600,11 @@ char *measure_get_channel_name( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( 0 );
 
-    if( channel >= CHANNEL_END )
-        return( 0 );
-        
     return( channelconfig[ channel ].name );    
 }
 
 void measure_set_channel_name( uint16_t channel, char *name ) {
     if ( channel >= VIRTUAL_CHANNELS )
-        return;
-
-    if( channel >= CHANNEL_END )
         return;
 
     strlcpy( channelconfig[ channel ].name, name, sizeof( channelconfig[ channel ].name ) );
@@ -623,9 +622,6 @@ void measure_set_channel_square_rms( int channel, bool square_rms ) {
 int measure_get_channel_type( uint16_t channel ){
     if ( channel >= VIRTUAL_CHANNELS )
         return( 0 );
-
-    if( channel >= CHANNEL_END )
-        return( 0 );
         
     return( channelconfig[ channel ].type );
 }
@@ -633,20 +629,13 @@ int measure_get_channel_type( uint16_t channel ){
 void measure_set_channel_type( uint16_t channel, int type ){
     if ( channel >= VIRTUAL_CHANNELS )
         return;
-
-    if( type >= CHANNEL_TYPE_END )
-        return;
         
     channelconfig[ channel ].type = type;
-    log_d("set channel %d type to %d", channel, channelconfig[ channel ].type );
     measure_set_measurement_invalid( 2 );
 }
 
 double measure_get_channel_offset( uint16_t channel ){
     if ( channel >= VIRTUAL_CHANNELS )
-        return( 0.0 );
-
-    if( channel >= CHANNEL_END )
         return( 0.0 );
         
     return( channelconfig[ channel ].offset );
@@ -656,9 +645,6 @@ void measure_set_channel_offset( uint16_t channel, double channel_offset ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return;
 
-    if( channel >= CHANNEL_END )
-        return;
-
     channelconfig[ channel ].offset = channel_offset;
     measure_set_measurement_invalid( 2 );
 }
@@ -666,18 +652,12 @@ void measure_set_channel_offset( uint16_t channel, double channel_offset ) {
 double measure_get_channel_ratio( uint16_t channel ){
     if ( channel >= VIRTUAL_CHANNELS )
         return( 0.0 );
-
-    if( channel >= CHANNEL_END )
-        return( 0.0 );
         
     return( channelconfig[ channel ].ratio );
 }
 
 void measure_set_channel_ratio( uint16_t channel, double channel_ratio ) {
     if ( channel >= VIRTUAL_CHANNELS )
-        return;
-
-    if( channel >= CHANNEL_END )
         return;
 
     channelconfig[ channel ].ratio = channel_ratio;
@@ -688,17 +668,11 @@ int measure_get_channel_phaseshift( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( 0 );
 
-    if( channel >= CHANNEL_END )
-        return( 0 );
-
     return( channelconfig[ channel ].phaseshift % 360 );
 }
 
 void measure_set_channel_phaseshift( uint16_t channel, int value ) {
     if ( channel >= VIRTUAL_CHANNELS )
-        return;
-
-    if( channel >= CHANNEL_END )
         return;
 
     channelconfig[ channel ].phaseshift = ( value % 360 );
@@ -737,17 +711,11 @@ int measure_get_channel_group_id( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( 0 );
 
-    if( channel >= CHANNEL_END )
-        return( 0 );
-
     return( channelconfig[ channel ].group_id );
 }
 
 void measure_set_channel_group_id( uint16_t channel, int group_id ) {
     if ( channel >= VIRTUAL_CHANNELS )
-        return;
-
-    if( channel >= CHANNEL_END )
         return;
 
     channelconfig[ channel ].group_id = group_id;
@@ -784,9 +752,6 @@ int measure_get_channel_with_group_id_and_type( int group_id, int type ) {
 int measure_get_channel_report_exp( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( false );
-
-    if( channel >= CHANNEL_END )
-        return( false );
         
     return( channelconfig[ channel ].report_exp );
 }
@@ -795,17 +760,11 @@ float measure_get_channel_report_exp_mul( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( 1.0 );
 
-    if( channel >= CHANNEL_END )
-        return( 1.0 );
-
     return( 1.0 / pow( 10, channelconfig[ channel ].report_exp ) );
 }
 
 void measure_set_channel_report_exp( uint16_t channel, int report_exp ) {
     if ( channel >= VIRTUAL_CHANNELS )
-        return;
-
-    if( channel >= CHANNEL_END )
         return;
 
     channelconfig[ channel ].report_exp = report_exp;
@@ -867,10 +826,6 @@ void measure_set_measurement_invalid( int sec ) {
 uint8_t * measure_get_channel_opcodeseq( uint16_t channel ) {
     if ( channel >= VIRTUAL_CHANNELS )
         return( NULL );
-
-    if( channel >= CHANNEL_END )
-        return( 0 );
-
     return( channelconfig[ channel ].operation );
 }
 
@@ -880,9 +835,6 @@ char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *
     *dest = '\0';
 
     if ( channel >= VIRTUAL_CHANNELS )
-        return( NULL );
-
-    if ( !dest )
         return( NULL );
 
     for( int a = 0 ; a < MAX_MICROCODE_OPS ; a++ ) {
@@ -917,8 +869,6 @@ void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
         opcode++;
     }
     measure_set_measurement_invalid( 2 );
-
-    log_d("set channel %d microcode to \"%s\"", channel, microcode );
 }
 
 void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
@@ -932,8 +882,6 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
 
     if( channel >= CHANNEL_END )
         return;
-
-    log_d("set channel %d microcode to \"%s\"", channel, ptr );
     /**
      * check string for illigal format
      */
@@ -962,7 +910,6 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
          * check if we have space for next opcode
          */
         if ( opcode_pos < MAX_MICROCODE_OPS ) {
-            log_d("opcode = %02x, pos = %d", opcode_binary, opcode_pos );
             channelconfig[ channel ].operation[ opcode_pos ] = opcode_binary;
             opcode_pos++;
         }
