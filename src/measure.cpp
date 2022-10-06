@@ -436,7 +436,7 @@ void measure_mes( void ) {
             TX_buffer = -1;
         }
         /**
-         * copy channel 1 into fftp buffer to get network frequency
+         * copy the first AC_VOLTAGE channel into fft buffer to get network frequency
          */
         if ( round < 4 ) {
             for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
@@ -616,7 +616,6 @@ bool measure_get_channel_square_rms( int channel ) {
 
 void measure_set_channel_square_rms( int channel, bool square_rms ) {
     channelconfig[ channel ].square_rms = square_rms;
-    measure_set_measurement_invalid( 2 );
 }
 
 int measure_get_channel_type( uint16_t channel ){
@@ -631,7 +630,6 @@ void measure_set_channel_type( uint16_t channel, int type ){
         return;
         
     channelconfig[ channel ].type = type;
-    measure_set_measurement_invalid( 2 );
 }
 
 double measure_get_channel_offset( uint16_t channel ){
@@ -646,7 +644,6 @@ void measure_set_channel_offset( uint16_t channel, double channel_offset ) {
         return;
 
     channelconfig[ channel ].offset = channel_offset;
-    measure_set_measurement_invalid( 2 );
 }
 
 double measure_get_channel_ratio( uint16_t channel ){
@@ -661,7 +658,6 @@ void measure_set_channel_ratio( uint16_t channel, double channel_ratio ) {
         return;
 
     channelconfig[ channel ].ratio = channel_ratio;
-    measure_set_measurement_invalid( 2 );
 }
 
 int measure_get_channel_phaseshift( uint16_t channel ) {
@@ -676,7 +672,6 @@ void measure_set_channel_phaseshift( uint16_t channel, int value ) {
         return;
 
     channelconfig[ channel ].phaseshift = ( value % 360 );
-    measure_set_measurement_invalid( 2 );
 }
 
 const char *measure_get_group_name( uint16_t group ) {
@@ -847,7 +842,6 @@ char * measure_get_channel_opcodeseq_str( uint16_t channel, uint16_t len, char *
 
 void measure_save_settings( void ) {
     measure_config.save();
-    measure_set_measurement_invalid( 2 );
 }
 
 void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
@@ -868,7 +862,6 @@ void measure_set_channel_opcodeseq( uint16_t channel, uint8_t *value ) {
         strncat( microcode, microcode_tmp, sizeof( microcode ) );
         opcode++;
     }
-    measure_set_measurement_invalid( 2 );
 }
 
 void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
@@ -918,6 +911,5 @@ void measure_set_channel_opcodeseq_str( uint16_t channel, const char *value ) {
             break;
         }
     }
-    measure_set_measurement_invalid( 2 );
     return;
 }
