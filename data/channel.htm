@@ -68,7 +68,7 @@
   <h2>sensor settings</h2>
   <div class="vbox">
     <label>predefined Sensor ratio ( <a href="sensor.htm" target="_blank" rel="noopener noreferrer">need help?</a> )</label><br>
-    <div class="select-wrapper"><select id="SensorType" name="SensorType" onclick='setSensor( document.getElementById( "SensorType" ).value );'><option value="0.025989163\0\-2048.0">SCT013-000 (~100A/1:2000,62R)</option><option value="0.330000\30\-2048.0">ZMPT101B (~250V/1M:2M)</option><option value="0.006598395\0\-2048.0">ACS712 (=5A/1k:2k)</option><option value="0.012207031\0\-2048.0">ACS712 (=20A/1k:2k)</option><option value="0.018495502\0\-2048.0">ACS712 (=30A/1k:2k)</option><option value="0.008862305\0\0.0">voltage divider (=36V/1k:10k)</option><option value="0.004833984\0\0.0">voltage divider (=19.8V/2k:10k)</option><option value="0.001208496\0\0.0">voltage divider (=4.95V/2k:1k)</option><option value="0.000805664\0\0.0">direct voltage</option></select></div>
+    <div class="select-wrapper"><select id="SensorType" name="SensorType" onclick='setSensor( document.getElementById( "SensorType" ).value );'><option value="0.025989163\0\-2048.0\true">SCT013-000 (~100A/1:2000,62R)</option><option value="0.330000\30\-2048.0\true">ZMPT101B (~250V/1M:2M)</option><option value="0.006598395\0\-2048.0\false">ACS712 (=5A/1k:2k)</option><option value="0.012207031\0\-2048.0\false">ACS712 (=20A/1k:2k)</option><option value="0.018495502\0\-2048.0\false">ACS712 (=30A/1k:2k)</option><option value="0.008862305\0\0.0\false">voltage divider (=36V/1k:10k)</option><option value="0.004833984\0\0.0\false">voltage divider (=19.8V/2k:10k)</option><option value="0.001208496\0\0.0\false">voltage divider (=4.95V/2k:1k)</option><option value="0.000805664\0\0.0\false">direct voltage</option></select></div>
   </div>
   <div class="vbox">
     <label>type</label><br>
@@ -77,7 +77,7 @@
     </div>
   </div>
   <div class="vbox">
-    <input type="checkbox" id="channel_square_rms" name="channel_square_rms" onchange='if( document.getElementById( "realtime_edit" ).checked ) SendCheckboxSetting( "channel_square_rms" );' unchecked><label for="channel_square_rms"> use square rms for AC calculation</label>
+    <input type="checkbox" id="channel_true_rms" name="channel_true_rms" onchange='if( document.getElementById( "realtime_edit" ).checked ) SendCheckboxSetting( "channel_true_rms" );' unchecked><label for="channel_true_rms"> use true rms for AC calculation</label>
   </div class="vbox">
   <div class="vbox">
     </label>ratio</label><br>
@@ -217,7 +217,7 @@
 </div>
 <br>
 <br>
-<button type='button' onclick='SendSetting("network_frequency");SendSetting("samplerate_corr");SendCheckboxSetting("channel_square_rms");SendSetting("channel_opcodeseq_str");SendSetting("channel_type");SendSetting("channel_phaseshift");SendSetting("channel_report_exp");SendSetting("channel_offset");SendSetting("channel_name");SendSetting("channel_ratio");SendSetting("channel_group_id");SaveSettings();get_channel_config();get_measurement_settings();' class='button'>save</button><br><br>
+<button type='button' onclick='SendSetting("network_frequency");SendSetting("samplerate_corr");SendCheckboxSetting("channel_true_rms");SendSetting("channel_opcodeseq_str");SendSetting("channel_type");SendSetting("channel_phaseshift");SendSetting("channel_report_exp");SendSetting("channel_offset");SendSetting("channel_name");SendSetting("channel_ratio");SendSetting("channel_group_id");SaveSettings();get_channel_config();get_measurement_settings();' class='button'>save</button><br><br>
 <br>
 <br>
 <br>

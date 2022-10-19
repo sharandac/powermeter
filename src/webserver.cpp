@@ -164,7 +164,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
                 selectedchannel = 0;
             client->printf("channel\\%d", selectedchannel );
             client->printf("channel_type\\%01x", measure_get_channel_type( selectedchannel ) );
-            client->printf("checkbox\\channel_square_rms\\%s", measure_get_channel_square_rms( selectedchannel ) ? "true" : "false" );
+            client->printf("checkbox\\channel_true_rms\\%s", measure_get_channel_true_rms( selectedchannel ) ? "true" : "false" );
             client->printf("channel_report_exp\\%d", measure_get_channel_report_exp( selectedchannel ) );
             client->printf("channel_phaseshift\\%d", measure_get_channel_phaseshift( selectedchannel ) );
             client->printf("channel_opcodeseq_str\\%s", measure_get_channel_opcodeseq_str( selectedchannel, sizeof( tmp ), tmp ) );
@@ -512,8 +512,8 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
             measure_set_channel_report_exp( selectedchannel , atoi( value ) );
         else if ( !strcmp("channel_phaseshift", cmd ) )
             measure_set_channel_phaseshift( selectedchannel , atoi( value ) );
-        else if ( !strcmp("channel_square_rms", cmd ) )
-            measure_set_channel_square_rms( selectedchannel, atoi( value ) ? true : false );
+        else if ( !strcmp("channel_true_rms", cmd ) )
+            measure_set_channel_true_rms( selectedchannel, atoi( value ) ? true : false );
         else if ( !strcmp("channel_opcodeseq_str", cmd ) )
             measure_set_channel_opcodeseq_str( selectedchannel ,value );
         else if ( !strcmp("channel_offset", cmd ) )

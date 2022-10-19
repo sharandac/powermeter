@@ -154,6 +154,12 @@ function setSensor( sensor ) {
 	    document.getElementById( 'channel_phaseshift' ).value = partsarry[ 1 ];
 	if( document.getElementById( 'channel_offset' ) )
 	    document.getElementById( 'channel_offset' ).value = partsarry[ 2 ];
+	if( document.getElementById( 'channel_true_rms' ) ) {
+  	if( partsarry[ 3 ] == 'true' ) 
+	    document.getElementById( 'channel_true_rms' ).checked = true;
+	  else
+	    document.getElementById( 'channel_true_rms' ).checked = false;
+	}
 }
 
 function sendCMD( value ) {

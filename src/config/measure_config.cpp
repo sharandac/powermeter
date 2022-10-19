@@ -30,7 +30,6 @@ bool measure_config_t::onSave(JsonDocument& doc) {
 
     doc["samplerate_corr"] = samplerate_corr;
     doc["network_frequency"] = network_frequency;
-    doc["square_rms"] = square_rms;
 
     for( int i = 0 ; i < MAX_GROUPS ; i++ ) {
         doc["group"][ i ]["name"] = measure_get_group_name( i );
@@ -41,6 +40,7 @@ bool measure_config_t::onSave(JsonDocument& doc) {
         char microcode[ VIRTUAL_CHANNELS * 3 ] = "";
         doc["channel"][ i ]["name"] = measure_get_channel_name( i );
         doc["channel"][ i ]["type"] = measure_get_channel_type( i );
+        doc["channel"][ i ]["true_rms"] = measure_get_channel_true_rms( i );
         doc["channel"][ i ]["report_exp"] = measure_get_channel_report_exp( i );
         doc["channel"][ i ]["offset"] = measure_get_channel_offset( i );
         doc["channel"][ i ]["ratio"] = measure_get_channel_ratio( i );
@@ -56,7 +56,6 @@ bool measure_config_t::onLoad(JsonDocument& doc) {
 
     samplerate_corr = doc["samplerate_corr"] | 0;
     network_frequency = doc["network_frequency"] | 50;
-    square_rms = doc["square_rms"] | false;
 
     for( int i = 0 ; i < MAX_GROUPS ; i++ ) {
         if( !doc["group"][ i ]["name"] )
@@ -68,6 +67,7 @@ bool measure_config_t::onLoad(JsonDocument& doc) {
     for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
         measure_set_channel_name( i, (char*) doc["channel"][ i ]["name"].as<String>().c_str() );
         measure_set_channel_type( i, doc["channel"][ i ]["type"] | AC_CURRENT );
+        measure_set_channel_true_rms( i, doc["channel"][ i ]["true_rms"] | false );
         measure_set_channel_report_exp( i, doc["channel"][ i ]["report_exp"] | 0 );
         measure_set_channel_offset( i, doc["channel"][ i ]["offset"] | 0.0 );
         measure_set_channel_ratio( i, doc["channel"][ i ]["ratio"] | 1.0);

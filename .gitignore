@@ -7,3 +7,4 @@
 flash_files.sh
 update_firmware.sh
 .vscode/settings.json
+update_spiffs.sh

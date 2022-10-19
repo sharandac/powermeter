@@ -113,7 +113,7 @@
         float       ratio;                              /** @brief channel ratio */
         float       offset;                             /** @brief channel offset */
         float       rms;                                /** @brief channel rms */
-        bool        square_rms;                         /** @brief channel rms calculated with square rms flag */
+        bool        true_rms;                         /** @brief channel rms calculated with square rms flag */
         float       sum;                                /** @brief channel sum */
         int         report_exp;                         /** @brief channel report exponent */
         int         group_id;                           /** @brief channel group ID for output groups */
@@ -195,13 +195,13 @@
      * @return true 
      * @return false 
      */
-    bool measure_get_channel_square_rms( int channel );
+    bool measure_get_channel_true_rms( int channel );
     /**
      * @brief set calculate square rms
      * 
-     * @param square_rms    true means enabled, false means disabled
+     * @param true_rms    true means enabled, false means disabled
      */
-    void measure_set_channel_square_rms( int channel, bool square_rms );
+    void measure_set_channel_true_rms( int channel, bool true_rms );
     /**
      * @brief get the name of a given channel
      * 

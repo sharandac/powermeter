@@ -58,16 +58,16 @@ struct groupconfig groupconfig[ MAX_GROUPS ] = {
  * define virtual channel type and their mathematics
  */
 struct channelconfig channelconfig[ VIRTUAL_CHANNELS ] = { 
-    { "L1 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, false, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_0, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L1 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, false, 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_3, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L1 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, true , 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_0, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L1 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, true , 0.0, 0, 0, 0.0, GET_ADC|CHANNEL_3, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L1 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, ABS, BRK, BRK, BRK, BRK },
     { "L1 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 0, 0.0, SET_TO|1, MUL|CHANNEL_0, MUL|CHANNEL_1, MUL_RATIO|CHANNEL_0, MUL_RATIO|CHANNEL_1, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_1, ABS, NEG, BRK },
-    { "L2 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, false, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_1, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L2 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, false, 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_4, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L2 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, true , 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_1, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L2 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, true , 0.0, 0, 1, 0.0, GET_ADC|CHANNEL_4, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L2 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, ABS, BRK, BRK, BRK, BRK },
     { "L2 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 1, 0.0, SET_TO|1, MUL|CHANNEL_2, MUL|CHANNEL_3, MUL_RATIO|CHANNEL_2, MUL_RATIO|CHANNEL_3, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_5, ABS, NEG, BRK },
-    { "L3 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, false, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_2, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
-    { "L3 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, false, 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_5, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L3 current"          , AC_CURRENT        , 0  , 0.025989   , 0.0, 0.0, true , 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_2, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
+    { "L3 voltage"          , AC_VOLTAGE        , 30 , 0.324000   , 0.0, 0.0, true , 0.0, 0, 2, 0.0, GET_ADC|CHANNEL_5, FILTER|0, BRK, BRK, BRK, BRK, BRK, BRK, BRK, BRK },
     { "L3 power"            , AC_POWER          , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, ABS, BRK, BRK, BRK, BRK },
     { "L3 reactive power"   , AC_REACTIVE_POWER , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 2, 0.0, SET_TO|1, MUL|CHANNEL_4, MUL|CHANNEL_5, MUL_RATIO|CHANNEL_4, MUL_RATIO|CHANNEL_5, PASS_NEGATIVE, MUL_REACTIVE|CHANNEL_9, ABS, NEG, BRK },
     { "all power"           , AC_POWER          , 0  , 1.0        , 0.0, 0.0, false, 0.0, 3, 3, 0.0, SET_TO|0, ADD|CHANNEL_0, ADD|CHANNEL_2, ADD|CHANNEL_4, BRK, BRK, BRK, BRK, BRK, BRK }
@@ -410,7 +410,7 @@ void measure_mes( void ) {
                 switch( channelconfig[ i ].type ) {
                     case AC_CURRENT:
                     case AC_VOLTAGE:
-                        if( channelconfig[ i ].square_rms )
+                        if( channelconfig[ i ].true_rms )
                             channelconfig[ i ].sum += adc_sample[ i ] * adc_sample[ i ];
                         else 
                             channelconfig[ i ].sum += fabs( adc_sample[ i ] );
@@ -420,7 +420,7 @@ void measure_mes( void ) {
                     case DC_CURRENT:
                     case DC_VOLTAGE:
                     case DC_POWER:
-                        if( channelconfig[ i ].square_rms )
+                        if( channelconfig[ i ].true_rms )
                             channelconfig[ i ].sum += adc_sample[ i ] * adc_sample[ i ];
                         else 
                             channelconfig[ i ].sum += adc_sample[ i ];
@@ -514,7 +514,7 @@ void measure_mes( void ) {
                     channelconfig[ i ].rms = channelconfig[ i ].ratio;                
                 }
                 else {
-                    if( channelconfig[ i ].square_rms )
+                    if( channelconfig[ i ].true_rms )
                         channelconfig[ i ].rms = channelconfig[ i ].ratio * sqrt( channelconfig[ i ].sum / ( numbersOfSamples * round ) );
                     else 
                         channelconfig[ i ].rms = channelconfig[ i ].ratio * ( channelconfig[ i ].sum / ( numbersOfSamples * round ) );
@@ -610,12 +610,12 @@ void measure_set_channel_name( uint16_t channel, char *name ) {
     strlcpy( channelconfig[ channel ].name, name, sizeof( channelconfig[ channel ].name ) );
 }
 
-bool measure_get_channel_square_rms( int channel ) {
-    return( channelconfig[ channel ].square_rms );
+bool measure_get_channel_true_rms( int channel ) {
+    return( channelconfig[ channel ].true_rms );
 }
 
-void measure_set_channel_square_rms( int channel, bool square_rms ) {
-    channelconfig[ channel ].square_rms = square_rms;
+void measure_set_channel_true_rms( int channel, bool true_rms ) {
+    channelconfig[ channel ].true_rms = true_rms;
 }
 
 int measure_get_channel_type( uint16_t channel ){
