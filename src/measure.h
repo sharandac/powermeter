@@ -41,7 +41,7 @@
     /**
      * @brief channel type enum
      */
-    enum {
+    typedef enum {
         AC_CURRENT = 0,                     /** @brief measured AC current */
         AC_VOLTAGE,                         /** @brief measured AC voltage */
         DC_CURRENT,                         /** @brief measured DC current */
@@ -49,34 +49,33 @@
         AC_POWER,                           /** @brief measured AC power */
         AC_REACTIVE_POWER,                  /** @brief measured AC reactive power */
         DC_POWER,                           /** @brief measured DC power */
-        CHANNEL_NOT_USED,                   /** @brief set channel to zero */
-        CHANNEL_TYPE_END
-    };
+        NO_CHANNEL_TYPE                     /** @brief set channel to zero */
+    } channel_type_t;
     /**
      * @brief opcode enum
      */
-    enum {
+    typedef enum {
         BRK = 0x00,                         /** @brief no operation */
         ADD = 0x10,                         /** @brief add value from channel */
         SUB = 0x20,                         /** @brief subtract value from channel */
         MUL = 0x30,                         /** @brief multiply value from channel */
-        MUL_RATIO = 0x80,                   /** @brief multiply mit ratio from channel */
-        MUL_SIGN = 0x90,                    /** @brief store value into buffer */
-        MUL_REACTIVE = 0xb0,                /** @brief multiply with reactive sign from channel */
-        ABS = 0xa0,                         /** @brief abs */
-        NEG = 0xd0,                         /** @brief change sign of a value */
-        PASS_NEGATIVE = 0xe0,               /** @brief only pass negative values, otherwise set to zero */
-        PASS_POSITIVE = 0xf0,               /** @brief only pass negative values, otherwise set to zero */
+        NOP = 0x40,
         GET_ADC = 0x50,                     /** @brief get value from adc channel */
         SET_TO = 0x60,                      /** @brief set value to zero */
         FILTER = 0x70,                      /** @brief filter value */
-        NOP = 0x40,
+        MUL_RATIO = 0x80,                   /** @brief multiply mit ratio from channel */
+        MUL_SIGN = 0x90,                    /** @brief store value into buffer */
+        ABS = 0xa0,                         /** @brief abs */
+        MUL_REACTIVE = 0xb0,                /** @brief multiply with reactive sign from channel */
+        NEG = 0xd0,                         /** @brief change sign of a value */
+        PASS_NEGATIVE = 0xe0,               /** @brief only pass negative values, otherwise set to zero */
+        PASS_POSITIVE = 0xf0,               /** @brief only pass negative values, otherwise set to zero */
         OPCODE_END
-    };
+    } opcode_t;
     /**
      * @brief channel enum
      */
-    enum {
+    typedef enum {
         CHANNEL_NOP = -1,
         CHANNEL_0,
         CHANNEL_1,
@@ -95,7 +94,7 @@
         CHANNEL_14,
         CHANNEL_15,
         CHANNEL_END
-    };
+    } channel_t;
     /**
      * @brief group config structure
      */
@@ -107,18 +106,18 @@
      * @brief channel config structure
      */
     struct channelconfig {
-        char        name[32];                           /** @brief channel name */
-        int         type;                               /** @brief channel type */
-        int         phaseshift;                         /** @brief channel adc phaseshift */
-        float       ratio;                              /** @brief channel ratio */
-        float       offset;                             /** @brief channel offset */
-        float       rms;                                /** @brief channel rms */
-        bool        true_rms;                         /** @brief channel rms calculated with square rms flag */
-        float       sum;                                /** @brief channel sum */
-        int         report_exp;                         /** @brief channel report exponent */
-        int         group_id;                           /** @brief channel group ID for output groups */
-        float       sign;                               /** @brief channel reactive power sign */
-        uint8_t     operation[ MAX_MICROCODE_OPS ];     /** @brief opcode sequence */
+        char            name[32];                           /** @brief channel name */
+        channel_type_t  type;                               /** @brief channel type */
+        int             phaseshift;                         /** @brief channel adc phaseshift */
+        float           ratio;                              /** @brief channel ratio */
+        float           offset;                             /** @brief channel offset */
+        float           rms;                                /** @brief channel rms */
+        bool            true_rms;                           /** @brief channel rms calculated with square rms flag */
+        float           sum;                                /** @brief channel sum */
+        int             report_exp;                         /** @brief channel report exponent */
+        int             group_id;                           /** @brief channel group ID for output groups */
+        float           sign;                               /** @brief channel reactive power sign */
+        uint8_t         operation[ MAX_MICROCODE_OPS ];     /** @brief opcode sequence */
     };
     /**
      * @brief measurement init function
@@ -221,14 +220,14 @@
      * 
      * @return uint8_t 
      */
-    int measure_get_channel_type( uint16_t channel );
+    channel_type_t measure_get_channel_type( uint16_t channel );
     /**
      * @brief set the channel type for a channel
      * 
      * @param channel 
-     * @return uint8_t 
+     * @return channel_type_t 
      */
-    void measure_set_channel_type( uint16_t channel, int value );
+    void measure_set_channel_type( uint16_t channel, channel_type_t value );
     /**
      * @brief get the channel offset
      * 

@@ -276,7 +276,7 @@ void measure_mes( void ) {
                 /**
                  * abort if group not active or channel not used
                  */
-                if( !groupconfig[ channelconfig[ i ].group_id ].active || channelconfig[ i ].type == CHANNEL_NOT_USED ) {
+                if( !groupconfig[ channelconfig[ i ].group_id ].active || channelconfig[ i ].type == NO_CHANNEL_TYPE ) {
                     buffer[ i ][ n ] = 2048;
                     channelconfig[ i ].sum = 0.0;
                     adc_sample[ i ] = 0.0; 
@@ -361,12 +361,32 @@ void measure_mes( void ) {
                                                         case AC_POWER:
                                                         case AC_REACTIVE_POWER:
                                                             /**
-                                                             * normal filtering
+                                                             * filter out DC component
                                                              */
-                                                            ac_filtered[ i ] = ( 0.9989 - ( 0.01 * op_channel ) ) * ( last_ac_filtered[ i ] + adc_sample[ i ] - last_adc_sample[ i ] );
+                                                            ac_filtered[ i ] = ( 0.9989 ) * ( last_ac_filtered[ i ] + adc_sample[ i ] - last_adc_sample[ i ] );
                                                             last_ac_filtered[ i ] = ac_filtered[ i ];
                                                             last_adc_sample[ i ] = adc_sample[ i ];
                                                             adc_sample[ i ] = ac_filtered[ i ];
+                                                            /**
+                                                             * do simple mean value filtering, low pass filtering
+                                                             */
+                                                            if( op_channel ) {
+                                                                int mul = 1;
+                                                                if( op_channel <= 6 )
+                                                                    mul = 1 << op_channel;
+                                                                else
+                                                                    mul = 1 << 6;
+                                                                    
+                                                                dc_filtered[ i ][ n % mul ] = adc_sample[ i ];
+                                                                
+                                                                adc_sample[ i ] = 0.0;
+                                                                for( int a = 0; a < mul ; a++ ) 
+                                                                    adc_sample[ i ] += dc_filtered[ i ][ a ];
+                                                                adc_sample[ i ] /= mul;
+                                                            }
+                                                            else {
+                                                                adc_sample[ i ] = adc_sample[ i ];
+                                                            }
                                                             break;
                                                         case DC_CURRENT:
                                                         case DC_VOLTAGE:
@@ -424,6 +444,8 @@ void measure_mes( void ) {
                             channelconfig[ i ].sum += adc_sample[ i ] * adc_sample[ i ];
                         else 
                             channelconfig[ i ].sum += adc_sample[ i ];
+                        break;
+                    case NO_CHANNEL_TYPE:
                         break;
                 }
             }
@@ -519,6 +541,8 @@ void measure_mes( void ) {
                     else 
                         channelconfig[ i ].rms = channelconfig[ i ].ratio * ( channelconfig[ i ].sum / ( numbersOfSamples * round ) );
                 }
+                break;
+            case NO_CHANNEL_TYPE:
                 break;
         }
 
@@ -618,14 +642,14 @@ void measure_set_channel_true_rms( int channel, bool true_rms ) {
     channelconfig[ channel ].true_rms = true_rms;
 }
 
-int measure_get_channel_type( uint16_t channel ){
+channel_type_t measure_get_channel_type( uint16_t channel ){
     if ( channel >= VIRTUAL_CHANNELS )
-        return( 0 );
+        return( NO_CHANNEL_TYPE );
         
     return( channelconfig[ channel ].type );
 }
 
-void measure_set_channel_type( uint16_t channel, int type ){
+void measure_set_channel_type( uint16_t channel, channel_type_t type ){
     if ( channel >= VIRTUAL_CHANNELS )
         return;
         
@@ -720,7 +744,7 @@ int measure_get_channel_group_id_entrys( int group_id ) {
     int groupd_id_entrys = 0;
     
     for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ )
-        if( channelconfig[ i ].group_id == group_id && channelconfig[ i ].type != CHANNEL_NOT_USED )
+        if( channelconfig[ i ].group_id == group_id && channelconfig[ i ].type != NO_CHANNEL_TYPE )
             groupd_id_entrys++;
 
     return( groupd_id_entrys );

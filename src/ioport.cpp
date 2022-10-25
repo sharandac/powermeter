@@ -71,7 +71,7 @@ void ioport_loop( void ) {
                 /**
                  * check if group id and type exist
                  */
-                if( measure_get_channel_type( ioport_config.ioport[ ioport ].value_channel ) == CHANNEL_NOT_USED )
+                if( measure_get_channel_type( ioport_config.ioport[ ioport ].value_channel ) == NO_CHANNEL_TYPE )
                     continue;
                 /**
                  * get group id and type value

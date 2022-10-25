@@ -353,7 +353,7 @@ void mqtt_client_send_realtimepower( void ) {
                 /**
                  * continue if channel not used
                  */
-                if( measure_get_channel_type( channel ) == CHANNEL_NOT_USED )
+                if( measure_get_channel_type( channel ) == NO_CHANNEL_TYPE )
                     continue;
 
                 if( measure_get_channel_type( channel ) == AC_POWER )
@@ -462,7 +462,12 @@ void mqtt_client_send_power( void ) {
     doc["reset_state"] = reset_state;
     doc["measurement_valid"] = measure_get_measurement_valid();
     doc["interval"] = mqtt_config.interval;
-    doc["frequency"] = measure_get_max_freq();
+    for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+        if( measure_get_channel_type( i ) == AC_VOLTAGE ) {
+            doc["frequency"] = measure_get_max_freq();
+            break;
+        }
+    }
     /**
      * write out measurment data
      */
@@ -488,7 +493,7 @@ void mqtt_client_send_power( void ) {
                 /**
                  * continue if channel not used
                  */
-                if( measure_get_channel_type( channel ) == CHANNEL_NOT_USED )
+                if( measure_get_channel_type( channel ) == NO_CHANNEL_TYPE )
                     continue;
 
                 if( measure_get_channel_type( channel ) == AC_POWER )

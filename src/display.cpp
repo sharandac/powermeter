@@ -140,7 +140,7 @@ void display_loop( void ) {
             /**
              * if channel not used, get next
              */
-            if( measure_get_channel_type( display_config.displayinfo[ i ].value_channel ) == CHANNEL_NOT_USED )
+            if( measure_get_channel_type( display_config.displayinfo[ i ].value_channel ) == NO_CHANNEL_TYPE )
                 continue;
             /**
              * set fontsize

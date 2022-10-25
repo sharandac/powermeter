@@ -155,7 +155,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         if ( !strcmp("get_channel_list", cmd ) ) {
             for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
                 client->printf("get_channel_list\\channel_%d_name\\%s", i, measure_get_channel_name( i ) );
-                client->printf("get_channel_use_list\\channel%d\\%s\\channel\\%d\\%s", i, ( measure_get_channel_type( i ) != CHANNEL_NOT_USED ) && measure_get_group_active( measure_get_channel_group_id( i ) ) ? "true" : "false", i, measure_get_channel_name( i ) );
+                client->printf("get_channel_use_list\\channel%d\\%s\\channel\\%d\\%s", i, ( measure_get_channel_type( i ) != NO_CHANNEL_TYPE ) && measure_get_group_active( measure_get_channel_group_id( i ) ) ? "true" : "false", i, measure_get_channel_name( i ) );
             }
         }
         else if ( !strcmp("get_channel_config", cmd ) ) {
@@ -412,7 +412,13 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
                 snprintf( tmp, sizeof( tmp ), "]" );
                 strncat( request, tmp, sizeof( request ) );
             }
-            snprintf( tmp, sizeof( tmp ), " ; f = %.3fHz", measure_get_max_freq() );
+            tmp[ 0 ] = '\0';
+            for( int i = 0 ; i < VIRTUAL_CHANNELS ; i++ ) {
+                if( measure_get_channel_type( i ) == AC_VOLTAGE ) {
+                    snprintf( tmp, sizeof( tmp ), " ; f = %.3fHz", measure_get_max_freq() );
+                    break;
+                }
+            }
             strncat( request, tmp, sizeof( request ) );
             strncat( request, " )", sizeof( request ));
 
@@ -507,7 +513,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
         else if ( !strcmp("channel", cmd ) )
             selectedchannel = atoi( value );
         else if ( !strcmp("channel_type", cmd ) )
-            measure_set_channel_type( selectedchannel , atoi( value ) );
+            measure_set_channel_type( selectedchannel , (channel_type_t)atoi( value ) );
         else if ( !strcmp("channel_report_exp", cmd ) )
             measure_set_channel_report_exp( selectedchannel , atoi( value ) );
         else if ( !strcmp("channel_phaseshift", cmd ) )
