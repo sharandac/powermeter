@@ -9,7 +9,9 @@
 
 # powermeter
 
-A not so simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
+A not so simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface. IO ports are supported which can be switched depending on measured values. A simple OLED driver for simple value outputs. Everything can also be set via web interface.<br>
+<h3 style="color:#00ff00">Note: From version 2022110101 a complete reconfiguration is required.</h3>
+<h3 style="color:#ff0000">Danger: Working with 110V or 230V is dangerous!</h3>
 
 # Install
 
@@ -58,17 +60,17 @@ At any time, all 6 adc channel are read in simultaneously regardless of the sett
 
 # Hardware
 
-SCT013-000 current sensor (~100A)
-![current sensor](images/SCT013-000.png)
+SCT013-000 current sensor (~100A)<br>
+![SCT013-000 current sensor (~100A)](data/SCT013-000.png)
 
-ZMPT101B voltage sensor (~250V)
-![current sensor](images/ZMPT101B.png)
+ZMPT101B voltage sensor (~250V)<br>
+![current sensor](data/ZMPT101B.png)
 
-ACS712 current sensor 5A, 20A and 30A
-![current sensor](images/ACS712.png)
+ACS712 current sensor 5A, 20A and 30A<br>
+![current sensor](data/ACS712.png)
 
-simple voltage divider
-![current sensor](images/voltage-div.png)
+simple voltage divider<br>
+![current sensor](data/voltage-div.png)
 
 For ratio calculation see inline documentation via webinterface.
 

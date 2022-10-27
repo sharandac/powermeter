@@ -89,21 +89,12 @@ double netfrequency;
 static int measurement_valid = 3; /** @brief startcounter to prevent trash in first run */
 
 void measure_Task( void * pvParameters ) {
-    static uint64_t NextMillis = millis();
-
     log_i("Start Measurement Task on Core: %d", xPortGetCoreID() );
 
     measure_init();
-    i2s_start(I2S_PORT);
 
     while( true ) {
-
-        vTaskDelay( 1 );
-    
-        if ( millis() - NextMillis > DELAY ) {
-            NextMillis += DELAY;
-            measure_mes();
-        }
+        measure_mes();
     }
 }
 /**
@@ -127,6 +118,8 @@ void measure_init( void ) {
      * load config from json 
      */
     measure_config.load();
+    netfrequency = measure_config.network_frequency;
+
     int sample_rate = ( samplingFrequency * measure_config.network_frequency / 2 ) + measure_config.samplerate_corr;
     /**
      * config i2s to capture data from internal adc
@@ -176,7 +169,7 @@ void measure_init( void ) {
 
     log_i("Measurement: I2S driver ready");
 
-    netfrequency = measure_config.network_frequency;
+    i2s_start( I2S_PORT );
 }
 
 /*
