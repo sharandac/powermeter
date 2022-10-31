@@ -37,6 +37,7 @@
  * @brief arduino setup function
  */
 void setup( void ) {
+    setCpuFrequencyMhz( 240 );
     /*
      * hardware stuff and file system
      */

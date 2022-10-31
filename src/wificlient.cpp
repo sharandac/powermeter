@@ -57,7 +57,7 @@ void wificlient_init( void ) {
         esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT40 );
 
     if( wificlient_config.low_power )
-        esp_wifi_set_ps( WIFI_PS_MAX_MODEM );
+        esp_wifi_set_ps( WIFI_PS_MODEM );
     else
         esp_wifi_set_ps( WIFI_PS_NONE );
     /**

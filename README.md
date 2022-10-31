@@ -9,7 +9,7 @@
 
 # powermeter
 
-A not so simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface. IO ports are supported which can be switched depending on measured values. A simple OLED driver for simple value outputs. Everything can also be set via web interface.<br>
+A not so simple but very flexible smart meter based on ESP32. It supports MQTT, live monitoring via web interface, IO ports ( can be switched depending on measured values ), a simple OLED driver for simple value reports, editable opcode sequences per channel and group management. And the best is: everything can also be set via the web interface and has immediate effect and invites to play to improve the understanding of AC voltage/current or DC voltage/current.<br>
 <h3 style="color:#00ff00">Note: From version 2022110101 a complete reconfiguration is required.</h3>
 <h3 style="color:#ff0000">Danger: Working with 110V or 230V is dangerous!</h3>
 
@@ -56,7 +56,7 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 
 ![signalpath](images/signalpath.png)
 
-At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of editable microopcodes, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
+At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of editable microopcodes, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how AC current or three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Alternating_current) and [here](https://en.wikipedia.org/wiki/Three-phase_electric_power)
 
 # Hardware
 
