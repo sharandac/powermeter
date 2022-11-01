@@ -9,7 +9,9 @@
 
 # powermeter
 
-A simple smartmeter based on ESP32. Supports the complete setup via web interface, MQTT and live monitoring via web interface.
+A not so simple but very flexible smart meter based on ESP32. It supports MQTT, live monitoring via web interface, IO ports ( can be switched depending on measured values ), a simple OLED driver for simple value reports, editable opcode sequences per channel and group management. And the best is: everything can also be set via the web interface and has immediate effect and invites to play to improve the understanding of AC voltage/current or DC voltage/current.<br>
+<h3 style="color:#00ff00">Note: From version 2022110101 a complete reconfiguration is required.</h3>
+<h3 style="color:#ff0000">Danger: Working with 110V or 230V is dangerous!</h3>
 
 # Install
 
@@ -52,26 +54,32 @@ http://192.168.4.1 or powermeter_xxxxxx.local
 ```
 # How it works
 
-![signalpath](https://github.com/sharandac/powermeter/blob/master/images/signalpath.png)
+![signalpath](images/signalpath.png)
+
+At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of editable microopcodes, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how AC current or three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Alternating_current) and [here](https://en.wikipedia.org/wiki/Three-phase_electric_power)
 
 # Hardware
 
-![current sensor](https://github.com/sharandac/powermeter/blob/master/images/schematic.png)
+SCT013-000 current sensor (~100A)<br>
+![SCT013-000 current sensor (~100A)](data/SCT013-000.png)
 
-Please pay attention to the Burden resistor. Some current sensors have a built-in Burden resistor. In this example a SCT-013-000 without a built-in Burden resistor was used. Please check the documentation for the right Burden resistor value.
+ZMPT101B voltage sensor (~250V)<br>
+![current sensor](data/ZMPT101B.png)
 
-# Channel setting
+ACS712 current sensor 5A, 20A and 30A<br>
+![current sensor](data/ACS712.png)
 
-At any time, 3 channels are read in simultaneously regardless of the settings. The individual power of each channel is calculated and the power of all channels together. If 3 channels are set, an additional virtual fourth channel is calculated with the sum of all currents. This enables us to measure the neutral conductor current indirectly. For more information about how three-phase current works, [read here](https://en.wikipedia.org/wiki/Three-phase_electric_power)!
+simple voltage divider<br>
+![current sensor](data/voltage-div.png)
+
+For ratio calculation see inline documentation via webinterface.
 
 # Interface
 
 ## live view
-![live view](https://github.com/sharandac/powermeter/blob/master/images/preview.gif)
-## MQTT settings
-![mqtt](https://github.com/sharandac/powermeter/blob/master/images/mqtt-setting.png)
-## measurement settings
-![measurement](https://github.com/sharandac/powermeter/blob/master/images/measurement-setting.png)
+![live view](images/preview.gif)
+## round trip
+![round trip](images/live-view.gif)
 
 # Contributors
 

@@ -3,3 +3,11 @@
 .vscode/c_cpp_properties.json
 .vscode/launch.json
 .vscode/ipch
+<<<<<<< HEAD
+=======
+.vscode/extensions.json
+flash_files.sh
+update_firmware.sh
+.vscode/settings.json
+update_spiffs.sh
+>>>>>>> experimental

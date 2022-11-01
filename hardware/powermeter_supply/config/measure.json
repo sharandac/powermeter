@@ -1,0 +1,175 @@
+{
+    "samplerate_corr": 146,
+    "network_frequency": 50,
+    "group": [
+      {
+        "name": "L1",
+        "active": true
+      },
+      {
+        "name": "L2",
+        "active": false
+      },
+      {
+        "name": "L3",
+        "active": false
+      },
+      {
+        "name": "all power",
+        "active": false
+      },
+      {
+        "name": "unused",
+        "active": false
+      },
+      {
+        "name": "unused",
+        "active": false
+      }
+    ],
+    "channel": [
+      {
+        "name": "L1 current",
+        "type": 0,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.023696,
+        "phaseshift": 0,
+        "group_id": 0,
+        "mircocode": "55700000000000000000"
+      },
+      {
+        "name": "L1 voltage",
+        "type": 1,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.412,
+        "phaseshift": 16,
+        "group_id": 0,
+        "mircocode": "51750000000000000000"
+      },
+      {
+        "name": "L1 power",
+        "type": 4,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 0,
+        "mircocode": "6130318081a000000000"
+      },
+      {
+        "name": "L1 reactive power",
+        "type": 5,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 0,
+        "mircocode": "6130318081e0b1a0d000"
+      },
+      {
+        "name": "L2 current",
+        "type": 0,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.025989,
+        "phaseshift": 0,
+        "group_id": 1,
+        "mircocode": "51700000000000000000"
+      },
+      {
+        "name": "L2 voltage",
+        "type": 1,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.324,
+        "phaseshift": 30,
+        "group_id": 1,
+        "mircocode": "54700000000000000000"
+      },
+      {
+        "name": "L2 power",
+        "type": 4,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 1,
+        "mircocode": "6132338283a000000000"
+      },
+      {
+        "name": "L2 reactive power",
+        "type": 5,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 1,
+        "mircocode": "6132338283e0b5a0d000"
+      },
+      {
+        "name": "L3 current",
+        "type": 0,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.025989,
+        "phaseshift": 0,
+        "group_id": 2,
+        "mircocode": "52700000000000000000"
+      },
+      {
+        "name": "L3 voltage",
+        "type": 1,
+        "true_rms": true,
+        "report_exp": 0,
+        "offset": 0,
+        "ratio": 0.324,
+        "phaseshift": 30,
+        "group_id": 2,
+        "mircocode": "55700000000000000000"
+      },
+      {
+        "name": "L3 power",
+        "type": 4,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 2,
+        "mircocode": "6134358485a000000000"
+      },
+      {
+        "name": "L3 reactive power",
+        "type": 5,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 2,
+        "mircocode": "6134358485e0b9a0d000"
+      },
+      {
+        "name": "all power",
+        "type": 4,
+        "true_rms": false,
+        "report_exp": 3,
+        "offset": 0,
+        "ratio": 1,
+        "phaseshift": 0,
+        "group_id": 3,
+        "mircocode": "60101214000000000000"
+      }
+    ]
+  }

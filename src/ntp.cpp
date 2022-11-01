@@ -1,11 +1,12 @@
-/****************************************************************************
- *            ntp.cpp
- *
- *  Sa April 27 12:17:32 2019
- *  Copyright  2019  Dirk Brosswick
- *  Email: dirk.brosswick@googlemail.com
- ****************************************************************************/ 
-/*
+/**
+ * @file ntp.cpp
+ * @author Dirk Broßwick (dirk.brosswick@googlemail.com)
+ * @brief 
+ * @version 1.0
+ * @date 2022-10-03
+ * 
+ * @copyright Copyright (c) 2022
+ * 
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
  *  the Free Software Foundation; either version 2 of the License, or
@@ -22,7 +23,7 @@
  */ 
 #include <Arduino.h>
 #include <WiFi.h>
-#include "time.h"
+#include <time.h>
 
 #include "ntp.h"
 #include "config.h"
@@ -38,7 +39,7 @@ void ntp_StartTask( void ) {
     xTaskCreatePinnedToCore(
                     ntp_Task,           /* Function to implement the task */
                     "ntp Task",         /* Name of the task */
-                    10000,              /* Stack size in words */
+                    2000,              /* Stack size in words */
                     NULL,               /* Task input parameter */
                     1,                  /* Priority of the task */
                     &_NTP_Task,         /* Task handle. */

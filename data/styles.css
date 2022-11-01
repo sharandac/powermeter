@@ -379,6 +379,20 @@ div#fixedfooter {
 	cursor: pointer;
 }
 
+.smallbutton {
+	width: 370px;
+	height: 1.3cm;
+	background-color: #666666;
+	border: none;
+	color: white;
+	padding: 15px 32px;
+	text-align: center;
+	text-decoration: none;
+	display: inline-block;
+	font-size: 16px;
+	cursor: pointer;
+}
+
 .left    { text-align: left; }
 .right   { text-align: right; }
 .center  { text-align: center; }
@@ -448,7 +462,7 @@ li a, .dropbtn {
 }
 
 .select-wrapper {
-  width: 200px;
+  width: 370px;
 }
 
 select {
