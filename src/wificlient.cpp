@@ -48,6 +48,8 @@ void wificlient_init( void ) {
      * set wifi sta mode
      */
     WiFi.mode( WIFI_STA );
+    /**set low power wifi*/
+
     /**
      * set low power and low bandwidth
      */
@@ -57,9 +59,9 @@ void wificlient_init( void ) {
         esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT40 );
 
     if( wificlient_config.low_power )
-        esp_wifi_set_ps( WIFI_PS_MODEM );
+        esp_wifi_set_max_tx_power( 44 );
     else
-        esp_wifi_set_ps( WIFI_PS_NONE );
+        esp_wifi_set_max_tx_power( 80 );
     /**
      * set hostname
      */
@@ -196,6 +198,11 @@ bool wificlient_get_low_bandwidth( void ) {
 
 void wificlient_set_low_bandwidth( bool low_bandwidth ) {
     wificlient_config.low_bandwidth = low_bandwidth;
+
+    if(  wificlient_config.low_bandwidth )
+        esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT20 );
+    else
+        esp_wifi_set_bandwidth( ESP_IF_WIFI_STA, WIFI_BW_HT40 );
 }
 
 bool wificlient_get_low_power( void ) {
@@ -204,6 +211,11 @@ bool wificlient_get_low_power( void ) {
 
 void wificlient_set_low_power( bool low_power ) {
     wificlient_config.low_power = low_power;
+
+    if( wificlient_config.low_power )
+        esp_wifi_set_max_tx_power( 44 );
+    else
+        esp_wifi_set_max_tx_power( 80 );
 }
 
 void wificlient_save_settings( void ) {
