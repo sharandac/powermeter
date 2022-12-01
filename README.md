@@ -13,7 +13,7 @@ A not so simple but very flexible smart meter based on ESP32. It supports MQTT, 
 <h3 style="color:#00ff00">Note: From version 2022110101 a complete reconfiguration is required.</h3>
 <h3 style="color:#ff0000">Danger: Working with 110V or 230V is dangerous!</h3>
 
-# Install
+# install
 
 Clone this repository and open it with platformIO. Remember, the SPIFF must also be flashed. On a terminal in vscode you can do it with
 ```bash
@@ -52,13 +52,13 @@ After that you can configure the powermeter under the following IP-address with 
 ```bash
 http://192.168.4.1 or powermeter_xxxxxx.local
 ```
-# How it works
+# how it works
 
 ![signalpath](images/signalpath.png)
 
 At any time, all 6 adc channel are read in simultaneously regardless of the settings. Afterwards, these 6 ADC channels are distributed to 13 virtual channels with the help of editable microopcodes, each sample has a maximum of 10 opcodes available for real-time calculations (mixing, sum calculation, reactive power and so on). These 13 virtual channels can then be combined into a maximum of 6 output groups. For more information about how AC current or three-phase current and power calculations works, [read here](https://en.wikipedia.org/wiki/Alternating_current) and [here](https://en.wikipedia.org/wiki/Three-phase_electric_power)
 
-# Hardware
+# sensor hardware
 
 SCT013-000 current sensor (~100A)<br>
 ![SCT013-000 current sensor (~100A)](data/SCT013-000.png)
@@ -74,14 +74,14 @@ simple voltage divider<br>
 
 For ratio calculation see inline documentation via webinterface.
 
-# Interface
+# web interface
 
 ## live view
 ![live view](images/preview.gif)
 ## round trip
 ![round trip](images/live-view.gif)
 
-# Contributors
+# contributors
 
 Every Contribution to this repository is highly welcome! Don't fear to create pull requests which enhance or fix the project, you are going to help everybody.
 <p>
