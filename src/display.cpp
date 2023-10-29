@@ -24,17 +24,27 @@
 #include <Arduino.h>
 #include <Wire.h>
 #include <Adafruit_GFX.h>
-#include <Adafruit_SSD1306.h>
+// #include <Adafruit_SSD1306.h>
+#include <Adafruit_SH110X.h>
 #include <Fonts/FreeSans18pt7b.h>
 #include <Fonts/FreeSans12pt7b.h>
 #include <Fonts/FreeSans9pt7b.h>
 
+#include "config.h"
 #include "config/display_config.h"
 #include "display.h"
 #include "measure.h"
 
 display_config_t display_config;
-Adafruit_SSD1306 display( SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1 );
+
+#if defined( _Adafruit_SSD1306_H_ )
+    Adafruit_SSD1306 display( SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1 );
+#elif defined( _Adafruit_SH110X_H_ )
+    Adafruit_SH1106G display( SCREEN_WIDTH, SCREEN_HEIGHT, &Wire, -1 );
+#else
+    #error "no display driver found"
+#endif
+
 static bool displayinit = false;
 
 int display_get_string_width( const char *fmt );
@@ -73,18 +83,35 @@ void display_init( void ) {
     /**
      * init display
      */
+#if defined( _Adafruit_SSD1306_H_ )
     if( !display.begin( SSD1306_SWITCHCAPVCC, SCREEN_ADDRESS ) ) { 
         displayinit = false;
         log_e("SSD1306 allocation failed");
         return;
     }
+#elif defined( _Adafruit_SH110X_H_ )
+    if( !display.begin( SCREEN_ADDRESS ) ) { 
+        displayinit = false;
+        log_e("SH110X allocation failed");
+        return;
+    }
+#else
+    #error "no display driver found"
+#endif
+
     /**
      * clear display and set startup message
      */
     display.display();
     display.setRotation( display_config.flip ? 2 : 0 );
     display.clearDisplay();
+#if defined( _Adafruit_SSD1306_H_ )
     display.setTextColor( SSD1306_WHITE );
+#elif defined( _Adafruit_SH110X_H_ )
+    display.setTextColor( SH110X_WHITE );
+#else
+    #error "no display driver found"
+#endif
     display.setFont( NULL );
     display.setTextSize( 1 );
     display.setCursor( 0, 0 );

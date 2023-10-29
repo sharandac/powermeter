@@ -29,7 +29,9 @@
     typedef enum {
         IOPORT_TRIGGER_EQUAL = 0,
         IOPORT_TRIGGER_LOWER,
-        IOPORT_TRIGGER_HIGHER
+        IOPORT_TRIGGER_HIGHER,
+        IOPORT_TRIGGER_FALLING_EDGE,
+        IOPORT_TRIGGER_RAISING_EDGE
     } ioport_trigger_t;
 
     typedef enum {

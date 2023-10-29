@@ -26,11 +26,18 @@
 #include "measure.h"
 
 ioport_config_t ioport_config;
+static bool ioportinit = false;
 
 void ioport_init( void ) {
     /**
+     * abort if display not init or active
+     */
+    if( ioportinit )
+        return;
+    /**
      * load config from json
      */
+    log_i("init ioport" );
     ioport_config.load();
     /**
      * crawl all ioports and setup pin config
@@ -42,10 +49,16 @@ void ioport_init( void ) {
             ioport_config.ioport[ channel ].state = ioport_config.ioport[ channel ].start_state;
         }
     }
+    ioportinit = true;
 }
 
 void ioport_loop( void ) {
     static uint64_t NextIOPortMillis = 0;
+    /**
+     * abort if display not init or active
+     */
+    if( !ioportinit )
+        return;
     /**
      * on first run, init NextIOPortMillis
      */

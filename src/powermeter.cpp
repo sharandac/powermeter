@@ -38,10 +38,10 @@
  */
 void setup( void ) {
     setCpuFrequencyMhz( 240 );
+    Serial.begin(115200);
     /*
      * hardware stuff and file system
      */
-    Serial.begin(115200);
     log_i("Start Main Task on Core: %d", xPortGetCoreID() );
     if ( !SPIFFS.begin() ) {
         log_i("format SPIFFS ..." );

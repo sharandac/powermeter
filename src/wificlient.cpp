@@ -31,7 +31,7 @@
 wificlient_config_t wificlient_config;
 TaskHandle_t _wificlient_Task;
 
-void wificlient_Task( void * pvParameters );
+static void wificlient_Task( void * pvParameters );
 
 void wificlient_init( void ) {
     static bool wifi_client_init = false;
@@ -75,7 +75,7 @@ void wificlient_init( void ) {
 /**
  * @brief check WiFi connect and reconnect if network available or start a OTA softAP
  */
-void wificlient_Task( void * pvParameters ) {
+static void wificlient_Task( void * pvParameters ) {
     static bool wifi_client_task_init = false;
     static bool APMODE = false;
 
