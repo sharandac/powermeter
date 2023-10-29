@@ -33,7 +33,7 @@ const char* ntpServer = "pool.ntp.org";
 const long  gmtOffset_sec = 3600;
 const int   daylightOffset_sec = 3600;
 
-void ntp_Task( void * pvParameters );
+static void ntp_Task( void * pvParameters );
 
 void ntp_StartTask( void ) {  
     xTaskCreatePinnedToCore(
@@ -51,7 +51,7 @@ void ntp_StartTask( void ) {
  * 
  * @param pvParameters
  */
-void ntp_Task( void * pvParameters ) {
+static void ntp_Task( void * pvParameters ) {
     struct tm timeinfo;
     static uint64_t NextMillis = millis();
     

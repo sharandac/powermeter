@@ -60,6 +60,7 @@ At any time, all 6 adc channel are read in simultaneously regardless of the sett
 
 # sensor hardware
 
+## Sensors
 SCT013-000 current sensor (~100A)<br>
 ![SCT013-000 current sensor (~100A)](data/SCT013-000.png)
 
@@ -74,7 +75,14 @@ simple voltage divider<br>
 
 For ratio calculation see inline documentation via webinterface.
 
-# web interface
+## Display hardware
+Uncomment in "**display.cpp**" the line of the display you want to use<br>
+```c
+//#include <Adafruit_SSD1306.h>
+//#include  <Adafruit_SH110X.h>
+```
+
+# Interface
 
 ## live view
 ![live view](images/preview.gif)

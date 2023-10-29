@@ -418,10 +418,10 @@ function OScopeProbe() {
          * check if channel id exist
          */
         if ( document.getElementById( "channel" + i ) ) {
-        if( document.getElementById( "channel" + i ).checked )
-            channel_list_str += "1";
-        else
-            channel_list_str += "0";
+            if( document.getElementById( "channel" + i ).checked )
+                channel_list_str += "1";
+            else
+                channel_list_str += "0";
         }
     }
     

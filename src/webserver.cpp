@@ -48,7 +48,6 @@ TaskHandle_t _WEBSERVER_Task;
 static const char* serverIndex =
     "<!DOCTYPE html>\n <html><head>\n <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js'></script>"
     "\n <script src='/jquery.min.js'></script>"
-
     "\n <style>"
     "\n #progressbarfull {"
     "\n background-color: #20201F;"
@@ -105,11 +104,11 @@ static const char* serverIndex =
     "\n </script>"
     "\n </body></html>";
 
-void asyncwebserver_Task( void * pvParameters );
+static void asyncwebserver_Task( void * pvParameters );
 /*
  * websocket-eventroutine
  */
-void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len) {
+static void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventType type, void * arg, uint8_t *data, size_t len) {
     static int selectedchannel = 0;
     /*
     * queue the event-type
@@ -592,7 +591,7 @@ void onWsEvent(AsyncWebSocket * server, AsyncWebSocketClient * client, AwsEventT
 /*
  * based on: https://github.com/lbernstone/asyncUpdate/blob/master/AsyncUpdate.ino
  */
-void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) {
+static void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_t index, uint8_t *data, size_t len, bool final) {
     mqtt_client_disable();
 
     if ( !index ) {
@@ -632,7 +631,7 @@ void handleUpdate( AsyncWebServerRequest *request, const String& filename, size_
     void mqtt_client_enable();
 }
 
-void asyncwebserver_setup(void){
+static void asyncwebserver_setup(void){
     asyncserver.on("/info", HTTP_GET, [](AsyncWebServerRequest * request) { request->send(200, "text/plain", "Firmwarestand: " __DATE__ " " __TIME__ "\r\nGCC-Version: " __VERSION__ "\r\nVersion: " __FIRMWARE__ "\r\n" ); } );
     asyncserver.addHandler( new SPIFFSEditor( SPIFFS ) );
     asyncserver.serveStatic( "/", SPIFFS, "/" ).setDefaultFile( "index.htm" );
@@ -709,7 +708,7 @@ void asyncwebserver_StartTask ( void ) {
                             _WEBSERVER_TASKCORE );  /* Core where the task should run */  
 }
 
-void asyncwebserver_Task( void * pvParameters ) {
+static void asyncwebserver_Task( void * pvParameters ) {
     log_i( "Start Webserver on Core: %d", xPortGetCoreID() );
 
     asyncwebserver_setup();
